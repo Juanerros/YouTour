@@ -30,6 +30,7 @@
     color: #11233f;
     background-color: aliceblue;
     font-weight: bold;
+    font-size: 12px;
 }
 .NavContent a.active {
     background-color: rgb(210, 218, 224);

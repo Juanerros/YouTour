@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { MdCardTravel } from "react-icons/md";
 import { BsTicketPerforated } from "react-icons/bs";
 import { MdOutlineLocalOffer } from "react-icons/md";
-import { TbMountain } from "react-icons/tb";
+import { LuPlane } from "react-icons/lu";
 import { useUser } from '../../hooks/useUser';
 import useNotification from '../../hooks/useNotification';
 
@@ -28,14 +28,14 @@ const Nav = () => {
             className={activeIndex === 0 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(0); }}
           >
-            <MdCardTravel size={30} /> Vuelos
+            <LuPlane size={40} /> Vuelos
           </a>
           <a
             href=""
             className={activeIndex === 1 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(1); }}
           >
-            <BsTicketPerforated size={30} />
+            <BsTicketPerforated size={40} />
             Actividades
           </a>
           <a
@@ -43,7 +43,7 @@ const Nav = () => {
             className={activeIndex === 2 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(2); }}
           >
-            <MdOutlineLocalOffer size={30} />
+            <MdOutlineLocalOffer size={40} />
             Ofertas
           </a>
           <a
@@ -51,8 +51,7 @@ const Nav = () => {
             className={activeIndex === 3 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(3); }}
           >
-            <TbMountain size={30} />
-            Paquetes de Viaje
+            <MdCardTravel size={40} /> Paquetes de Viaje
           </a>
         </div>
         {isLogin ? (
