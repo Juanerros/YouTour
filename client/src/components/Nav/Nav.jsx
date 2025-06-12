@@ -1,13 +1,22 @@
 import './style.css'
-import React, { useState } from "react";
-import Logo from '../../../public/YouTourLogo.png'
+import Logo from '/YouTourLogo.png'
+import { useEffect, useState } from "react";
 import { MdCardTravel } from "react-icons/md";
 import { BsTicketPerforated } from "react-icons/bs";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { TbMountain } from "react-icons/tb";
+import { useUser } from '../../hooks/useUser';
+import useNotification from '../../hooks/useNotification';
 
 const Nav = () => {
+  const { handleLogout, getUser } = useUser();
+  const { notify } = useNotification();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isLogin, setIsLogin] = useState(false);
+
+  useEffect(() => {
+    if (getUser()) setIsLogin(true);
+  }, []);
 
   return (
     <div className='Navbar'>
@@ -19,7 +28,7 @@ const Nav = () => {
             className={activeIndex === 0 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(0); }}
           >
-            <MdCardTravel size={30}/> Vuelos
+            <MdCardTravel size={30} /> Vuelos
           </a>
           <a
             href=""
@@ -34,7 +43,7 @@ const Nav = () => {
             className={activeIndex === 2 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(2); }}
           >
-            <MdOutlineLocalOffer size={30}/>
+            <MdOutlineLocalOffer size={30} />
             Ofertas
           </a>
           <a
@@ -42,11 +51,15 @@ const Nav = () => {
             className={activeIndex === 3 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(3); }}
           >
-            <TbMountain size={30}/>
+            <TbMountain size={30} />
             Paquetes de Viaje
           </a>
         </div>
-        <a href="" className='Log-btn'>Iniciar Sesión</a>
+        {isLogin ? (
+          <button className='Login' onClick={() => { handleLogout(); notify("Sesión cerrada", "success"); }}>Cerrar Sesión</button>
+        ) : (
+          <a href="/auth" className='Log-btn'>Iniciar Sesión</a>
+        )}
       </div>
       <div className="NavDown">
         <div className='SearchBar'>

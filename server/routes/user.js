@@ -16,42 +16,42 @@ router.post('/login', async (req, res) => {
 
     try {
         const [resultLogin] = await conex.execute(
-            "SELECT * FROM login WHERE email = ?",
+            "SELECT * FROM usuarios WHERE email = ?",
             [email]
         );
 
-        if (resultLogin.length === 0) return handleError(res, 'Credenciales incorrectas', null, 401);
+        if (resultLogin.length === 0) return handleError(res, 'Credenciales incorrectas.', null, 401);
 
         const user = resultLogin[0];
 
         // Verificar si el usuario está bloqueado temporalmente
-        if (user.lock_until && new Date(user.lock_until) > new Date()) {
-            const remainingTime = moment(user.lock_until).fromNow();
+        if (user.bloqueado_hasta && new Date(user.bloqueado_hasta) > new Date()) {
+            const remainingTime = moment(user.bloqueado_hasta).fromNow();
             return handleError(res, `Muchos intentos fallidos. Intente de nuevo ${remainingTime}`, null, 403);
         }
 
         // Verificar la contraseña hasheada
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 
         if (!isPasswordValid) {
-            const failedAttempts = user.failed_attempts + 1;
-            let lockUntil = null;
+            const intentos_fallidos = user.intentos_fallidos + 1;
+            let bloqueado_hasta = null;
 
-            if (failedAttempts >= 3) {
-                lockUntil = moment().add(15, 'minutes').toDate();
+            if (intentos_fallidos >= 3) {
+                bloqueado_hasta = moment().add(15, 'minutes').toDate();
             }
 
             await conex.execute(
-                'UPDATE login SET failed_attempts = ?, lock_until = ? WHERE id_login = ?',
-                [failedAttempts, lockUntil, user.id_login]
+                'UPDATE usuarios SET intentos_fallidos = ?, lock_until = ? WHERE usuario_id = ?',
+                [intentos_fallidos, bloqueado_hasta, user.usuario_id]
             );
 
-            return handleError(res, 'Contraseña incorrecta.', null, 401);
+            return handleError(res, 'Credenciales incorrectas.', null, 401);
         }
 
         await conex.execute(
-            'UPDATE login SET failed_attempts = 0, lock_until = NULL WHERE id_login = ?',
-            [user.id_login]
+            'UPDATE usuarios SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE usuario_id = ?',
+            [user.usuario_id]
         );
 
         res.status(200).json({
@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
             user: {
                 ...user,
                 // Oculta la contraseña
-                password: '[Hidden]'
+                password_hash: '[Hidden]'
             }
         });
 
@@ -75,8 +75,8 @@ router.post('/register', async (req, res) => {
         // Hash de la contraseña antes de almacenarla
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-        const [resultRegistro] = await conex.execute(
-            'INSERT INTO login(email, password, nick) VALUES (?, ?, ?)',
+        const [register] = await conex.execute(
+            'INSERT INTO usuarios(email, password_hash) VALUES (?, ?)',
             [email, hashedPassword]
         );
 
@@ -84,7 +84,12 @@ router.post('/register', async (req, res) => {
 
         res.status(201).json({
             message: 'Usuario registrado correctamente',
-            id_user: resultRegistro.insertId
+            user: {
+                usuario_id: register.insertId,
+                email,
+                // Oculta la contraseña
+                password_hash: '[Hidden]'
+            }
         });
 
     } catch (err) {
