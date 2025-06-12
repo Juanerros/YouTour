@@ -1,10 +1,10 @@
 import './style.css'
 import Logo from '/YouTourLogo.png'
 import { useEffect, useState } from "react";
-import { MdCardTravel } from "react-icons/md";
-import { BsTicketPerforated } from "react-icons/bs";
-import { MdOutlineLocalOffer } from "react-icons/md";
-import { LuPlane } from "react-icons/lu";
+import { RiSuitcase2Fill } from "react-icons/ri";
+import { IoTicket } from "react-icons/io5";
+import { BiSolidOffer } from "react-icons/bi";
+import { BiSolidPlaneAlt } from "react-icons/bi";
 import { useUser } from '../../hooks/useUser';
 import useNotification from '../../hooks/useNotification';
 
@@ -28,14 +28,15 @@ const Nav = () => {
             className={activeIndex === 0 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(0); }}
           >
-            <LuPlane size={40} /> Vuelos
+            <BiSolidPlaneAlt size={40} /> 
+            Vuelos
           </a>
           <a
             href=""
             className={activeIndex === 1 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(1); }}
           >
-            <BsTicketPerforated size={40} />
+            <IoTicket size={40} />
             Actividades
           </a>
           <a
@@ -43,7 +44,7 @@ const Nav = () => {
             className={activeIndex === 2 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(2); }}
           >
-            <MdOutlineLocalOffer size={40} />
+            <BiSolidOffer size={40}/>
             Ofertas
           </a>
           <a
@@ -51,7 +52,8 @@ const Nav = () => {
             className={activeIndex === 3 ? "active" : ""}
             onClick={e => { e.preventDefault(); setActiveIndex(3); }}
           >
-            <MdCardTravel size={40} /> Paquetes de Viaje
+             <RiSuitcase2Fill size={40}/>
+            Paquetes
           </a>
         </div>
         {isLogin ? (

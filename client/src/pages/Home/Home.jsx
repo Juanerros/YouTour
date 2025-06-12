@@ -1,9 +1,12 @@
 import './style.css'
+import ImgA from '/img/a.webp'
 
 const Home = () => {
   return (
-    <div>
-      <h1>Bienvenido a la página principal</h1>
+    <div className='Home'>
+      <div className="Welcome">
+        <h1>Viaja con YouTour</h1>
+      </div>
     </div>
   );
 };
