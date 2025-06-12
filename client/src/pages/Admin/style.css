@@ -1,0 +1,45 @@
+.Admin {
+    height: 100%;
+    width: 100%;
+    background: #F5F8FC;
+    background: linear-gradient(180deg, rgba(245, 248, 252, 1) 0%, rgba(207, 219, 255, 1) 20%);
+}
+
+.navbar {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+}
+
+.row {
+    display: flex;
+    width: 100%;    
+    padding: 16px;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+}
+.row h4 {
+    font-size: 10px;
+    color: rgb(0, 0, 0, .5);
+}
+
+.agregar-vuelo-btn {
+    text-align: center;
+    font-size: 16px;
+    height: 40px;
+    width: 150px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563ea;
+    color: white;
+}
+
+.vuelos-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
