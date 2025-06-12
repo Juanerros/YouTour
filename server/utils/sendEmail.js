@@ -1,4 +1,6 @@
 const { handleError } = require("../config/setup");
+const nodemailer = require('nodemailer');
+process.loadEnvFile();
 
 const transport = nodemailer.createTransport({
     service: 'gmail',
