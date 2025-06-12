@@ -1,0 +1,72 @@
+.Navbar {
+    background-color: rgb(210, 218, 224);
+    height: 110px;
+}
+
+.Logo {
+    width: 60px;
+    padding: 2px;
+}
+
+.NavUp {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: aliceblue;
+}
+
+.NavContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.NavContent a {
+    display: flex;
+    height: 100%;
+    padding: 4px;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #11233f;
+    background-color: aliceblue;
+    font-weight: bold;
+}
+.NavContent a.active {
+    background-color: rgb(210, 218, 224);
+}
+
+.Log-btn {
+    height: 30px;
+    padding: 4px;
+    background-color: #11233f;
+    border-radius: 4px;
+    margin: 4px;
+    color: aliceblue;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.NavDown {
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.NavDown .SearchBar {
+    background-color: aliceblue;
+    border: 1px solid #11233f;
+    height: 25px;
+    width: 80%;
+    border-radius: 99px 0 0 99px;
+    padding: 4px
+}
+.NavDown .Search {
+    border: 1px solid #11233f;
+    background-color: #11233f;
+    color: aliceblue;
+    height: 25px;
+    font-weight: bold;
+    border-radius: 0 99px 99px 0;
+    padding: 4px;
+    cursor: pointer;
+}
