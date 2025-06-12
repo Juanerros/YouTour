@@ -1,0 +1,245 @@
+.filter-container {
+  width: 300px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.filter-header {
+  background-color: #4285f4;
+  color: white;
+  padding: 15px;
+  margin: -20px -20px 20px -20px;
+  border-radius: 8px 8px 0 0;
+  text-align: center;
+}
+
+.filter-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.filter-section {
+  margin-bottom: 25px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 20px;
+}
+
+.filter-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.filter-section h4 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Destinos */
+.continent-item {
+  margin-bottom: 10px;
+}
+
+.continent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.continent-header:hover {
+  background-color: #f0f0f0;
+}
+
+.continent-header.active {
+  background-color: #e3f2fd;
+  border-color: #4285f4;
+}
+
+.continent-icon {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.continent-header.active .continent-icon {
+  transform: rotate(90deg);
+}
+
+.count {
+  background-color: #4285f4;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.countries-list {
+  margin-top: 8px;
+  padding-left: 20px;
+}
+
+.country-item {
+  padding: 6px 12px;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.country-item:hover {
+  background-color: #e0e0e0;
+}
+
+.country-item.selected {
+  background-color: #bbdefb;
+  border-color: #4285f4;
+  color: #1565c0;
+}
+
+/* Salidas Disponibles */
+.months-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.month-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.month-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #4285f4;
+}
+
+.month-item label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.month-item .count {
+  font-size: 11px;
+  padding: 1px 6px;
+}
+
+/* Duración */
+.duration-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #ddd;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.duration-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4285f4;
+  cursor: pointer;
+}
+
+.duration-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4285f4;
+  cursor: pointer;
+  border: none;
+}
+
+/* Precio */
+.price-inputs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.price-inputs input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.price-inputs input:focus {
+  outline: none;
+  border-color: #4285f4;
+}
+
+.apply-price-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.apply-price-btn:hover {
+  background-color: #3367d6;
+}
+
+/* Incluye */
+.includes-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.include-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.include-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #4285f4;
+}
+
+.include-item label {
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filter-container {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
