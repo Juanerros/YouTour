@@ -1,4 +1,5 @@
 const path = require('path');
+const { sendEmail } = require('./utils/sendEmail');
 const isProduction = process.env.NODE_ENV === 'production';
 const { express } = require(path.join(__dirname, 'config', 'setup'));
 
@@ -32,8 +33,10 @@ app.use('/user', require(path.join(__dirname, 'routes', 'user')));
 
 // Testeo de api
 app.get('/ping', async (req, res) => {
-    res.send('Pong');
+    res.send('Pong')
 });
+
+app.post('/send', sendEmail);
 
 // Prender servidor de solicitudes http 
 const port = process.env.API_PORT || 5001;
