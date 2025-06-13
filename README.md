@@ -47,7 +47,7 @@ El proyecto está dividido en dos equipos principales:
   - Seguridad y autenticación
   - Gestión de base de datos
 
-## 🔐 Seguridad
+## Seguridad
 
 La aplicación implementa múltiples capas de seguridad:
 
@@ -62,7 +62,7 @@ La aplicación implementa múltiples capas de seguridad:
   - CORS configurado para endpoints específicos
   - Variables de entorno para datos sensibles
 
-## 💻 Flujo de Compra
+## Flujo de Compra
 
 1. **Registro/Login de Usuario**
    - Autenticación segura con JWT
@@ -78,7 +78,7 @@ La aplicación implementa múltiples capas de seguridad:
    - Personalización de servicios adicionales
    - Checkout seguro con MercadoPago/Uala
 
-## ⚙️ Panel Administrativo
+## Panel Administrativo
 
 Gestión completa CRUD para:
 - Vuelos
@@ -87,7 +87,7 @@ Gestión completa CRUD para:
 - Usuarios
 - Servicios adicionales
 
-## ✍️ Autores
+## Autores
 
 Este proyecto fue desarrollado como parte del curso de Tecnicatura en Programación en E.E.S.T N°1.
 

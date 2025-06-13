@@ -1,20 +1,21 @@
-import { Outlet } from "react-router-dom";
-
 // Componentes
 import Nav from './components/Nav/Nav.jsx';
-
+// Dependencias
+import { Outlet } from "react-router-dom";
+import './globals.css';
 const Layout = () => {
   return (
     <>
       <header>
         <Nav />
       </header>
-      <main style={{ display: "flex" }}>
+      <main>
         <div className="router">
-          <Outlet /> 
+          <Outlet />
         </div>
       </main>
     </>
   );
-}
+};
+
 export default Layout;

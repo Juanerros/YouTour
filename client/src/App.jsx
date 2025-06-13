@@ -1,5 +1,5 @@
 // Estilos
-import './global.css';
+import './globals.css';
 // Rutas
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // Notificaciones
@@ -20,7 +20,7 @@ import Packages from "./pages/Admin/Pages/Packages.jsx";
 import AdminLayout from "./pages/AdminLayout/AdminLayout.jsx";
 import OrdersManagement from "./pages/OrdersManagement/OrdersManagement.jsx";
 
-export default function App () {
+const App = () => {
   return (
     <Router>
       <ToastContainer
@@ -35,26 +35,28 @@ export default function App () {
           pauseOnHover
         />
       <Routes>
-        {/* Despues se le agrega verificacion para que solo el admin pueda ver */}
+        
+        {/* Rutas de Admin */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Admin />} />
           <Route path="airplanes" element={<Airplanes />} />
           <Route path="activities" element={<Activities />} />
           <Route path="hotels" element={<Hotel />} />
           <Route path="packages" element={<Packages />} />
+
           {/* Rutas de gestion de pedidos */}
           <Route path="orders" element={<OrdersManagement />} />
         </Route>
         <Route path="/auth" element={<Auth />} />
 
-        {/* Rutas que contiene el Layout */}
+        {/* Rutas del Cliente */}
         <Route path="/" element={<Layout />}>
-
           <Route index element={<Home />} />
           <Route path="/catalog" element={<Catalog />} />
-
         </Route>
       </Routes>
     </Router>
   );
 };
+
+export default App;
