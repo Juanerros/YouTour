@@ -30,6 +30,12 @@ if (!isProduction) {
 
 // Rutas
 app.use('/user', require(path.join(__dirname, 'routes', 'user')));
+app.use('/paises', require(path.join(__dirname, 'routes', 'paises')));
+app.use('/ciudades', require(path.join(__dirname, 'routes', 'ciudades')));
+app.use('/vuelos', require(path.join(__dirname, 'routes', 'vuelos')));
+app.use('/hoteles', require(path.join(__dirname, 'routes', 'hoteles')));
+app.use('/actividades', require(path.join(__dirname, 'routes', 'actividades')));
+app.use('/paquetes', require(path.join(__dirname, 'routes', 'paquetes')));
 
 // Testeo de api
 app.get('/ping', async (req, res) => {
