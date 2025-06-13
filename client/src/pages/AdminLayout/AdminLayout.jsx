@@ -8,8 +8,8 @@ import { RiHotelFill } from "react-icons/ri";
 import { PiSunFill, PiAirplaneTiltDuotone } from "react-icons/pi";
 
 const sidebarOptions = [
-  { icon: <BsSuitcaseFill className='op-ico' />, label: "Paquetes Turisticos", path: "/Pages/Packages.jsx" },
-  { icon: <IoIosAirplane className='op-ico' />, label: "Vuelos", path: "/Airplanes.jsx" },
+  { icon: <BsSuitcaseFill className='op-ico' />, label: "Paquetes Turisticos", path: "/admin/packages" },
+  { icon: <IoIosAirplane className='op-ico' />, label: "Vuelos", path: "/admin/airplanes" },
   { icon: <RiHotelFill className='op-ico' />, label: "Hoteles", path: "/admin/hotels" },
   { icon: <PiSunFill className='op-ico' />, label: "Actividades", path: "/admin/activities" },
 ];
@@ -26,6 +26,7 @@ const AdminLayout = () => {
   }, [location.pathname]);
 
   return (
+    <>
     <div className="admin-layout-container">
       <aside>
         <div className="sidebar">
@@ -57,6 +58,7 @@ const AdminLayout = () => {
         <Outlet/>
       </section>
     </div>
+    </>
   );
 };
 
