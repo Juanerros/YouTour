@@ -5,13 +5,7 @@ async function createConnection() {
     try {
         const conex = await mysql.createPool({
             // la url que propociona railway
-            uri: isProduction ? process.env.DB_URL : null,
-            // xampp
-            host: !isProduction ? process.env.DB_HOST : null,
-            user: !isProduction ? process.env.DB_USER : null,
-            password: !isProduction ? process.env.DB_PASSWORD : null,
-            database: !isProduction ? process.env.DB_NAME : null,
-            port: !isProduction ? process.env.DB_PORT : null,
+            uri: process.env.DB_URL,
             waitForConnections: true,
             connectionLimit: 3,
             queueLimit: 0

@@ -24,7 +24,7 @@ export default function App () {
   return (
     <Router>
       <ToastContainer
-          position="top-right"
+          position="top-left"
           autoClose={5000}
           hideProgressBar={true}
           newestOnTop={false}

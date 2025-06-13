@@ -15,8 +15,9 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        // Obtenemos todos los datos del usuario
         const [resultLogin] = await conex.execute(
-            "SELECT * FROM usuarios WHERE email = ?",
+            "SELECT l.*, u.* FROM login l INNER JOIN users u ON l.id_user = u.id_user WHERE l.email = ?",
             [email]
         );
 
@@ -25,33 +26,36 @@ router.post('/login', async (req, res) => {
         const user = resultLogin[0];
 
         // Verificar si el usuario está bloqueado temporalmente
-        if (user.bloqueado_hasta && new Date(user.bloqueado_hasta) > new Date()) {
-            const remainingTime = moment(user.bloqueado_hasta).fromNow();
+        if (user.lock_until && new Date(user.lock_until) > new Date()) {
+            const remainingTime = moment(user.lock_until).fromNow();
             return handleError(res, `Muchos intentos fallidos. Intente de nuevo ${remainingTime}`, null, 403);
         }
 
         // Verificar la contraseña hasheada
-        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+        const isPasswordValid = await bcrypt.compare(password, user.pass);
 
         if (!isPasswordValid) {
-            const intentos_fallidos = user.intentos_fallidos + 1;
-            let bloqueado_hasta = null;
+            const failed_attempts = user.failed_attempts + 1;
+            let lock_until = null;
 
-            if (intentos_fallidos >= 3) {
-                bloqueado_hasta = moment().add(15, 'minutes').toDate();
+            // Si se exceden los intentos fallidos, bloquear temporalmente
+            if (failed_attempts >= 3) {
+                lock_until = moment().add(15, 'minutes').toDate();
             }
 
+            // Actualizar los intentos fallidos y el bloqueo temporal
             await conex.execute(
-                'UPDATE usuarios SET intentos_fallidos = ?, lock_until = ? WHERE usuario_id = ?',
-                [intentos_fallidos, bloqueado_hasta, user.usuario_id]
+                'UPDATE login SET failed_attempts = ?, lock_until = ? WHERE id_login = ?',
+                [failed_attempts, lock_until, user.id_login]
             );
 
             return handleError(res, 'Credenciales incorrectas.', null, 401);
         }
 
+        // Reiniciar los intentos fallidos y el bloqueo temporal al logeo exitoso
         await conex.execute(
-            'UPDATE usuarios SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE usuario_id = ?',
-            [user.usuario_id]
+            'UPDATE login SET failed_attempts = 0, lock_until = NULL WHERE id_login = ?',
+            [user.id_login]
         );
 
         res.status(200).json({
@@ -69,32 +73,53 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-    const { email, password /* Hace faltan mas datos obvio */} = req.body;
+    const { email, pass, name, dni, phone } = req.body;
+    let userId = null;
 
     try {
-        // Hash de la contraseña antes de almacenarla
-        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
-        const [register] = await conex.execute(
-            'INSERT INTO usuarios(email, password_hash) VALUES (?, ?)',
-            [email, hashedPassword]
+        // Primero crear el usuario
+        const [userResult] = await conex.execute(
+            'INSERT INTO users(name, dni, phone) VALUES (?, ?, ?)',
+            [name, dni, phone]
         );
 
-        if (register.length == 0) return handleError(res, 'Error al intentar registrarte', null, 500);
+        if (userResult.affectedRows === 0) return handleError(res, 'Error al crear el usuario');
+
+        userId = userResult.insertId;
+
+        // Hash de la contraseña antes de almacenarla
+        const hashedPassword = await bcrypt.hash(pass, SALT_ROUNDS);
+
+        // Crear el login asociado al usuario
+        const [loginResult] = await conex.execute(
+            'INSERT INTO login(id_user, email, pass) VALUES (?, ?, ?)',
+            [userResult.insertId, email, hashedPassword]
+        );
+
+        if (loginResult.affectedRows === 0) {
+            // Si falla el login, eliminar el usuario creado
+            await conex.execute('DELETE FROM users WHERE id_user = ?', [userId]);
+            return handleError(res, 'Error al crear el usuario');
+        }
 
         res.status(201).json({
             message: 'Usuario registrado correctamente',
             user: {
-                usuario_id: register.insertId,
+                id_login: loginResult.insertId,
                 email,
                 // Oculta la contraseña
-                password_hash: '[Hidden]'
+                pass: '[Hidden]',
+                name,
+                dni,
+                phone,
             }
         });
 
     } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') {
-            return handleError(res, 'El email y/o usuario ya se encuentran registrados', null, 409);
+            // Eliminar usuario si hubo un registro fallido
+            if (userId) await conex.execute('DELETE FROM users WHERE id_user = ?', [userId]);  
+            return handleError(res, 'El email ya se encuentra registrado', null, 409);
         }
         return handleError(res, 'Error al registrarse', err);
     }
