@@ -1,0 +1,147 @@
+.agregar-actividad-btn {
+  border: 1px solid #2563ae;
+  background: rgba(37, 99, 174, 0.12);
+  color: #2563ae;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.agregar-actividad-btn:hover {
+  background: rgba(37, 99, 174, 0.22);
+}
+
+.actividades-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding: 2rem 3vw;
+  box-sizing: border-box;
+  justify-content: flex-start;
+}
+
+.actividad-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: #f0f4ff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px #bddbff80; /* azul clarito */
+  border: 1px solid #2563ea63;
+  padding: 12px 18px;
+  min-height: 110px;
+  width: 48%;              /* 2 cards por fila */
+  max-width: 500px;
+  transition: box-shadow 0.18s, transform 0.18s;
+  will-change: transform;
+  position: relative;
+  gap: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .actividad-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.actividad-card:hover {
+  box-shadow: 0 4px 16px #2563ea40;
+  transform: translateY(-4px) scale(1.015);
+}
+
+.actividad-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.actividad-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.actividad-header h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2563ae;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.actividad-precio {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #2563ae;
+  background: #bcceff;
+  border-radius: 6px;
+  padding: 0.18rem 0.7rem;
+  margin-left: 1rem;
+  box-shadow: 0 1px 4px #bddbff40;
+}
+
+.actividad-descripcion {
+  font-size: 0.98rem;
+  color: #11233f;
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.actividad-detalles {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.92rem;
+  color: #2563ae;
+  opacity: 0.85;
+  margin-top: 0.1rem;
+}
+
+.actividad-duracion {
+  font-weight: 500;
+}
+.actividad-ubicacion {
+  font-weight: 400;
+}
+
+.actividad-tipo {
+  font-size: 0.85rem;
+  color: #fff;
+  background: #2563ae;
+  border-radius: 999px;
+  padding: 0.12rem 0.7rem;
+  display: inline-block;
+  margin-top: 0.2rem;
+  width: fit-content;
+}
+
+.actividad-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  margin-left: 1.5rem;
+  background: #989898;
+  flex-shrink: 0;
+}
+
+.actividad-icono {
+  font-size: 4rem;
+  color: #2563ae;
+  margin-left: 0.5rem;
+  margin-right: 1.5rem;
+  background: #bcceff;
+  border-radius: 12px;
+  padding: 10px;
+  align-self: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 6px rgba(37,99,174,0.08);
+}
