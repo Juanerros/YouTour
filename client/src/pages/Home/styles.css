@@ -1,0 +1,127 @@
+.hero {
+  background-image: linear-gradient(
+    rgba(24, 100, 171, 0.85),
+    rgba(24, 100, 171, 0.85)
+  ),
+  url('https://images.unsplash.com/photo-1503220317375-aaad61436b1b?q=80&w=2070');
+  background-size: cover;
+  background-position: center;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.special-offer {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+  color: white;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  line-height: 1.5;
+}
+
+.search-container {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  padding: 0.3rem;
+  border-radius: 30px;
+  max-width: 700px;
+  margin: 0 auto;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.search-input {
+  flex: 1;
+}
+
+.search-input input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: none;
+  height: 30px;
+  outline: none;
+  font-size: 0.9rem;
+  border-radius: 6rem !important;
+}
+h1 span {
+  color: #113161;
+  font-family: 'Poppins-Bold';
+}
+h1 {
+  font-family: 'Poppins-Bold'
+}
+.filter-btn, .search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  width: 25%;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.search-btn {
+  background: #1864AB;
+  color: white;
+}
+  
+  .filter-btn:hover {
+    background: #e0e0e0;
+  }
+  
+  .search-btn:hover {
+    background: #145091;
+  }
+  
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+  
+    .search-container {
+      flex-direction: column;
+      background: transparent;
+      gap: 1rem;
+    }
+  
+    .search-input, .filter-btn, .search-btn {
+      width: 100%;
+      background: white;
+    }
+  
+    .search-btn {
+      background: #1864AB;
+    }
+  }
