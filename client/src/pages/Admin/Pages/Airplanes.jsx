@@ -3,6 +3,9 @@ import '../../../components/Modal/ModalAirplanes.css'
 import './css/Airplanes.css'
 import { useState } from 'react';
 
+import { PiAirplaneTaxiing } from "react-icons/pi";
+import { PiAirplaneTiltLight } from "react-icons/pi";
+
 const Airplanes = () => {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
@@ -46,7 +49,31 @@ const Airplanes = () => {
         <div className="vuelos-container">
           <div className="vuelos-card">
             {/* Aquí irán los vuelos */}
-            
+            <div className="info-general">
+              <PiAirplaneTiltLight className='card-ico' />
+              <div className="info-container">
+                <div className="info">
+                  <h2>Buenos Aires (EZE)</h2>
+                  <hr />
+                  <PiAirplaneTaxiing size={30} />
+                  <hr />
+                  <h2>Montevideo (MVD)</h2>
+                </div>
+                <div className="info">
+                  <h3>LATAM Airlines </h3>
+                  <hr />
+                  <h3>1h 15m</h3>
+                  <hr />
+                  <h3>08:30 - 09:45</h3>
+                </div>
+              </div>
+            </div>
+            <div className="precio">
+              <siv className="info-container">
+                <h1>$660</h1>
+                <h3>por persona</h3>
+              </siv>
+            </div>
           </div>
         </div>
       </div>
