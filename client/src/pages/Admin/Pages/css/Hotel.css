@@ -1,0 +1,94 @@
+/* Botón añadir hotel */
+.agregar-hotel-btn {
+  border: 1px solid #2563ae;
+  background: rgba(37, 99, 174, 0.12);
+  color: #2563ae;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.agregar-hotel-btn:hover {
+  background: rgba(37, 99, 174, 0.22);
+}
+
+/* Cards de hoteles */
+.hoteles-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding: 2rem 3vw; /* Espaciado para que no estén pegados a los bordes */
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+.hotel-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transition: box-shadow 0.25s, transform 0.25s;
+  will-change: transform;
+}
+.hotel-card:hover {
+  box-shadow: 0 8px 32px rgba(37,99,174,0.22);
+  transform: translateY(-10px) scale(1.03);
+}
+.hotel-img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  background: #e3e3e3;
+}
+.hotel-info {
+  padding: 0.7rem 0.8rem 0.8rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.hotel-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.hotel-title h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #2563ae;
+}
+.hotel-ubicacion {
+  font-size: 0.85rem;
+  color: #11233f;
+  opacity: 0.7;
+}
+.hotel-amenidades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 0.2rem;
+}
+.amenidad-tag {
+  background: #2563ea18;
+  color: #2563ae;
+  border: 1px solid #2563ae;
+  border-radius: 999px;
+  padding: 0.12rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.hotel-descripcion {
+  font-size: 1rem;
+  color: #11233f;
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}

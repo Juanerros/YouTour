@@ -1,0 +1,99 @@
+/* Modal fondo y caja */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  min-width: 420px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+  max-width: 600px;
+  width: 100%;
+}
+.modal h2 {
+  margin-bottom: 1.2rem;
+}
+
+/* Inputs en dos columnas */
+.modal-inputs-row {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+.modal-inputs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+.modal-inputs-col label {
+  font-weight: 500;
+  color: #11233f;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.modal-inputs-col input {
+  width: 100%;
+  padding: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #2563ea63;
+}
+
+/* Inputs full ancho */
+.modal-label-full {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 500;
+  color: #11233f;
+  margin-bottom: 1rem;
+}
+.modal-label-full textarea {
+  width: 100%;
+  padding: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #2563ea63;
+  resize: vertical;
+}
+
+/* Botones */
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+.btn-agregar {
+  border: 1px solid #2563ae;
+  background: rgba(37, 99, 174, 0.12);
+  color: #2563ae;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-agregar:hover {
+  background: rgba(37, 99, 174, 0.22);
+}
+.btn-cancelar {
+  border: 1px solid #e53935;
+  background: rgba(229, 57, 53, 0.12);
+  color: #e53935;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-cancelar:hover {
+  background: rgba(229, 57, 53, 0.22);
+}
