@@ -68,11 +68,11 @@ const Airplanes = () => {
                 </div>
               </div>
             </div>
-            <div className="precio">
-              <siv className="info-container">
+            <div className="precio"> {/* div que no se esta usando xd */}
+              <div className="info-container">
                 <h1>$660</h1>
                 <h3>por persona</h3>
-              </siv>
+              </div>
             </div>
           </div>
         </div>
