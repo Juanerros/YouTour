@@ -1,7 +1,7 @@
 # YouTour
 
 <p align="center">
-  <img src="./client/public/img/youTourLogo.png" alt="Logo de YouTour" width="200"/>
+  <img src="./client/public/img/youTourLogo.png" alt="Logo de YouTour" width="400"/>
 </p>
 
 ## 📋 Sobre el Proyecto
