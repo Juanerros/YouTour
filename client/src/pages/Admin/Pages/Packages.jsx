@@ -6,8 +6,8 @@ const Packages = () => {
       <div className="Packages">
         <div className="row">
         <span>
-          <h1>Gestión de vuelos</h1>
-          <h4>Administra los vuelos disponibles.</h4>
+          <h1>Gestión de Paquetes</h1>
+          <h4>Administra los paquetes.</h4>
         </span>
         <input type="submit" value="+ Agregar Vuelo" className='agregar-vuelo-btn' />
       </div>
