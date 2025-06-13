@@ -116,9 +116,9 @@ router.post('/register', async (req, res) => {
         });
 
     } catch (err) {
+        // Eliminar usuario si hubo un registro fallido
+        if (userId) await conex.execute('DELETE FROM users WHERE id_user = ?', [userId]);  
         if (err.code === 'ER_DUP_ENTRY') {
-            // Eliminar usuario si hubo un registro fallido
-            if (userId) await conex.execute('DELETE FROM users WHERE id_user = ?', [userId]);  
             return handleError(res, 'El email ya se encuentra registrado', null, 409);
         }
         return handleError(res, 'Error al registrarse', err);
