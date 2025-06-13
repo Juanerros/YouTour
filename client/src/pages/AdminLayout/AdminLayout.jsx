@@ -1,21 +1,60 @@
 import './style.css'
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+
+import { useState, useEffect } from 'react';
+import { BsSuitcaseFill } from "react-icons/bs";
+import { IoIosAirplane } from "react-icons/io";
+import { RiHotelFill } from "react-icons/ri";
+import { PiSunFill, PiAirplaneTiltDuotone } from "react-icons/pi";
+
+const sidebarOptions = [
+  { icon: <BsSuitcaseFill className='op-ico' />, label: "Paquetes Turisticos", path: "/Pages/Packages.jsx" },
+  { icon: <IoIosAirplane className='op-ico' />, label: "Vuelos", path: "/Airplanes.jsx" },
+  { icon: <RiHotelFill className='op-ico' />, label: "Hoteles", path: "/admin/hotels" },
+  { icon: <PiSunFill className='op-ico' />, label: "Actividades", path: "/admin/activities" },
+];
 
 const AdminLayout = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    // Set active index based on current path
+    const idx = sidebarOptions.findIndex(opt => location.pathname.startsWith(opt.path));
+    setActiveIndex(idx === -1 ? 0 : idx);
+  }, [location.pathname]);
+
   return (
     <div className="admin-layout-container">
       <aside>
         <div className="sidebar">
           <div className="w-dashboard">
-            <img src="" alt="" />
+            <PiAirplaneTiltDuotone className='ico'/>
             <span>
               <h1>YouTour</h1><h4>Dashboard</h4>
             </span>
           </div>
+          <div className="op-container">
+            {sidebarOptions.map((opt, idx) => (
+              <a
+                href={opt.path}
+                key={opt.label}
+                className={`sidebar-op${activeIndex === idx ? " active" : ""}`}
+                onClick={e => {
+                  e.preventDefault();
+                  setActiveIndex(idx);
+                  navigate(opt.path);
+                }}
+              >
+                {opt.icon}{opt.label}
+              </a>
+            ))}
+          </div>
         </div>
       </aside>
       <section className="main-content">
-      <Outlet/>
+        <Outlet/>
       </section>
     </div>
   );
