@@ -53,31 +53,17 @@ CREATE TABLE IF NOT EXISTS hoteles (
     FOREIGN KEY (id_ciudad) REFERENCES ciudades(id_ciudad)
 );
 
--- Tabla de tipos de actividades
-CREATE TABLE IF NOT EXISTS tipos_actividad (
-    id_tipo INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL
-);
-
--- Tabla de niveles de dificultad
-CREATE TABLE IF NOT EXISTS niveles_dificultad (
-    id_nivel INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL
-);
-
 -- Tabla de actividades
 CREATE TABLE IF NOT EXISTS actividades (
     id_actividad INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    id_tipo INT NOT NULL,
+    tipo ENUM('Tour Guiado', 'Aventura', 'Gastronómico', 'Cultural', 'Relajación') NOT NULL,
     id_ciudad INT NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
     duracion VARCHAR(50) NOT NULL,
     descripcion TEXT,
-    id_dificultad INT NOT NULL,
-    FOREIGN KEY (id_tipo) REFERENCES tipos_actividad(id_tipo),
-    FOREIGN KEY (id_ciudad) REFERENCES ciudades(id_ciudad),
-    FOREIGN KEY (id_dificultad) REFERENCES niveles_dificultad(id_nivel)
+    nivel_dificultad ENUM('Fácil', 'Moderado', 'Difícil', 'Extremo') NOT NULL,
+    FOREIGN KEY (id_ciudad) REFERENCES ciudades(id_ciudad)
 );
 
 -- Tabla de paquetes turísticos
@@ -90,7 +76,8 @@ CREATE TABLE IF NOT EXISTS paquetes (
     cantidad_personas INT NOT NULL DEFAULT 1,
     fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
     fecha_inicio DATE NOT NULL,
-    fecha_fin DATE NOT NULL
+    fecha_fin DATE NOT NULL,
+    estado ENUM('Creado', 'Reservado', 'Pagado', 'En progreso', 'Completado', 'Cancelado') NOT NULL DEFAULT 'Creado'
 );
 
 -- Tabla de relación entre paquetes y vuelos
@@ -136,23 +123,6 @@ CREATE TABLE IF NOT EXISTS paquete_personas (
     email VARCHAR(100),
     telefono VARCHAR(20),
     FOREIGN KEY (id_paquete) REFERENCES paquetes(id_paquete) ON DELETE CASCADE
-);
-
--- Tabla de estado del paquete
-CREATE TABLE IF NOT EXISTS paquete_estados (
-    id_estado INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL
-);
-
--- Tabla de seguimiento de estado del paquete
-CREATE TABLE IF NOT EXISTS paquete_seguimiento (
-    id_seguimiento INT AUTO_INCREMENT PRIMARY KEY,
-    id_paquete INT NOT NULL,
-    id_estado INT NOT NULL,
-    fecha_cambio DATETIME DEFAULT CURRENT_TIMESTAMP,
-    notas TEXT,
-    FOREIGN KEY (id_paquete) REFERENCES paquetes(id_paquete) ON DELETE CASCADE,
-    FOREIGN KEY (id_estado) REFERENCES paquete_estados(id_estado)
 );
 
 -- Inserción de datos de ejemplo
@@ -204,30 +174,6 @@ INSERT INTO ciudades (nombre, codigo_aeropuerto, id_pais) VALUES
 ('Bangkok', 'BKK', 12),
 ('Phuket', 'HKT', 12);
 
--- Tipos de actividad
-INSERT INTO tipos_actividad (nombre) VALUES
-('Tour Guiado'),
-('Aventura'),
-('Gastronómico'),
-('Cultural'),
-('Relajación');
-
--- Niveles de dificultad
-INSERT INTO niveles_dificultad (nombre) VALUES
-('Fácil'),
-('Moderado'),
-('Difícil'),
-('Extremo');
-
--- Estados de paquete
-INSERT INTO paquete_estados (nombre) VALUES
-('Creado'),
-('Reservado'),
-('Pagado'),
-('En progreso'),
-('Completado'),
-('Cancelado');
-
 -- Insertar algunos vuelos de ejemplo
 INSERT INTO vuelos (origen, destino, aerolinea, precio, duracion, aeronave, salida, llegada, fecha_vuelo) VALUES
 (1, 3, 'LATAM Airlines', 280.00, '1h 15m', 'Boeing 737', '08:30', '09:45', '2023-12-15'),
@@ -245,12 +191,12 @@ INSERT INTO hoteles (nombre, id_ciudad, rating, precio_noche, descripcion, ameni
 ('Hotel de Paris', 11, 4.7, 280.00, 'Elegante hotel en el centro de París', 'WiFi Gratis, Spa, Restaurante Gourmet');
 
 -- Insertar algunas actividades de ejemplo
-INSERT INTO actividades (nombre, id_tipo, id_ciudad, precio, duracion, descripcion, id_dificultad) VALUES
-('City Tour Montevideo', 1, 3, 45.00, '4 horas', 'Recorrido por los principales atractivos de Río de Janeiro: Cristo Redentor, Pan de Azúcar y Copacabana.', 1),
-('Paseo en Catamarán', 2, 3, 60.00, '3 horas', 'Navegación por la bahía de Río de Janeiro con vista panorámica de la ciudad.', 1),
-('Tour del Bernabéu', 1, 9, 35.00, '2 horas', 'Visita guiada al estadio Santiago Bernabéu, casa del Real Madrid.', 1),
-('Tour Gastronómico', 3, 9, 70.00, '4 horas', 'Degustación de tapas y vinos en los mejores bares de Madrid.', 1),
-('Tour de Central Park', 1, 5, 25.00, '2 horas', 'Paseo guiado por el famoso parque de Manhattan.', 1),
-('Excursión a Chichén Itzá', 4, 8, 120.00, '10 horas', 'Visita a las ruinas mayas de Chichén Itzá, una de las 7 maravillas del mundo moderno.', 2),
-('Tour de la Torre Eiffel', 1, 11, 40.00, '2 horas', 'Visita guiada a la Torre Eiffel con acceso prioritario.', 1),
-('La Perdiz', 3, 3, 35.00, '2 horas', 'Auténtica parrilla uruguaya con las mejores carnes y ambiente tradicional.', 1);
+INSERT INTO actividades (nombre, tipo, id_ciudad, precio, duracion, descripcion, nivel_dificultad) VALUES
+('City Tour Montevideo', 'Tour Guiado', 3, 45.00, '4 horas', 'Recorrido por los principales atractivos de Río de Janeiro: Cristo Redentor, Pan de Azúcar y Copacabana.', 'Fácil'),
+('Paseo en Catamarán', 'Aventura', 3, 60.00, '3 horas', 'Navegación por la bahía de Río de Janeiro con vista panorámica de la ciudad.', 'Fácil'),
+('Tour del Bernabéu', 'Tour Guiado', 9, 35.00, '2 horas', 'Visita guiada al estadio Santiago Bernabéu, casa del Real Madrid.', 'Fácil'),
+('Tour Gastronómico', 'Gastronómico', 9, 70.00, '4 horas', 'Degustación de tapas y vinos en los mejores bares de Madrid.', 'Fácil'),
+('Tour de Central Park', 'Tour Guiado', 5, 25.00, '2 horas', 'Paseo guiado por el famoso parque de Manhattan.', 'Fácil'),
+('Excursión a Chichén Itzá', 'Cultural', 8, 120.00, '10 horas', 'Visita a las ruinas mayas de Chichén Itzá, una de las 7 maravillas del mundo moderno.', 'Moderado'),
+('Tour de la Torre Eiffel', 'Tour Guiado', 11, 40.00, '2 horas', 'Visita guiada a la Torre Eiffel con acceso prioritario.', 'Fácil'),
+('La Perdiz', 'Gastronómico', 3, 35.00, '2 horas', 'Auténtica parrilla uruguaya con las mejores carnes y ambiente tradicional.', 'Fácil');
