@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS actividades (
 -- Tabla de paquetes turísticos
 CREATE TABLE IF NOT EXISTS paquetes (
     id_paquete INT AUTO_INCREMENT PRIMARY KEY,
+    id_vuelo INT NOT NULL,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT,
     duracion_dias INT NOT NULL,
@@ -78,15 +79,43 @@ CREATE TABLE IF NOT EXISTS paquetes (
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,
     estado ENUM('Creado', 'Reservado', 'Pagado', 'En progreso', 'Completado', 'Cancelado') NOT NULL DEFAULT 'Creado'
+    FOREIGN KEY (id_vuelo) REFERENCES vuelos(id_vuelo)
 );
 
--- Tabla de relación entre paquetes y vuelos
-CREATE TABLE IF NOT EXISTS paquete_vuelos (
-    id_paquete_vuelo INT AUTO_INCREMENT PRIMARY KEY,
+-- Tabla de carrito de compras
+CREATE TABLE IF NOT EXISTS carritos (
+    id_carrito INT AUTO_INCREMENT PRIMARY KEY,
+    id_user INT NOT NULL,
     id_paquete INT NOT NULL,
-    id_vuelo INT NOT NULL,
-    FOREIGN KEY (id_paquete) REFERENCES paquetes(id_paquete) ON DELETE CASCADE,
-    FOREIGN KEY (id_vuelo) REFERENCES vuelos(id_vuelo)
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    estado ENUM('Activo', 'Procesando', 'Completado', 'Cancelado') NOT NULL DEFAULT 'Activo',
+    FOREIGN KEY (id_user) REFERENCES users(id_user),
+    FOREIGN KEY (id_paquete) REFERENCES paquetes(id_paquete),
+    UNIQUE KEY unique_user_active_cart (id_user, estado)
+);
+
+-- Tabla de pedidos
+CREATE TABLE IF NOT EXISTS pedidos (
+    id_pedido INT AUTO_INCREMENT PRIMARY KEY,
+    id_user INT NOT NULL,
+    id_paquete INT NOT NULL,
+    fecha_pedido DATETIME DEFAULT CURRENT_TIMESTAMP,
+    estado ENUM('Pendiente', 'Confirmado', 'En Proceso', 'Completado', 'Cancelado') NOT NULL DEFAULT 'Pendiente',
+    total DECIMAL(10, 2) NOT NULL,
+    metodo_pago VARCHAR(50),
+    FOREIGN KEY (id_user) REFERENCES users(id_user),
+    FOREIGN KEY (id_paquete) REFERENCES paquetes(id_paquete)
+);
+
+-- Tabla de ventas
+CREATE TABLE IF NOT EXISTS ventas (
+    id_venta INT AUTO_INCREMENT PRIMARY KEY,
+    id_pedido INT NOT NULL,
+    fecha_venta DATETIME DEFAULT CURRENT_TIMESTAMP,
+    total DECIMAL(10, 2) NOT NULL,
+    comision DECIMAL(10, 2) NOT NULL,
+    metodo_pago VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido)
 );
 
 -- Tabla de relación entre paquetes y hoteles
@@ -111,20 +140,6 @@ CREATE TABLE IF NOT EXISTS paquete_actividades (
     FOREIGN KEY (id_paquete) REFERENCES paquetes(id_paquete) ON DELETE CASCADE,
     FOREIGN KEY (id_actividad) REFERENCES actividades(id_actividad)
 );
-
--- Tabla de personas en el paquete
-CREATE TABLE IF NOT EXISTS paquete_personas (
-    id_paquete_persona INT AUTO_INCREMENT PRIMARY KEY,
-    id_paquete INT NOT NULL,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    documento VARCHAR(20) NOT NULL,
-    fecha_nacimiento DATE,
-    email VARCHAR(100),
-    telefono VARCHAR(20),
-    FOREIGN KEY (id_paquete) REFERENCES paquetes(id_paquete) ON DELETE CASCADE
-);
-
 -- Inserción de datos de ejemplo
 -- Continentes
 INSERT INTO continentes (nombre) VALUES 

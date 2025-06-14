@@ -7,7 +7,7 @@ const Home = () => {
       <div className="hero">
         <div className="hero-content">
           <span className="special-offer">✈ Ofertas especiales disponibles</span>
-          <h1>Explora el mundo con You<span>Tour</span></h1>
+          <h1>Explora el mundo con You <span>Tour</span></h1>
           <p>Descubre destinos increíbles con nuestros paquetes turísticos todo incluido. Vuelos, hoteles y experiencias únicas diseñadas para crear recuerdos inolvidables.</p>
           
           <div className="search-container">
