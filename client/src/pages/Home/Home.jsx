@@ -8,6 +8,7 @@ import 'swiper/css/pagination';
 import TourPackage from '../../components/Cards/TourPackage/TourPackage';
 import { useState, useEffect } from 'react';
 import { FaPhone, FaEnvelope, FaHeadset } from 'react-icons/fa';
+import HomeSlider from './components/HomeSlider';
 
 const Home = () => {
   const [packages, setPackages] = useState([]);
@@ -103,37 +104,13 @@ const Home = () => {
               <input type="text" placeholder="¿A dónde quieres viajar?" />
             </div>
 
-            <button className="search-btn">
+            <button className="search-btn rounded">
               <FaSearch /> Buscar Viajes
             </button>
           </div>
         </div>
       </div>
-      <section className="slider-offers">
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          spaceBetween={30}
-          slidesPerView={1}
-          navigation
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 5000 }}
-          className="offers-swiper"
-        >
-          {offers.map((offer, index) => (
-            <SwiperSlide key={index}>
-              <div className="offer-card" style={{ background: offer.color }}>
-                <div className="offer-content">
-                  <div className="offer-icon">{offer.icon}</div>
-                  <h2>{offer.title}</h2>
-                  <h3>{offer.subtitle}</h3>
-                  <p>{offer.description}</p>
-                  <button className="offer-btn">{offer.buttonText}</button>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </section>
+      <HomeSlider />
       <section className="why-us">
         <div className="why-us-content">
           <h2>¿Por qué elegir youTour?</h2>

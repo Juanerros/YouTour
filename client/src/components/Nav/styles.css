@@ -140,9 +140,9 @@ a {
 
 .mobile-menu.active {
   right: 0;
+  z-index: 1000000000000000000;
 }
 
-/* Add overlay for mobile menu */
 .menu-overlay {
   display: none;
   position: fixed;
@@ -161,7 +161,7 @@ a {
   opacity: 1;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .nav-links, .nav-actions {
     display: none;
   }
@@ -186,6 +186,7 @@ a {
 
   .mobile-menu.active {
     right: 0;
+    z-index: 10000000;
   }
 
   .mobile-link {
