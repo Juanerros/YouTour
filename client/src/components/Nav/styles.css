@@ -52,6 +52,7 @@ a {
 .nav-link span {
   font-family: 'Poppins-Medium';
   transition: all 0.3s ease;
+  
 }
 .nav-link::after {
   content: '';
