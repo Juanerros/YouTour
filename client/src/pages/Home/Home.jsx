@@ -7,6 +7,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import TourPackage from '../../components/Cards/TourPackage/TourPackage';
 import { useState, useEffect } from 'react';
+import { FaPhone, FaEnvelope, FaHeadset } from 'react-icons/fa';
 
 const Home = () => {
   const [packages, setPackages] = useState([]);
@@ -391,7 +392,150 @@ const Home = () => {
           )}
         </div>
       </section>
-    </div>
+      <section className="contact">
+        <div className="contact-container">
+          <h2>Contáctanos</h2>
+          <p>Nuestro equipo de expertos en viajes está aquí para ayudarte a crear la experiencia perfecta. Conecta con nosotros y comienza a planificar tu próxima aventura.</p>
+          
+          <div className="contact-stats">
+            <div className="contact-stat-card">
+              <div className="contact-stat-icon">
+                <FaUsers />
+              </div>
+              <h3>10,000+</h3>
+              <p>Clientes Satisfechos</p>
+            </div>
+            
+            <div className="contact-stat-card">
+              <div className="contact-stat-icon">
+                <FaClock />
+              </div>
+              <h3>15</h3>
+              <p>Tiempos Reducidos</p>
+            </div>
+            
+            <div className="contact-stat-card">
+              <div className="contact-stat-icon">
+                <FaHeadset />
+              </div>
+              <h3>24h</h3>
+              <p>Tiempo de Respuesta</p>
+            </div>
+          </div>
+          
+          <div className="contact-content">
+            <div className="contact-info">
+              <h3>Información de Contacto</h3>
+              
+              <div className="contact-method">
+                <div className="contact-icon">
+                  <FaPhone />
+                </div>
+                <div className="contact-details">
+                  <h4>Línea Directa</h4>
+                  <p>+34 900 123 456</p>
+                  <span>Lunes a Viernes: 9:00 - 20:00</span>
+                </div>
+              </div>
+              
+              <div className="contact-method">
+                <div className="contact-icon">
+                  <FaEnvelope />
+                </div>
+                <div className="contact-details">
+                  <h4>Correo Electrónico</h4>
+                  <p>info@youtour.com</p>
+                  <span>Respuesta garantizada en 24h</span>
+                </div>
+              </div>
+              
+              <div className="contact-method">
+                <div className="contact-icon">
+                  <FaMapMarkerAlt />
+                </div>
+                <div className="contact-details">
+                  <h4>Oficina Central</h4>
+                  <p>Madrid, España</p>
+                  <span>Calle del Turismo, 123</span>
+                </div>
+              </div>
+              
+              <div className="contact-method">
+                <div className="contact-icon">
+                  <FaHeadset />
+                </div>
+                <div className="contact-details">
+                  <h4>Soporte Online</h4>
+                  <p>24/7 Disponible</p>
+                  <span>Chat en vivo siempre activo</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="contact-form">
+              <h3>Envíanos un Mensaje</h3>
+              <p>Completa el formulario y nos pondremos en contacto contigo lo antes posible.</p>
+              
+              <form>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Nombre completo *</label>
+                    <input type="text" required />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Correo electrónico *</label>
+                    <input type="email" required />
+                  </div>
+                </div>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Asunto *</label>
+                    <input type="text" required />
+                  </div>
+                </div>
+                
+                <div className="form-group">
+                  <label>Mensaje *</label>
+                  <textarea rows="5" required placeholder="Cuéntanos más detalles sobre tu consulta o viaje que deseas planear."></textarea>
+                </div>
+                
+                <div className="form-privacy">
+                  <p>Al enviar este formulario, aceptas nuestros términos y política de datos.</p>
+                </div>
+                
+                <button type="submit" className="submit-btn">Enviar Mensaje</button>
+              </form>
+            </div>
+          </div>
+          
+          <div className="location-map">
+            <h3>Nuestra ubicación</h3>
+            <div className="map-container">
+              <div className="map-info">
+                <div className="map-icon">
+                  <FaMapMarkerAlt />
+                </div>
+                <div>
+                  <h4>Oficina Principal</h4>
+                  <p>Calle del Turismo, 123</p>
+                  <p>28001 Madrid</p>
+                </div>
+              </div>
+              <div className="map-placeholder">
+                {/* Vincular el google maps despues */}
+                <img src="https://maps.googleapis.com/maps/api/staticmap?center=Madrid,Spain&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7CMadrid,Spain&key="/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>    </div>
   );
 };
 
