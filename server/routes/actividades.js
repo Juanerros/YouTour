@@ -30,12 +30,7 @@ router.get('/dificultades', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const [actividades] = await conex.execute(
-            'SELECT a.*, t.nombre as tipo, c.nombre as ciudad, p.nombre as pais, d.nombre as dificultad ' +
-            'FROM actividades a ' +
-            'INNER JOIN tipos_actividad t ON a.id_tipo = t.id_tipo ' +
-            'INNER JOIN ciudades c ON a.id_ciudad = c.id_ciudad ' +
-            'INNER JOIN paises p ON c.id_pais = p.id_pais ' +
-            'INNER JOIN niveles_dificultad d ON a.id_dificultad = d.id_nivel'
+            'SELECT * FROM actividades'
         );
         res.json(actividades);
     } catch (err) {

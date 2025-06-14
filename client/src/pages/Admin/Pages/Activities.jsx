@@ -1,11 +1,13 @@
+import { useState } from 'react';
+import { MdPhotoCamera } from "react-icons/md";
+import useActividades from '../hooks/useActividades';
 import '../style.css'
 import '../../../components/Modal/ModalActivities.css'
 import './css/Activities.css'
-import { useState } from 'react';
-import { MdPhotoCamera } from "react-icons/md";
 
 const Activities = () => {
   const [showModal, setShowModal] = useState(false);
+  const { actividades, loading, error, addActividad } = useActividades();
   const [form, setForm] = useState({
     nombre: '',
     tipo: '',
@@ -14,20 +16,26 @@ const Activities = () => {
     duracion: '',
     descripcion: ''
   });
-  const [actividades, setActividades] = useState([]);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setActividades([...actividades, { ...form }]);
-    setShowModal(false);
-    setForm({
-      nombre: '', tipo: '', ubicacion: '', precio: '', duracion: '', descripcion: ''
-    });
+    try {
+      await addActividad(form);
+      setShowModal(false);
+      setForm({
+        nombre: '', tipo: '', ubicacion: '', precio: '', duracion: '', descripcion: ''
+      });
+    } catch (err) {
+      console.error('Error al agregar actividad:', err);
+    }
   };
+
+  if (loading) return <div>Cargando...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <>

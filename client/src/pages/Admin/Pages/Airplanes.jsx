@@ -3,9 +3,19 @@ import '../../../components/Modal/ModalAirplanes.css'
 import './css/Airplanes.css'
 import { useState } from 'react';
 import { PiAirplaneTaxiing, PiAirplaneTiltLight } from "react-icons/pi";
+import useVuelos from '../hooks/useVuelos';
+import usePaises from '../hooks/usePaises';
+import useContinentes from '../hooks/useContinentes';
 
 const Airplanes = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showPaisModal, setShowPaisModal] = useState(false);
+  const [showContinenteModal, setShowContinenteModal] = useState(false);
+  
+  const { vuelos, loading, error, addVuelo } = useVuelos();
+  const { paises, loading: paisesLoading, addPais } = usePaises();
+  const { continentes, loading: continentesLoading, addContinente } = useContinentes();
+  
   const [form, setForm] = useState({
     origen: '',
     destino: '',
@@ -13,22 +23,93 @@ const Airplanes = () => {
     duracion: '',
     salida: '',
     llegada: '',
-    precio: ''
+    precio: '',
+    aeronave: '',
+    fecha_vuelo: ''
   });
-  const [vuelos, setVuelos] = useState([]);
+
+  const [paisForm, setPaisForm] = useState({
+    nombre: '',
+    continente_id: ''
+  });
+
+  const [continenteForm, setContinenteForm] = useState({
+    nombre: ''
+  });
+
+  const [currentField, setCurrentField] = useState(''); // Para saber si es origen o destino
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    setVuelos([...vuelos, { ...form }]);
-    setShowModal(false);
-    setForm({
-      origen: '', destino: '', aerolinea: '', duracion: '', salida: '', llegada: '', precio: ''
-    });
+  const handlePaisChange = e => {
+    setPaisForm({ ...paisForm, [e.target.name]: e.target.value });
   };
+
+  const handleContinenteChange = e => {
+    setContinenteForm({ ...continenteForm, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await addVuelo(form);
+      setShowModal(false);
+      setForm({
+        origen: '', destino: '', aerolinea: '', duracion: '', salida: '', 
+        llegada: '', precio: '', aeronave: '', fecha_vuelo: ''
+      });
+    } catch (err) {
+      console.error('Error al agregar vuelo:', err);
+    }
+  };
+
+  const handlePaisSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const nuevoPais = await addPais(paisForm);
+      setForm({ ...form, [currentField]: nuevoPais.id });
+      setShowPaisModal(false);
+      setPaisForm({ nombre: '', continente_id: '' });
+    } catch (err) {
+      console.error('Error al agregar país:', err);
+    }
+  };
+
+  const handleContinenteSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const nuevoContinente = await addContinente(continenteForm);
+      setPaisForm({ ...paisForm, continente_id: nuevoContinente.id });
+      setShowContinenteModal(false);
+      setContinenteForm({ nombre: '' });
+    } catch (err) {
+      console.error('Error al agregar continente:', err);
+    }
+  };
+
+  const handleSelectChange = (e, field) => {
+    const value = e.target.value;
+    if (value === 'agregar_nuevo') {
+      setCurrentField(field);
+      setShowPaisModal(true);
+    } else {
+      setForm({ ...form, [field]: value });
+    }
+  };
+
+  const handleContinenteSelect = (e) => {
+    const value = e.target.value;
+    if (value === 'agregar_nuevo') {
+      setShowContinenteModal(true);
+    } else {
+      setPaisForm({ ...paisForm, continente_id: value });
+    }
+  };
+
+  if (loading) return <div>Cargando...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <>
@@ -62,9 +143,7 @@ const Airplanes = () => {
                     <h3>{vuelo.aerolinea}</h3>
                     <hr />
                     <h3>
-                      {vuelo.salida && vuelo.llegada
-                        ? `${new Date(vuelo.salida).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(vuelo.llegada).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-                        : ''}
+                      {vuelo.salida && vuelo.llegada ? `${vuelo.salida} - ${vuelo.llegada}` : ''}
                     </h3>
                   </div>
                 </div>
@@ -80,6 +159,7 @@ const Airplanes = () => {
         </div>
       </div>
 
+      {/* Modal para agregar vuelo */}
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">
@@ -89,13 +169,21 @@ const Airplanes = () => {
                 <div className="modal-inputs-col">
                   <label>
                     Origen:
-                    <input
-                      type="text"
+                    <select
                       name="origen"
                       value={form.origen}
-                      onChange={handleChange}
+                      onChange={(e) => handleSelectChange(e, 'origen')}
                       required
-                    />
+                      disabled={paisesLoading}
+                    >
+                      <option value="">Selecciona un país</option>
+                      {paises.map(pais => (
+                        <option key={pais.id} value={pais.id}>
+                          {pais.nombre}
+                        </option>
+                      ))}
+                      <option value="agregar_nuevo">+ Agregar nuevo país</option>
+                    </select>
                   </label>
                   <label>
                     Aerolínea:
@@ -117,17 +205,45 @@ const Airplanes = () => {
                       required
                     />
                   </label>
+                  <label>
+                    Duración:
+                    <input
+                      type="text"
+                      name="duracion"
+                      value={form.duracion}
+                      onChange={handleChange}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Fecha de Vuelo:
+                    <input
+                      type="date"
+                      name="fecha_vuelo"
+                      value={form.fecha_vuelo}
+                      onChange={handleChange}
+                      required
+                    />
+                  </label>
                 </div>
                 <div className="modal-inputs-col">
                   <label>
                     Destino:
-                    <input
-                      type="text"
+                    <select
                       name="destino"
                       value={form.destino}
-                      onChange={handleChange}
+                      onChange={(e) => handleSelectChange(e, 'destino')}
                       required
-                    />
+                      disabled={paisesLoading}
+                    >
+                      <option value="">Selecciona un país</option>
+                      {paises.map(pais => (
+                        <option key={pais.id} value={pais.id}>
+                          {pais.nombre}
+                        </option>
+                      ))}
+                      <option value="agregar_nuevo">+ Agregar nuevo país</option>
+                    </select>
                   </label>
                   <label>
                     Precio:
@@ -150,19 +266,116 @@ const Airplanes = () => {
                       required
                     />
                   </label>
+                  <label>
+                    Aeronave:
+                    <input
+                      type="text"
+                      name="aeronave"
+                      value={form.aeronave}
+                      onChange={handleChange}
+                      required
+                    />
+                  </label>
                 </div>
               </div>
               <div className="modal-actions">
-                <button
-                  type="submit"
-                  className="btn-agregar"
-                >
+                <button type="submit" className="btn-agregar">
                   Agregar
                 </button>
                 <button
                   type="button"
                   className="btn-cancelar"
                   onClick={() => setShowModal(false)}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para agregar país */}
+      {showPaisModal && (
+        <div className="modal-backdrop">
+          <div className="modal modal-small">
+            <h2>Agregar Nuevo País</h2>
+            <form onSubmit={handlePaisSubmit}>
+              <label>
+                Nombre del país:
+                <input
+                  type="text"
+                  name="nombre"
+                  value={paisForm.nombre}
+                  onChange={handlePaisChange}
+                  required
+                />
+              </label>
+              <label>
+                Continente:
+                <select
+                  name="continente_id"
+                  value={paisForm.continente_id}
+                  onChange={handleContinenteSelect}
+                  required
+                  disabled={continentesLoading}
+                >
+                  <option value="">Selecciona un continente</option>
+                  {continentes.map(continente => (
+                    <option key={continente.id} value={continente.id}>
+                      {continente.nombre}
+                    </option>
+                  ))}
+                  <option value="agregar_nuevo">+ Agregar nuevo continente</option>
+                </select>
+              </label>
+              <div className="modal-actions">
+                <button type="submit" className="btn-agregar">
+                  Agregar País
+                </button>
+                <button
+                  type="button"
+                  className="btn-cancelar"
+                  onClick={() => {
+                    setShowPaisModal(false);
+                    setPaisForm({ nombre: '', continente_id: '' });
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para agregar continente */}
+      {showContinenteModal && (
+        <div className="modal-backdrop">
+          <div className="modal modal-small">
+            <h2>Agregar Nuevo Continente</h2>
+            <form onSubmit={handleContinenteSubmit}>
+              <label>
+                Nombre del continente:
+                <input
+                  type="text"
+                  name="nombre"
+                  value={continenteForm.nombre}
+                  onChange={handleContinenteChange}
+                  required
+                />
+              </label>
+              <div className="modal-actions">
+                <button type="submit" className="btn-agregar">
+                  Agregar Continente
+                </button>
+                <button
+                  type="button"
+                  className="btn-cancelar"
+                  onClick={() => {
+                    setShowContinenteModal(false);
+                    setContinenteForm({ nombre: '' });
+                  }}
                 >
                   Cancelar
                 </button>

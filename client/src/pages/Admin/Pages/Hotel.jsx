@@ -2,11 +2,13 @@ import '../style.css'
 import '../../../components/Modal/ModalHotel.css'
 import './css/Hotel.css'
 import { useState } from 'react';
+import useHoteles from '../hooks/useHoteles';
 
 const ejemploFoto = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80";
 
 const Hotel = () => {
   const [showModal, setShowModal] = useState(false);
+  const { hoteles, loading, error, addHotel } = useHoteles();
   const [form, setForm] = useState({
     nombre: '',
     ubicacion: '',
@@ -16,20 +18,26 @@ const Hotel = () => {
     amenidades: '',
     foto: ejemploFoto
   });
-  const [hoteles, setHoteles] = useState([]);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setHoteles([...hoteles, { ...form }]);
-    setShowModal(false);
-    setForm({
-      nombre: '', ubicacion: '', rating: '', precio: '', descripcion: '', amenidades: '', foto: ejemploFoto
-    });
+    try {
+      await addHotel(form);
+      setShowModal(false);
+      setForm({
+        nombre: '', ubicacion: '', rating: '', precio: '', descripcion: '', amenidades: '', foto: ejemploFoto
+      });
+    } catch (err) {
+      console.error('Error al agregar hotel:', err);
+    }
   };
+
+  if (loading) return <div>Cargando...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <>

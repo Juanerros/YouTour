@@ -16,6 +16,17 @@ router.get('/continentes', async (req, res) => {
     }
 });
 
+router.post('/continentes', async(req, res) => {
+    try {
+        const [continentes] = await conex.execute(
+            'INSERT INTO continentes (nombre) VALUES (?)',
+            [req.body.nombre]
+        );
+    }catch (err) {
+        handleError(res, 'Error al agregar continente', err);
+    }
+})
+
 // Obtener todos los países
 router.get('/', async (req, res) => {
     try {
