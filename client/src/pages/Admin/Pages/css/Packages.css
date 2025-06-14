@@ -1,0 +1,13 @@
+.agregar-paquete-btn {
+border: 1px solid #2563ae;
+  background: rgba(37, 99, 174, 0.12);
+  color: #2563ae;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.agregar-paquete-btn:hover {
+  background: rgba(37, 99, 174, 0.22);
+}

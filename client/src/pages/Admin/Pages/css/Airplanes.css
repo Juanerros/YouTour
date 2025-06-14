@@ -1,15 +1,15 @@
-
 .agregar-vuelo-btn {
-    cursor: pointer;
-    text-align: center;
-    font-size: 16px;
-    height: 40px;
-    width: 150px;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    background-color: #2563ea;
-    color: white;
+border: 1px solid #2563ae;
+  background: rgba(37, 99, 174, 0.12);
+  color: #2563ae;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.agregar-vuelo-btn:hover {
+  background: rgba(37, 99, 174, 0.22);
 }
 
 .vuelos-container {

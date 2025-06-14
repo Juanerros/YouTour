@@ -2,9 +2,7 @@ import '../style.css'
 import '../../../components/Modal/ModalAirplanes.css'
 import './css/Airplanes.css'
 import { useState } from 'react';
-
-import { PiAirplaneTaxiing } from "react-icons/pi";
-import { PiAirplaneTiltLight } from "react-icons/pi";
+import { PiAirplaneTaxiing, PiAirplaneTiltLight } from "react-icons/pi";
 
 const Airplanes = () => {
   const [showModal, setShowModal] = useState(false);
@@ -17,6 +15,7 @@ const Airplanes = () => {
     llegada: '',
     precio: ''
   });
+  const [vuelos, setVuelos] = useState([]);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,7 +23,7 @@ const Airplanes = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    // Aquí puedes manejar el envío del formulario
+    setVuelos([...vuelos, { ...form }]);
     setShowModal(false);
     setForm({
       origen: '', destino: '', aerolinea: '', duracion: '', salida: '', llegada: '', precio: ''
@@ -47,34 +46,37 @@ const Airplanes = () => {
           />
         </div>
         <div className="vuelos-container">
-          <div className="vuelos-card">
-            {/* Aquí irán los vuelos */}
-            <div className="info-general">
-              <PiAirplaneTiltLight className='card-ico' />
-              <div className="info-container">
-                <div className="info">
-                  <h2>Buenos Aires (EZE)</h2>
-                  <hr />
-                  <PiAirplaneTaxiing size={30} />
-                  <hr />
-                  <h2>Montevideo (MVD)</h2>
+          {vuelos.map((vuelo, idx) => (
+            <div className="vuelos-card" key={idx}>
+              <div className="info-general">
+                <PiAirplaneTiltLight className='card-ico' />
+                <div className="info-container">
+                  <div className="info">
+                    <h2>{vuelo.origen}</h2>
+                    <hr />
+                    <PiAirplaneTaxiing size={30} />
+                    <hr />
+                    <h2>{vuelo.destino}</h2>
+                  </div>
+                  <div className="info">
+                    <h3>{vuelo.aerolinea}</h3>
+                    <hr />
+                    <h3>
+                      {vuelo.salida && vuelo.llegada
+                        ? `${new Date(vuelo.salida).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(vuelo.llegada).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                        : ''}
+                    </h3>
+                  </div>
                 </div>
-                <div className="info">
-                  <h3>LATAM Airlines </h3>
-                  <hr />
-                  <h3>1h 15m</h3>
-                  <hr />
-                  <h3>08:30 - 09:45</h3>
+              </div>
+              <div className="precio">
+                <div className="info-container">
+                  <h1>${vuelo.precio}</h1>
+                  <h3>por persona</h3>
                 </div>
               </div>
             </div>
-            <div className="precio"> {/* div que no se esta usando xd */}
-              <div className="info-container">
-                <h1>$660</h1>
-                <h3>por persona</h3>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
