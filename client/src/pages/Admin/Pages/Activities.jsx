@@ -7,27 +7,66 @@ import './css/Activities.css'
 
 const Activities = () => {
   const [showModal, setShowModal] = useState(false);
-  const { actividades, loading, error, addActividad } = useActividades();
+  const { 
+    actividades, 
+    paises, 
+    ciudades, 
+    tiposActividad,
+    loading, 
+    error, 
+    addActividad, 
+    fetchCiudadesPorPais 
+  } = useActividades();
+  
   const [form, setForm] = useState({
     nombre: '',
     tipo: '',
-    ubicacion: '',
+    id_ciudad: '',
+    id_pais: '',
     precio: '',
-    duracion: '',
+    duracion_horas: '',
+    duracion_minutos: '',
     descripcion: ''
   });
 
   const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === 'id_pais') {
+      setForm(prev => ({ ...prev, id_pais: value, id_ciudad: '' }));
+      fetchCiudadesPorPais(value);
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addActividad(form);
+      // Formatear la duración en formato HH:MM:SS para MySQL TIME
+      const horas = form.duracion_horas || '0';
+      const minutos = form.duracion_minutos || '0';
+      const duracion = `${horas.padStart(2, '0')}:${minutos.padStart(2, '0')}:00`;
+      
+      const actividadData = {
+        nombre: form.nombre,
+        tipo: form.tipo,
+        id_ciudad: form.id_ciudad,
+        precio: form.precio,
+        duracion: duracion,
+        descripcion: form.descripcion
+      };
+      
+      await addActividad(actividadData);
       setShowModal(false);
       setForm({
-        nombre: '', tipo: '', ubicacion: '', precio: '', duracion: '', descripcion: ''
+        nombre: '',
+        tipo: '',
+        id_ciudad: '',
+        id_pais: '',
+        precio: '',
+        duracion_horas: '',
+        duracion_minutos: '',
+        descripcion: ''
       });
     } catch (err) {
       console.error('Error al agregar actividad:', err);
@@ -101,27 +140,59 @@ const Activities = () => {
                   </label>
                   <label>
                     Tipo:
-                    <input
-                      type="text"
-                      name="tipo"
+                    <select 
+                      name="tipo" 
                       value={form.tipo}
-                      onChange={handleChange}
-                      placeholder="Cultural, aventura, entretenimiento, etc."
+                      onChange={handleChange} 
                       required
-                    />
+                    >
+                      <option value="">Seleccione un tipo</option>
+                      {tiposActividad.map(tipo => (
+                        <option key={tipo.tipo} value={tipo.tipo}>
+                          {tipo.nombre}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                 </div>
                 <div className="modal-inputs-col">
                   <label>
-                    Ubicación:
-                    <input
-                      type="text"
-                      name="ubicacion"
-                      value={form.ubicacion}
+                    País:
+                    <select
+                      name="id_pais"
+                      value={form.id_pais}
                       onChange={handleChange}
                       required
-                    />
+                    >
+                      <option value="">Seleccione un país</option>
+                      {paises.map(pais => (
+                        <option key={pais.id_pais} value={pais.id_pais}>
+                          {pais.nombre}
+                        </option>
+                      ))}
+                    </select>
                   </label>
+                  <label>
+                    Ciudad:
+                    <select
+                      name="id_ciudad"
+                      value={form.id_ciudad}
+                      onChange={handleChange}
+                      required
+                      disabled={!form.id_pais}
+                    >
+                      <option value="">Seleccione una ciudad</option>
+                      {ciudades.map(ciudad => (
+                        <option key={ciudad.id_ciudad} value={ciudad.id_ciudad}>
+                          {ciudad.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <div className="modal-inputs-row">
+                <div className="modal-inputs-col">
                   <label>
                     Precio:
                     <input
@@ -134,17 +205,35 @@ const Activities = () => {
                     />
                   </label>
                 </div>
+                <div className="modal-inputs-col">
+                  <label>
+                    Duración:
+                    <div className="duracion-container">
+                      <input
+                        type="number"
+                        name="duracion_horas"
+                        value={form.duracion_horas}
+                        onChange={handleChange}
+                        min="0"
+                        max="23"
+                        placeholder="Horas"
+                        required
+                      />
+                      <span>:</span>
+                      <input
+                        type="number"
+                        name="duracion_minutos"
+                        value={form.duracion_minutos}
+                        onChange={handleChange}
+                        min="0"
+                        max="59"
+                        placeholder="Minutos"
+                        required
+                      />
+                    </div>
+                  </label>
+                </div>
               </div>
-              <label className="modal-label-full">
-                Duración:
-                <input
-                  type="text"
-                  name="duracion"
-                  value={form.duracion}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
               <label className="modal-label-full">
                 Descripción:
                 <textarea

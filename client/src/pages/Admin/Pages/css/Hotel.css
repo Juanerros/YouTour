@@ -73,16 +73,6 @@
   gap: 0.3rem;
   margin-bottom: 0.2rem;
 }
-.amenidad-tag {
-  background: #2563ea18;
-  color: #2563ae;
-  border: 1px solid #2563ae;
-  border-radius: 999px;
-  padding: 0.12rem 0.6rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
 .hotel-descripcion {
   font-size: 1rem;
   color: #11233f;
@@ -91,4 +81,118 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
+}
+
+/* Estilos para el selector de amenidades */
+.amenidades-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.amenidades-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+}
+
+.amenidad-tag {
+  display: inline-flex;
+  align-items: center;
+  background: #2563ea18;
+  color: #2563ae;
+  border: 1px solid #2563ae;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  gap: 4px;
+}
+
+.remove-amenidad {
+  background: none;
+  border: none;
+  color: #2563ae;
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 16px;
+}
+
+.remove-amenidad:hover {
+  color: #dc3545;
+}
+
+.btn-agregar-amenidad {
+  background: rgba(37, 99, 174, 0.12);
+  border: 1px solid #2563ae;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #2563ae;
+  font-size: 14px;
+  font-weight: 500;
+  align-self: flex-start;
+}
+
+.btn-agregar-amenidad:hover {
+  background: rgba(37, 99, 174, 0.22);
+}
+
+.amenidades-modal {
+  max-width: 800px !important;
+}
+
+.amenidades-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.amenidades-list {
+  border: 1px solid #2563ae;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.amenidades-list h3 {
+  margin: 0 0 16px 0;
+  color: #2563ae;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.amenidad-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  gap: 8px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.amenidad-item:last-child {
+  border-bottom: none;
+}
+
+.amenidad-item button {
+  background: rgba(37, 99, 174, 0.12);
+  border: 1px solid #2563ae;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: #2563ae;
+  font-weight: 500;
+}
+
+.amenidad-item button:hover {
+  background: rgba(37, 99, 174, 0.22);
+}
+
+.amenidad-item span {
+  flex: 1;
+  color: #11233f;
 }

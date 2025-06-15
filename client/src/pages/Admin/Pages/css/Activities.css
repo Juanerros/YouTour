@@ -239,3 +239,18 @@
 .btn-cancelar:hover {
   background: rgba(229, 57, 53, 0.22);
 }
+
+.duracion-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.duracion-container input {
+  width: 70px;
+}
+
+.duracion-container span {
+  font-weight: bold;
+  font-size: 18px;
+}

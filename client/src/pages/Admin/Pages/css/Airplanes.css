@@ -171,4 +171,150 @@ hr{
     background: rgba(229, 56, 53, 0.3);
   }
 
+/* Estilos para el modal de selección de ciudades */
+.modal-medium {
+  width: 600px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-small {
+  width: 400px;
+  max-width: 90vw;
+}
+
+/* Estilos para el botón de selección de ciudad */
+.select-ciudad-btn {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.2rem;
+  border-radius: 4px;
+  border: 1px solid #2563ea63;
+  background-color: white;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.select-ciudad-btn:hover {
+  background-color: #f0f4ff;
+}
+
+/* Estilos para el buscador */
+.search-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #75b3ff;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 0.5rem 0.5rem 2rem;
+  border-radius: 4px;
+  border: 1px solid #2563ea63;
+}
+
+/* Estilos para la cuadrícula de países */
+.paises-grid, .ciudades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.pais-item, .ciudad-item {
+  padding: 0.8rem;
+  border-radius: 4px;
+  border: 1px solid #2563ea63;
+  background-color: #f0f4ff;
+  color: #1447b5;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-align: center;
+}
+
+.pais-item:hover, .ciudad-item:hover {
+  background-color: #d8e5ff;
+}
+
+.pais-nuevo, .ciudad-nueva {
+  background-color: rgba(37, 99, 174, 0.12);
+  color: #2563ae;
+  font-weight: 500;
+}
+
+.pais-nuevo:hover, .ciudad-nueva:hover {
+  background-color: rgba(37, 99, 174, 0.22);
+}
+
+/* Estilos para el país seleccionado */
+.selected-pais {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  background-color: #f0f4ff;
+  border-radius: 4px;
+  border: 1px solid #2563ea63;
+}
+
+.btn-volver {
+  border: 1px solid #2563ae;
+  background: rgba(37, 99, 174, 0.12);
+  color: #2563ae;
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-volver:hover {
+  background: rgba(37, 99, 174, 0.22);
+}
+
+/* Estilos para los items de ciudad */
+.ciudad-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.ciudad-nombre {
+  font-weight: 500;
+}
+
+.ciudad-codigo {
+  font-size: 0.8rem;
+  color: #75b3ff;
+  margin-top: 0.2rem;
+}
+
+/* Estilos para la duración formateada */
+.duracion-formato {
+  display: block;
+  font-size: 0.8rem;
+  color: #75b3ff;
+  margin-top: 0.2rem;
+}
+
+/* Estilos para los selects */
+.modal-inputs-col select {
+  width: 220px;
+  padding: 0.4rem;
+  margin-top: 0.2rem;
+  border-radius: 4px;
+  border: 1px solid #2563ea63;
+}
+
   

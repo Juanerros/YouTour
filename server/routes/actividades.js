@@ -6,26 +6,6 @@ let conex;
 const init = async () => conex = await createConnection();
 init();
 
-// Obtener todos los tipos de actividad
-router.get('/tipos', async (req, res) => {
-    try {
-        const [tipos] = await conex.execute('SELECT * FROM tipos_actividad');
-        res.json(tipos);
-    } catch (err) {
-        handleError(res, 'Error al obtener tipos de actividad', err);
-    }
-});
-
-// Obtener todos los niveles de dificultad
-router.get('/dificultades', async (req, res) => {
-    try {
-        const [niveles] = await conex.execute('SELECT * FROM niveles_dificultad');
-        res.json(niveles);
-    } catch (err) {
-        handleError(res, 'Error al obtener niveles de dificultad', err);
-    }
-});
-
 // Obtener todas las actividades
 router.get('/', async (req, res) => {
     try {
@@ -98,46 +78,6 @@ router.get('/tipo/:id', async (req, res) => {
     }
 });
 
-// Obtener actividades por dificultad
-router.get('/dificultad/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const [actividades] = await conex.execute(
-            'SELECT a.*, t.nombre as tipo, c.nombre as ciudad, p.nombre as pais, d.nombre as dificultad ' +
-            'FROM actividades a ' +
-            'INNER JOIN tipos_actividad t ON a.id_tipo = t.id_tipo ' +
-            'INNER JOIN ciudades c ON a.id_ciudad = c.id_ciudad ' +
-            'INNER JOIN paises p ON c.id_pais = p.id_pais ' +
-            'INNER JOIN niveles_dificultad d ON a.id_dificultad = d.id_nivel ' +
-            'WHERE a.id_dificultad = ?',
-            [id]
-        );
-        res.json(actividades);
-    } catch (err) {
-        handleError(res, 'Error al obtener actividades por dificultad', err);
-    }
-});
-
-// Obtener actividades por rango de precio
-router.get('/precio/:min/:max', async (req, res) => {
-    const { min, max } = req.params;
-    try {
-        const [actividades] = await conex.execute(
-            'SELECT a.*, t.nombre as tipo, c.nombre as ciudad, p.nombre as pais, d.nombre as dificultad ' +
-            'FROM actividades a ' +
-            'INNER JOIN tipos_actividad t ON a.id_tipo = t.id_tipo ' +
-            'INNER JOIN ciudades c ON a.id_ciudad = c.id_ciudad ' +
-            'INNER JOIN paises p ON c.id_pais = p.id_pais ' +
-            'INNER JOIN niveles_dificultad d ON a.id_dificultad = d.id_nivel ' +
-            'WHERE a.precio BETWEEN ? AND ?',
-            [min, max]
-        );
-        res.json(actividades);
-    } catch (err) {
-        handleError(res, 'Error al obtener actividades por rango de precio', err);
-    }
-});
-
 // Obtener una actividad específica
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
@@ -165,10 +105,10 @@ router.get('/:id', async (req, res) => {
 
 // Crear una nueva actividad
 router.post('/', async (req, res) => {
-    const { nombre, id_tipo, id_ciudad, precio, duracion, descripcion, id_dificultad } = req.body;
+    const { nombre, tipo, id_ciudad, precio, duracion, descripcion } = req.body;
     
-    if (!nombre || !id_tipo || !id_ciudad || !precio || !duracion || !id_dificultad) {
-        return handleError(res, 'Nombre, tipo, ciudad, precio, duración y dificultad son requeridos', null, 400);
+    if (!nombre || !tipo || !id_ciudad || !precio || !duracion) {
+        return handleError(res, 'Nombre, tipo, ciudad, precio, duración son requeridos', null, 400);
     }
     
     try {
@@ -182,40 +122,20 @@ router.post('/', async (req, res) => {
             return handleError(res, 'Ciudad no encontrada', null, 404);
         }
         
-        // Verificar que el tipo exista
-        const [tipo] = await conex.execute(
-            'SELECT * FROM tipos_actividad WHERE id_tipo = ?',
-            [id_tipo]
-        );
-        
-        if (tipo.length === 0) {
-            return handleError(res, 'Tipo de actividad no encontrado', null, 404);
-        }
-        
-        // Verificar que la dificultad exista
-        const [dificultad] = await conex.execute(
-            'SELECT * FROM niveles_dificultad WHERE id_nivel = ?',
-            [id_dificultad]
-        );
-        
-        if (dificultad.length === 0) {
-            return handleError(res, 'Nivel de dificultad no encontrado', null, 404);
-        }
-        
+        // Insertar la actividad en la base de datos
         const [result] = await conex.execute(
-            'INSERT INTO actividades (nombre, id_tipo, id_ciudad, precio, duracion, descripcion, id_dificultad) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [nombre, id_tipo, id_ciudad, precio, duracion, descripcion, id_dificultad]
+            'INSERT INTO actividades (nombre, tipo, id_ciudad, precio, duracion, descripcion) VALUES (?, ?, ?, ?, ?, ?)',
+            [nombre, tipo, id_ciudad, precio, duracion, descripcion]
         );
         
         res.status(201).json({
             id_actividad: result.insertId,
             nombre,
-            id_tipo,
+            tipo,
             id_ciudad,
             precio,
             duracion,
-            descripcion,
-            id_dificultad
+            descripcion
         });
     } catch (err) {
         handleError(res, 'Error al crear actividad', err);
@@ -225,10 +145,10 @@ router.post('/', async (req, res) => {
 // Actualizar una actividad
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { nombre, id_tipo, id_ciudad, precio, duracion, descripcion, id_dificultad } = req.body;
+    const { nombre, id_tipo, id_ciudad, precio, duracion, descripcion } = req.body;
     
-    if (!nombre || !id_tipo || !id_ciudad || !precio || !duracion || !id_dificultad) {
-        return handleError(res, 'Nombre, tipo, ciudad, precio, duración y dificultad son requeridos', null, 400);
+    if (!nombre || !id_tipo || !id_ciudad || !precio || !duracion) {
+        return handleError(res, 'Nombre, tipo, ciudad, precio, duración son requeridos', null, 400);
     }
     
     try {
@@ -252,19 +172,9 @@ router.put('/:id', async (req, res) => {
             return handleError(res, 'Tipo de actividad no encontrado', null, 404);
         }
         
-        // Verificar que la dificultad exista
-        const [dificultad] = await conex.execute(
-            'SELECT * FROM niveles_dificultad WHERE id_nivel = ?',
-            [id_dificultad]
-        );
-        
-        if (dificultad.length === 0) {
-            return handleError(res, 'Nivel de dificultad no encontrado', null, 404);
-        }
-        
         const [result] = await conex.execute(
-            'UPDATE actividades SET nombre = ?, id_tipo = ?, id_ciudad = ?, precio = ?, duracion = ?, descripcion = ?, id_dificultad = ? WHERE id_actividad = ?',
-            [nombre, id_tipo, id_ciudad, precio, duracion, descripcion, id_dificultad, id]
+            'UPDATE actividades SET nombre = ?, id_tipo = ?, id_ciudad = ?, precio = ?, duracion = ?, descripcion = ? WHERE id_actividad = ?',
+            [nombre, id_tipo, id_ciudad, precio, duracion, descripcion, id]
         );
         
         if (result.affectedRows === 0) {
@@ -278,8 +188,7 @@ router.put('/:id', async (req, res) => {
             id_ciudad,
             precio,
             duracion,
-            descripcion,
-            id_dificultad
+            descripcion
         });
     } catch (err) {
         handleError(res, 'Error al actualizar actividad', err);
