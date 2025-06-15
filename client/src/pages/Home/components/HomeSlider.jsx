@@ -12,7 +12,7 @@ const HomeSlider = () => {
           subtitle: "Servicios gratuitos en tu primer viaje",
           description: "Transfer, seguro y guía privado sin costo adicional",
           icon: <FaGift />,
-          color: "linear-gradient(90deg, #e65c00, #F9423D)",
+          image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
           buttonText: "Ver Ofertas"
         },
         {
@@ -20,7 +20,7 @@ const HomeSlider = () => {
           subtitle: "Ahorra hasta $200 reservando con 3 meses de antelación",
           description: "Planifica tu viaje perfecto y obtén los mejores precios",
           icon: <FaClock />,
-          color: "linear-gradient(90deg, #2E8B57, #00b09b)",
+          image: "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=2070",
           buttonText: "Ver Ofertas"
         },
         {
@@ -28,7 +28,7 @@ const HomeSlider = () => {
           subtitle: "Hasta 30% de descuento en paquetes seleccionados",
           description: "Descubre las ciudades más hermosas de Europa con precios increíbles",
           icon: <FaPercent />,
-          color: "linear-gradient(90deg, #8E2DE2, #4A00E0)",
+          image: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?q=80&w=2070",
           buttonText: "Ver Ofertas"
         }
       ];
@@ -46,7 +46,16 @@ const HomeSlider = () => {
         >
           {offers.map((offer, index) => (
             <SwiperSlide key={index}>
-              <div className="offer-card" style={{ background: offer.color }}>
+              <div 
+                className="offer-card" 
+                style={{ 
+                  backgroundImage: `url(${offer.image})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  position: 'relative'
+                }}
+              >
+                <div className="offer-overlay"></div>
                 <div className="offer-content">
                   <div className="offer-icon">{offer.icon}</div>
                   <h2>{offer.title}</h2>

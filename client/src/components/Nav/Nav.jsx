@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBars, FaTimes, FaShoppingCart } from 'react-icons/fa';
 import { useUser } from '../../hooks/useUser';
+import { LuTicketsPlane } from 'react-icons/lu';
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, handleLogout } = useUser();
@@ -38,7 +39,7 @@ const Nav = () => {
       </div>
       <div className="nav-actions">
         <Link className="cart-btn" to={'/cart'}>
-          <FaShoppingCart size={24} />
+          <LuTicketsPlane  size={24} />
         </Link>
         {user ? <button className="login-btn" onClick={handleLogout}>Cerrar sesión</button>
           : <Link className="login-btn" to={'/auth'}>Iniciar sesión</Link>}

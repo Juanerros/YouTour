@@ -1,7 +1,5 @@
 import './styles.css';
 import { FaSearch, FaFilter, FaGift, FaClock, FaPercent, FaClock as FaSupport, FaUsers, FaStar, FaMapMarkerAlt, FaCalendarAlt, FaChevronRight } from 'react-icons/fa';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -10,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { FaPhone, FaEnvelope, FaHeadset } from 'react-icons/fa';
 import HomeSlider from './components/HomeSlider';
 import Why from './components/Why';
+import SpecialOffers from './components/SpecialOffers';
 
 const Home = () => {
   const [packages, setPackages] = useState([]);
@@ -43,9 +42,6 @@ const Home = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-
-
-
   return (
     <div className='Home'>
       <div className="hero">
@@ -65,54 +61,14 @@ const Home = () => {
           </div>
         </div>
       </div>
+
       {/* Seccion de Slider Promocional */}
       <HomeSlider />
       {/* Seccion de features Promocionales */}
       <Why />
-
-      <section className="special-offers-container">
-        <div className="special-offers-content">
-          <h2>OFERTAS ESPECIALES</h2>
-          <p>Descubre nuestras promociones exclusivas y vive experiencias únicas con los mejores precios</p>
-
-          <div className="offers-grid">
-            <div className="offer-large" style={{
-              backgroundImage: 'linear-gradient(rgba(255, 99, 71, 0.85), rgba(255, 99, 71, 0.85)), url("https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=2070")'
-            }}>
-              <div className="offer-content">
-                <h3>OFERTAS DE VERANO</h3>
-                <h4>Hasta 40% de descuento en destinos europeos</h4>
-                <p>Descubre Europa con los mejores precios del año. Viajes únicos e inolvidables te esperan.</p>
-                <button>Ver Ofertas →</button>
-              </div>
-            </div>
-
-            <div className="offers-column">
-              <div className="offer-small" style={{
-                backgroundImage: 'linear-gradient(rgba(72, 61, 139, 0.85), rgba(72, 61, 139, 0.85)), url("https://images.unsplash.com/photo-1480996408299-fc0e830b5db1?q=80&w=2069")'
-              }}>
-                <div className="offer-content">
-                  <h3>ESCAPADAS MÁGICAS</h3>
-                  <h4>Destinos únicos para desconectar</h4>
-                  <p>Lugares increíbles que cambiarán tu perspectiva del mundo</p>
-                  <button>Ver Ofertas →</button>
-                </div>
-              </div>
-
-              <div className="offer-small" style={{
-                backgroundImage: 'linear-gradient(rgba(32, 178, 170, 0.85), rgba(32, 178, 170, 0.85)), url("https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?q=80&w=2070")'
-              }}>
-                <div className="offer-content">
-                  <h3>EXTREMAS</h3>
-                  <h4>Experiencias que desafían tus límites</h4>
-                  <p>Adrenalina pura en los lugares más impresionantes</p>
-                  <button>Ver Ofertas →</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Seccion de Ofertas Especiales */}
+      <SpecialOffers/>
+      
       <section className="you-tour-features">
         <div className="features-stats">
           <div className="stat-card">
@@ -316,6 +272,8 @@ const Home = () => {
       </section>    </div>
   );
 };
+
+// Temporalmente JSON para previsualizar
 
 const tourPackages = [
   {

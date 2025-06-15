@@ -625,7 +625,6 @@ const Catalog = () => {
 
         <div className="search-bar-container">
           <div className="search-bar">
-            <FaSearch className="search-icon" />
             <input
               type="text"
               placeholder="Buscar destinos, ciudades o países..."
@@ -702,7 +701,7 @@ const Catalog = () => {
 
               <div className="filter-group">
                 <h3><FaStar /> Valoración</h3>
-                <div className="rating-filter">
+                <div className="months-grid">
                   {[4, 4.5, 4.8].map(rating => (
                     <button
                       key={rating}
@@ -860,13 +859,6 @@ const Catalog = () => {
 
             {totalPages > 1 && (
               <div className="pagination">
-                <button
-                  className="prev-page"
-                  onClick={() => currentPage > 1 && paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  Anterior
-                </button>
 
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
                   <button

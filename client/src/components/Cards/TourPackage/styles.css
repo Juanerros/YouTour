@@ -181,7 +181,7 @@
 }
 
 .btn-details {
-  background: #f5f5f5;
+  background: #dfdede;
   color: #333;
   flex: 1;
 }
@@ -193,7 +193,7 @@
 }
 
 .btn-details:hover {
-  background: #e0e0e0;
+  background: #a6a4be;
 }
 
 .btn-add-cart:hover {

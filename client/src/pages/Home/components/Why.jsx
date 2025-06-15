@@ -1,23 +1,25 @@
-import { FaHotel, FaUsers, FaStar, FaPhone} from 'react-icons/fa';
+import { LuShield, LuHeadphones, LuUsers } from "react-icons/lu";
+import { MdModeOfTravel } from "react-icons/md";
+
 const Why = () => {
     const features = [
         {
-            icon: <FaHotel className="feature-icon" />,
+            icon: <LuShield className="feature-icon" size={16}/>,
             title: "Viajes Seguros",
             description: "Seguro completo incluido en todos nuestros paquetes"
         },
         {
-            icon: <FaPhone className="feature-icon" />,
+            icon: <LuHeadphones className="feature-icon" size={16}/>,
             title: "Soporte 24/7",
             description: "Asistencia disponible en cualquier momento del día"
         },
         {
-            icon: <FaUsers className="feature-icon" />,
+            icon: <LuUsers className="feature-icon" size={12}/>,
             title: "Guías Expertos",
             description: "Profesionales locales con amplio conocimiento"
         },
         {
-            icon: <FaStar className="feature-icon" />,
+            icon: <MdModeOfTravel className="feature-icon" size={16}/>,
             title: "Experiencias Únicas",
             description: "Tours exclusivos que no encontrarás en otro lugar"
         }

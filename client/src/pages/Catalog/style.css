@@ -1,10 +1,13 @@
-.catalog-container {
+.catalog-page {
   min-width: 1300px;
   width: 100%;
   margin: 0 auto;
   padding: 20px;
   background-color: #f8f9fa;
   min-height: 100vh;
+  width: 100%;
+  padding-top: 20vh !important;  
+  transform: scale(0.9);
 }
 
 /* Sección de búsqueda */
@@ -20,9 +23,9 @@
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
+  
+  padding: 10px;
 }
-
-
 
 .search-input:focus {
   outline: none;
@@ -104,8 +107,7 @@
 
 /* Grid de productos */
 .products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  
   gap: 20px;
   padding: 0;
 }
@@ -248,13 +250,14 @@
 .catalog-header h1 {
   text-align: center;
   font-size: 2.2rem;
-  color: #333;
-  margin-bottom: 0.5rem;
+  color: #222;
+  font-family: 'Poppins-Bold';
 }
 
 .catalog-header p {
   text-align: center;
   color: #666;
+  font-family: 'Poppins-Light';
   margin-bottom: 2rem;
 }
 
@@ -296,13 +299,14 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #f5f5f5;
+  background: #eceef1;
   border: none;
   padding: 0.6rem 1.2rem;
+  border: solid 1px #3333331c;
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
-  color: #333;
+  color: #111;
 }
 
 .filter-btn.active {
@@ -473,9 +477,12 @@
 }
 
 .tour-packages-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  width: fit-content;
+  justify-content: center;
   gap: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .no-results {
