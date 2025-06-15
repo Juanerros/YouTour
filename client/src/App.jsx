@@ -19,6 +19,8 @@ import Hotel from "./pages/Admin/Pages/Hotel.jsx";
 import Packages from "./pages/Admin/Pages/Packages.jsx";
 import AdminLayout from "./pages/AdminLayout/AdminLayout.jsx";
 import OrdersManagement from "./pages/OrdersManagement/OrdersManagement.jsx";
+import Cart from './pages/Cart/Cart.jsx';
+import PackagePage from './pages/PackagePage/PackagePage.jsx';
 
 const App = () => {
   return (
@@ -53,6 +55,8 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="/catalog" element={<Catalog />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/package/:id" element={<PackagePage/>} />
         </Route>
       </Routes>
     </Router>

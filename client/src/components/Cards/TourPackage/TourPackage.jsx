@@ -50,11 +50,10 @@ const TourPackage = ({ package: pkg }) => {
         <div className="package-price">
           <div className="original-price">
             <span>Desde</span>
-            <span className="price-value">{pkg.originalPrice} €</span>
+            <span className="price-value">${pkg.originalPrice} ARS</span>
           </div>
           <div className="current-price">
-            <span>por persona</span>
-            <span className="price-value">{pkg.currentPrice} €</span>
+            <span className="price-value">${pkg.currentPrice} ARS</span>
           </div>
         </div>
         
