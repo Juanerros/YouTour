@@ -1,4 +1,3 @@
-const e = require('express');
 const { createConnection, handleError, express } = require('./../config/setup');
 const router = express.Router();
 
@@ -83,7 +82,7 @@ router.put('/:cartId/checkout', async (req, res) => {
         );
 
         res.json({
-            message: 'Checkout exitoso',
+            message: 'Checkout exitoso, tu pedido sera proce',
             pedidoId: pedidoResult.insertId
         });
 
@@ -114,7 +113,7 @@ router.delete('/:cartId', async (req, res) => {
             [cartId]
         );
 
-        res.json({ 
+        res.json({
             message: 'Paquete eliminado del carrito exitosamente'
         });
     } catch (err) {

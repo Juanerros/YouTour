@@ -9,8 +9,9 @@ import { FaEye, FaEyeSlash, FaShoppingCart } from 'react-icons/fa';
 const Auth = () => {
   const navigate = useNavigate();
   const { notify } = useNotification();
-  const { handleLogin } = useUser();
+  const { handleLogin, user  } = useUser();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -26,6 +27,7 @@ const Auth = () => {
     e.preventDefault();
     if (!isValid()) return;
     try {
+      setIsLoading(true);
       const endpoint = `/user${isLogin ? '/login' : '/register'}`;
       const dataToSend = isLogin ? {
         email: formData.email,
@@ -44,6 +46,8 @@ const Auth = () => {
       navigate('/');
     } catch (error) {
       notify(error.response?.data?.message || 'Error en la autenticación', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -306,8 +310,8 @@ const Auth = () => {
                 </>
               )}
               
-              <button type="submit" className="submit-button">
-                {isLogin ? 'Iniciar sesión' : 'Crear cuenta'}
+              <button type="submit" className="submit-button" disabled={isLoading}>
+                {isLoading ? 'Cargando...' : isLogin ? 'Iniciar sesión' : 'Crear cuenta'}
               </button>
             </form>
             

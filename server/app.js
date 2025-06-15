@@ -37,13 +37,12 @@ app.use('/hoteles', require(path.join(__dirname, 'routes', 'hoteles')));
 app.use('/actividades', require(path.join(__dirname, 'routes', 'actividades')));
 app.use('/paquetes', require(path.join(__dirname, 'routes', 'paquetes')));
 app.use('/cart', require(path.join(__dirname, 'routes', 'cart')));
+app.use('/email', require(path.join(__dirname, 'routes', 'email')));
 
 // Testeo de api
 app.get('/ping', async (req, res) => {
     res.send('Pong')
 });
-
-app.post('/send', sendEmail);
 
 // Prender servidor de solicitudes http 
 const port = process.env.API_PORT || 5001;

@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
 import './style.css';
+import { useState, useEffect } from 'react';
 import { FaStar, FaFilter, FaSearch, FaMapMarkerAlt, FaCalendarAlt, FaUsers, FaMoon, FaRegClock, FaHotel, FaPlane, FaUtensils, FaRoute, FaUserTie } from 'react-icons/fa';
 import TourPackage from '../../components/Cards/TourPackage/TourPackage';
+import axios from '../../api/axios';
+import { useUser } from '../../hooks/useUser';
+import useNotification from '../../hooks/useNotification';
 
 const Catalog = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { notify } = useNotification();
+  const { user } = useUser();
+
   const tourPackages = [
     {
       id: 1,
@@ -248,6 +255,20 @@ const Catalog = () => {
     }
   ];
 
+  const handleAddToCart = async (paqueteId) => {
+    try {
+      setIsLoading(true);
+
+      const { data } = await axios.post('/cart/add', { userId: user.id_user, paqueteId });
+
+      notify(data.message, 'success');
+    } catch (error) {
+      notify(error.response?.data?.message || 'Error al agregar al carrito', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const [filteredTrips, setFilteredTrips] = useState(tourPackages);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -267,7 +288,7 @@ const Catalog = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const packagesPerPage = 6;
 
-  
+
   const getAllDestinations = () => {
     const destinations = new Set();
     tourPackages.forEach(trip => {
@@ -276,7 +297,7 @@ const Catalog = () => {
     return Array.from(destinations).sort();
   };
 
-  
+
   const getAllCountries = () => {
     const countries = new Set();
     tourPackages.forEach(trip => {
@@ -285,7 +306,7 @@ const Catalog = () => {
     return Array.from(countries).sort();
   };
 
-  
+
   const getAllCategories = () => {
     const categories = new Set();
     tourPackages.forEach(trip => {
@@ -294,7 +315,7 @@ const Catalog = () => {
     return Array.from(categories).sort();
   };
 
-  
+
   const getAllDifficulties = () => {
     const difficulties = new Set();
     tourPackages.forEach(trip => {
@@ -303,7 +324,7 @@ const Catalog = () => {
     return Array.from(difficulties).sort();
   };
 
-  
+
   const getAllAccommodations = () => {
     const accommodations = new Set();
     tourPackages.forEach(trip => {
@@ -312,7 +333,7 @@ const Catalog = () => {
     return Array.from(accommodations).sort();
   };
 
- 
+
   const getAllMeals = () => {
     const meals = new Set();
     tourPackages.forEach(trip => {
@@ -321,7 +342,7 @@ const Catalog = () => {
     return Array.from(meals).sort();
   };
 
- 
+
   const getAllGroupSizes = () => {
     const groupSizes = new Set();
     tourPackages.forEach(trip => {
@@ -338,28 +359,28 @@ const Catalog = () => {
   const meals = getAllMeals();
   const groupSizes = getAllGroupSizes();
 
- 
+
   const getPriceRange = () => {
     let min = Infinity;
     let max = 0;
-    
+
     tourPackages.forEach(trip => {
       if (trip.currentPrice < min) min = trip.currentPrice;
       if (trip.currentPrice > max) max = trip.currentPrice;
     });
-    
+
     return [Math.floor(min), Math.ceil(max)];
   };
 
   const [minMaxPrice] = useState(getPriceRange());
 
-  
+
   const applyFilters = () => {
     let filtered = [...tourPackages];
 
-   
+
     if (searchTerm) {
-      filtered = filtered.filter(trip => 
+      filtered = filtered.filter(trip =>
         trip.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         trip.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
         trip.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -367,52 +388,52 @@ const Catalog = () => {
       );
     }
 
-   
+
     if (selectedDestination) {
       filtered = filtered.filter(trip => trip.province === selectedDestination);
     }
 
-  
+
     if (selectedCountry) {
       filtered = filtered.filter(trip => trip.country === selectedCountry);
     }
 
-   
+
     if (selectedCategory) {
       filtered = filtered.filter(trip => trip.category === selectedCategory);
     }
 
-    
+
     if (selectedRating > 0) {
       filtered = filtered.filter(trip => trip.rating >= selectedRating);
     }
 
-    
+
     if (selectedDifficulty) {
       filtered = filtered.filter(trip => trip.difficulty === selectedDifficulty);
     }
 
-  
+
     if (selectedAccommodation) {
       filtered = filtered.filter(trip => trip.accommodation === selectedAccommodation);
     }
 
-    
+
     if (selectedMeals) {
       filtered = filtered.filter(trip => trip.meals === selectedMeals);
     }
 
-  
+
     if (selectedGroupSize) {
       filtered = filtered.filter(trip => trip.groupSize === selectedGroupSize);
     }
 
-    
-    filtered = filtered.filter(trip => 
+
+    filtered = filtered.filter(trip =>
       trip.currentPrice >= priceRange[0] && trip.currentPrice <= priceRange[1]
     );
 
-   
+
     if (selectedMonths.length > 0) {
       filtered = filtered.filter(trip => {
         const monthName = trip.date.split(' ')[1];
@@ -420,24 +441,24 @@ const Catalog = () => {
       });
     }
 
-    filtered = filtered.filter(trip => 
+    filtered = filtered.filter(trip =>
       trip.duration >= selectedDuration[0] && trip.duration <= selectedDuration[1]
     );
 
-    
+
     const activeIncludes = Object.entries(selectedIncludes)
       .filter(([_, value]) => value)
       .map(([key]) => key);
-    
+
     if (activeIncludes.length > 0) {
-      filtered = filtered.filter(trip => 
-        activeIncludes.some(include => 
+      filtered = filtered.filter(trip =>
+        activeIncludes.some(include =>
           trip.includes.some(item => item.toLowerCase().includes(include.toLowerCase()))
         )
       );
     }
 
- 
+
     switch (sortBy) {
       case 'valorados':
         filtered.sort((a, b) => b.rating - a.rating);
@@ -461,14 +482,14 @@ const Catalog = () => {
     return filtered;
   };
 
- 
+
   useEffect(() => {
     const filtered = applyFilters();
     setFilteredTrips(filtered);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   }, [
-    searchTerm, 
-    selectedDestination, 
+    searchTerm,
+    selectedDestination,
     selectedCountry,
     selectedCategory,
     selectedRating,
@@ -476,14 +497,14 @@ const Catalog = () => {
     selectedAccommodation,
     selectedMeals,
     selectedGroupSize,
-    priceRange, 
-    selectedMonths, 
-    selectedDuration, 
-    selectedIncludes, 
+    priceRange,
+    selectedMonths,
+    selectedDuration,
+    selectedIncludes,
     sortBy
   ]);
 
-  
+
   const indexOfLastPackage = currentPage * packagesPerPage;
   const indexOfFirstPackage = indexOfLastPackage - packagesPerPage;
   const currentPackages = filteredTrips.slice(indexOfFirstPackage, indexOfLastPackage);
@@ -491,7 +512,7 @@ const Catalog = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
- 
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -576,9 +597,9 @@ const Catalog = () => {
     setSortBy('valorados');
   };
 
-  
+
   const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-  
+
 
   const durationOptions = [
     { label: "1-3 días", min: 1, max: 3 },
@@ -587,7 +608,7 @@ const Catalog = () => {
     { label: "15+ días", min: 15, max: 30 }
   ];
 
-  
+
   const includesOptions = [
     { id: "vuelos", label: "Vuelos", icon: <FaPlane /> },
     { id: "hotel", label: "Hotel", icon: <FaHotel /> },
@@ -601,7 +622,7 @@ const Catalog = () => {
       <div className="catalog-header">
         <h1>Catálogo de Tours</h1>
         <p>Encuentra tu próxima aventura entre más de 50 destinos increíbles</p>
-        
+
         <div className="search-bar-container">
           <div className="search-bar">
             <FaSearch className="search-icon" />
@@ -613,18 +634,18 @@ const Catalog = () => {
             />
           </div>
         </div>
-        
+
         <div className="filter-toggle">
-          <button 
+          <button
             className={`filter-btn ${showFilters ? 'active' : ''}`}
             onClick={() => setShowFilters(!showFilters)}
           >
             <FaFilter /> Filtros
           </button>
-          
+
           <div className="filter-summary">
             <span>Mostrando {filteredTrips.length} resultados</span>
-            
+
             <div className="sort-container">
               <select value={sortBy} onChange={handleSortChange}>
                 <option value="valorados">Mejor valorados</option>
@@ -636,14 +657,14 @@ const Catalog = () => {
             </div>
           </div>
         </div>
-        
+
         {showFilters && (
           <div className="filters-panel">
             <div className="filters-grid">
               <div className="filter-group">
                 <h3><FaMapMarkerAlt /> Destino</h3>
-                <select 
-                  value={selectedDestination} 
+                <select
+                  value={selectedDestination}
                   onChange={handleDestinationChange}
                 >
                   <option value="">Todos los destinos</option>
@@ -652,11 +673,11 @@ const Catalog = () => {
                   ))}
                 </select>
               </div>
-              
+
               <div className="filter-group">
                 <h3><FaMapMarkerAlt /> País</h3>
-                <select 
-                  value={selectedCountry} 
+                <select
+                  value={selectedCountry}
                   onChange={handleCountryChange}
                 >
                   <option value="">Todos los países</option>
@@ -665,11 +686,11 @@ const Catalog = () => {
                   ))}
                 </select>
               </div>
-              
+
               <div className="filter-group">
                 <h3><FaRoute /> Categoría</h3>
-                <select 
-                  value={selectedCategory} 
+                <select
+                  value={selectedCategory}
                   onChange={handleCategoryChange}
                 >
                   <option value="">Todas las categorías</option>
@@ -678,12 +699,12 @@ const Catalog = () => {
                   ))}
                 </select>
               </div>
-              
+
               <div className="filter-group">
                 <h3><FaStar /> Valoración</h3>
                 <div className="rating-filter">
                   {[4, 4.5, 4.8].map(rating => (
-                    <button 
+                    <button
                       key={rating}
                       className={selectedRating === rating ? 'active' : ''}
                       onClick={() => handleRatingChange(rating)}
@@ -693,38 +714,38 @@ const Catalog = () => {
                   ))}
                 </div>
               </div>
-              
+
               <div className="filter-group">
-                <h3>Precio: €{priceRange[0]} - €{priceRange[1]}</h3>
+                <h3>Precio: ${priceRange[0]} - ${priceRange[1]}</h3>
                 <div className="price-inputs">
-                  <input 
-                    type="range" 
-                    min={minMaxPrice[0]} 
-                    max={minMaxPrice[1]} 
+                  <input
+                    type="range"
+                    min={minMaxPrice[0]}
+                    max={minMaxPrice[1]}
                     value={priceRange[0]}
                     onChange={handlePriceChange}
                     className="price-slider min-price"
                   />
-                  <input 
-                    type="range" 
-                    min={minMaxPrice[0]} 
-                    max={minMaxPrice[1]} 
+                  <input
+                    type="range"
+                    min={minMaxPrice[0]}
+                    max={minMaxPrice[1]}
                     value={priceRange[1]}
                     onChange={handleMaxPriceChange}
                     className="price-slider max-price"
                   />
                 </div>
                 <div className="price-labels">
-                  <span>€{minMaxPrice[0]}</span>
-                  <span>€{minMaxPrice[1]}</span>
+                  <span>${minMaxPrice[0]}</span>
+                  <span>${minMaxPrice[1]}</span>
                 </div>
               </div>
-              
+
               <div className="filter-group">
                 <h3><FaRegClock /> Duración</h3>
                 <div className="duration-options">
                   {durationOptions.map((option, index) => (
-                    <button 
+                    <button
                       key={index}
                       className={selectedDuration[0] === option.min && selectedDuration[1] === option.max ? 'active' : ''}
                       onClick={() => handleDurationChange(option.min, option.max)}
@@ -734,12 +755,12 @@ const Catalog = () => {
                   ))}
                 </div>
               </div>
-              
+
               <div className="filter-group">
                 <h3><FaCalendarAlt /> Temporada / Meses</h3>
                 <div className="months-grid">
                   {months.map((month, index) => (
-                    <button 
+                    <button
                       key={index}
                       className={selectedMonths.includes(month) ? 'active' : ''}
                       onClick={() => handleMonthToggle(month)}
@@ -749,11 +770,11 @@ const Catalog = () => {
                   ))}
                 </div>
               </div>
-              
+
               <div className="filter-group">
                 <h3><FaRoute /> Dificultad</h3>
-                <select 
-                  value={selectedDifficulty} 
+                <select
+                  value={selectedDifficulty}
                   onChange={handleDifficultyChange}
                 >
                   <option value="">Cualquier dificultad</option>
@@ -762,11 +783,11 @@ const Catalog = () => {
                   ))}
                 </select>
               </div>
-              
+
               <div className="filter-group">
                 <h3><FaHotel /> Alojamiento</h3>
-                <select 
-                  value={selectedAccommodation} 
+                <select
+                  value={selectedAccommodation}
                   onChange={handleAccommodationChange}
                 >
                   <option value="">Cualquier alojamiento</option>
@@ -775,11 +796,11 @@ const Catalog = () => {
                   ))}
                 </select>
               </div>
-              
+
               <div className="filter-group">
                 <h3><FaUtensils /> Comidas</h3>
-                <select 
-                  value={selectedMeals} 
+                <select
+                  value={selectedMeals}
                   onChange={handleMealsChange}
                 >
                   <option value="">Cualquier régimen</option>
@@ -788,11 +809,11 @@ const Catalog = () => {
                   ))}
                 </select>
               </div>
-              
+
               <div className="filter-group">
                 <h3><FaUsers /> Tamaño del grupo</h3>
-                <select 
-                  value={selectedGroupSize} 
+                <select
+                  value={selectedGroupSize}
                   onChange={handleGroupSizeChange}
                 >
                   <option value="">Cualquier tamaño</option>
@@ -801,13 +822,13 @@ const Catalog = () => {
                   ))}
                 </select>
               </div>
-              
+
               <div className="filter-group">
                 <h3>Servicios incluidos</h3>
                 <div className="includes-options">
                   {includesOptions.map((option) => (
                     <label key={option.id} className="include-checkbox">
-                      <input 
+                      <input
                         type="checkbox"
                         checked={selectedIncludes[option.id] || false}
                         onChange={() => handleIncludeToggle(option.id)}
@@ -819,7 +840,7 @@ const Catalog = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="filter-actions">
               <button className="clear-btn" onClick={clearFilters}>Limpiar filtros</button>
               <button className="apply-btn" onClick={() => setShowFilters(false)}>Aplicar filtros</button>
@@ -827,26 +848,26 @@ const Catalog = () => {
           </div>
         )}
       </div>
-      
+
       <div className="catalog-results">
         {filteredTrips.length > 0 ? (
           <>
             <div className="tour-packages-grid">
               {currentPackages.map(trip => (
-                <TourPackage key={trip.id} package={trip} />
+                <TourPackage key={trip.id} package={trip} onAddToCart={(e) => handleAddToCart(trip.id)} />
               ))}
             </div>
-            
+
             {totalPages > 1 && (
               <div className="pagination">
-                <button 
+                <button
                   className="prev-page"
                   onClick={() => currentPage > 1 && paginate(currentPage - 1)}
                   disabled={currentPage === 1}
                 >
                   Anterior
                 </button>
-                
+
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
                   <button
                     key={number}
@@ -856,8 +877,8 @@ const Catalog = () => {
                     {number}
                   </button>
                 ))}
-                
-                <button 
+
+                <button
                   className="next-page"
                   onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}

@@ -1,7 +1,7 @@
 import { FaStar, FaRegClock, FaMoon, FaUsers, FaCalendarAlt, FaCheck } from 'react-icons/fa';
 import './styles.css';
 
-const TourPackage = ({ package: pkg }) => {
+const TourPackage = ({ package: pkg, onAddToCart }) => {
   return (
     <div className="tour-package">
       <div className="package-header">
@@ -59,7 +59,7 @@ const TourPackage = ({ package: pkg }) => {
         
         <div className="package-actions">
           <button className="btn-details">Ver Detalles</button>
-          <button className="btn-add-cart">Añadir al Carrito</button>
+          <button className="btn-add-cart" onClick={onAddToCart} >Añadir al Carrito</button>
         </div>
       </div>
     </div>

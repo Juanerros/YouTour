@@ -17,7 +17,7 @@ const HomeSlider = () => {
         },
         {
           title: "Reserva Anticipada",
-          subtitle: "Ahorra hasta €200 reservando con 3 meses de antelación",
+          subtitle: "Ahorra hasta $200 reservando con 3 meses de antelación",
           description: "Planifica tu viaje perfecto y obtén los mejores precios",
           icon: <FaClock />,
           color: "linear-gradient(90deg, #2E8B57, #00b09b)",

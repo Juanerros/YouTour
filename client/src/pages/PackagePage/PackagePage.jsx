@@ -366,7 +366,7 @@ const PackagePage = () => {
         
         <div className="booking-card">
           <div className="price">
-            <span className="current-price">{selectedPackage.currentPrice} €</span>
+            <span className="current-price">{selectedPackage.currentPrice} $</span>
             <span className="per-person">por persona</span>
           </div>
           

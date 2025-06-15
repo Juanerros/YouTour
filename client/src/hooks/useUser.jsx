@@ -17,8 +17,8 @@ export function useUser() {
   const handleLogout = () => {
     window.localStorage.removeItem("user");
     setUser(null);
-    window.location.reload();
     navigate("/");
+    window.location.reload();
   };
 
   const handleLogin = (user) => {

@@ -109,9 +109,7 @@ router.post('/register', async (req, res) => {
                 email,
                 // Oculta la contraseña
                 pass: '[Hidden]',
-                name,
-                dni,
-                phone,
+                name
             }
         });
 
@@ -119,7 +117,7 @@ router.post('/register', async (req, res) => {
         // Eliminar usuario si hubo un registro fallido
         if (userId) await conex.execute('DELETE FROM users WHERE id_user = ?', [userId]);  
         if (err.code === 'ER_DUP_ENTRY') {
-            return handleError(res, 'El email ya se encuentra registrado', null, 409);
+            return handleError(res, 'El Email/DNI/Telefono ya se encuentra registrado', null, 409);
         }
         return handleError(res, 'Error al registrarse', err);
     }

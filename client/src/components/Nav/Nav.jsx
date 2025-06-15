@@ -1,10 +1,11 @@
+import './styles.css';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBars, FaTimes, FaShoppingCart } from 'react-icons/fa';
-import './styles.css';
-import '../../globals.css';
+import { useUser } from '../../hooks/useUser';
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, handleLogout } = useUser();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -23,25 +24,24 @@ const Nav = () => {
         <Link to="/" className="nav-link">
           <span>Inicio</span>
         </Link>
-        <Link to="/destinos" className="nav-link">
-          <span>Destinos</span>
-        </Link>
-        <Link to="/paquetes" className="nav-link">
-          <span>Paquetes</span>
-        </Link>
-        <Link to="/ofertas" className="nav-link">
-          <span>Ofertas</span>
+        <Link to="/catalog" className="nav-link">
+          <span>Catalogo</span>
         </Link>
         <Link to="/contacto" className="nav-link">
           <span>Contacto</span>
         </Link>
+        {(user && user.isAdmin) ? (
+          <Link to="/admin" className="nav-link">
+            <span>Admin</span>
+          </Link>
+        ): null}
       </div>
       <div className="nav-actions">
-        <button className="cart-btn">
+        <Link className="cart-btn" to={'/cart'}>
           <FaShoppingCart size={24} />
-          <span className="cart-count">0</span>
-        </button>
-        <button className="login-btn">Iniciar sesión</button>
+        </Link>
+        {user ? <button className="login-btn" onClick={handleLogout}>Cerrar sesión</button>
+          : <Link className="login-btn" to={'/auth'}>Iniciar sesión</Link>}
       </div>
 
       {/* Movil Responsive */}
