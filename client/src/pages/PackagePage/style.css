@@ -76,6 +76,9 @@
 
 .package-details {
   display: flex;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 6px;
 }
 
 .package-header {

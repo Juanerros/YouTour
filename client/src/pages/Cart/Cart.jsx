@@ -299,7 +299,10 @@ const Cart = () => {
                     <div key={item.id} className="cart-item">
                       <div className="">
                         <div className="">
-                          <h4>Servicios adicionales:</h4>
+                          <div className="top-cart">
+                            <h4>Servicios adicionales:</h4>
+                            <span className='total-price'>{calculateTotal()} $</span>
+                          </div>
                           <div className="">
                             {item.additionalServices.map(service => (
                               service.selected && (
@@ -324,7 +327,6 @@ const Cart = () => {
                     </div>
                   ))}
 
-                  <span>{calculateTotal()} $</span>
                 </div>
                 <div className="summary-total">
                   <span>Total:</span>

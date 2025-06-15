@@ -295,6 +295,17 @@
   margin-bottom: 1.5rem;
 }
 
+.top-cart {
+  display: flex;
+  justify-content: space-between;
+}
+
+.total-price {
+  width: auto;
+  font-weight: 700;
+  color: #2563eb;
+}
+
 .checkout-btn {
   width: 100%;
   background-color: #2563eb;
@@ -541,4 +552,20 @@
 
 .payment-icon.mercado-pago {
   background-color: #3b82f6;
+}
+
+.pay-button {
+  width: 100%;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pay-button:hover {
+  background-color: #1d4ed8;
 }

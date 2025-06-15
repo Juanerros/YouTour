@@ -7,6 +7,7 @@ import useNotification from '../../hooks/useNotification';
 import { FaEye, FaEyeSlash, FaShoppingCart } from 'react-icons/fa';
 import { MdModeOfTravel } from 'react-icons/md';
 
+
 const Auth = () => {
   const navigate = useNavigate();
   const { notify } = useNotification();
