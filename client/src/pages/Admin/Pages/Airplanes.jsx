@@ -28,7 +28,7 @@ const Airplanes = () => {
   const { paises, loading: paisesLoading, addPais } = usePaises();
   const { ciudades, loading: ciudadesLoading, fetchCiudadesPorPais, addCiudad } = useCiudades();
   const { continentes, loading: continentesLoading, addContinente } = useContinentes();
-  
+
   const [form, setForm] = useState({
     origen: '',
     destino: '',
@@ -614,34 +614,38 @@ const Airplanes = () => {
       {showContinenteModal && (
         <div className="modal-backdrop">
           <div className="modal modal-small">
-            <h2>Agregar Nuevo Continente</h2>
-            <form onSubmit={handleContinenteSubmit}>
-              <label>
-                Nombre del continente:
-                <input
-                  type="text"
-                  name="nombre"
-                  value={continenteForm.nombre}
-                  onChange={handleContinenteChange}
-                  required
-                />
-              </label>
-              <div className="modal-actions">
-                <button type="submit" className="btn-agregar">
-                  Agregar Continente
-                </button>
-                <button
-                  type="button"
-                  className="btn-cancelar"
-                  onClick={() => {
-                    setShowContinenteModal(false);
-                    setContinenteForm({ nombre: '' });
-                  }}
-                >
-                  Cancelar
-                </button>
+            <div className="modal-inputs-row">
+              <div className="modal-inputs-col">
+                <h2>Agregar Nuevo Continente</h2>
+                <form onSubmit={handleContinenteSubmit}>
+                  <label>
+                    Nombre del continente:
+                    <input
+                      type="text"
+                      name="nombre"
+                      value={continenteForm.nombre}
+                      onChange={handleContinenteChange}
+                      required
+                    />
+                  </label>
+                  <div className="modal-actions">
+                    <button type="submit" className="btn-agregar">
+                      Agregar Continente
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-cancelar"
+                      onClick={() => {
+                        setShowContinenteModal(false);
+                        setContinenteForm({ nombre: '' });
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}

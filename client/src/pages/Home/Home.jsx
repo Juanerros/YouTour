@@ -8,87 +8,43 @@ import 'swiper/css/pagination';
 import TourPackage from '../../components/Cards/TourPackage/TourPackage';
 import { useState, useEffect } from 'react';
 import { FaPhone, FaEnvelope, FaHeadset } from 'react-icons/fa';
+import HomeSlider from './components/HomeSlider';
+import Why from './components/Why';
 
 const Home = () => {
   const [packages, setPackages] = useState([]);
-        const [filteredPackages, setFilteredPackages] = useState([]);
-        const [searchTerm, setSearchTerm] = useState('');
-        const [showFilters, setShowFilters] = useState(false);
-        const [currentPage, setCurrentPage] = useState(1);
-        const packagesPerPage = 6;
-        
-        useEffect(() => {
-          setPackages(tourPackages);
-        setFilteredPackages(tourPackages);
-        }, []);
-        
-        const handleSearch = (e) => {
-          const term = e.target.value;
-        setSearchTerm(term);
-          
-          const filtered = packages.filter(pkg =>
-        pkg.title.toLowerCase().includes(term.toLowerCase()) ||
-        pkg.location.toLowerCase().includes(term.toLowerCase())
-        );
+  const [filteredPackages, setFilteredPackages] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const packagesPerPage = 6;
 
-        setFilteredPackages(filtered);
-        setCurrentPage(1);
-        };
+  useEffect(() => {
+    setPackages(tourPackages);
+    setFilteredPackages(tourPackages);
+  }, []);
 
-        const indexOfLastPackage = currentPage * packagesPerPage;
-        const indexOfFirstPackage = indexOfLastPackage - packagesPerPage;
-        const currentPackages = filteredPackages.slice(indexOfFirstPackage, indexOfLastPackage);
-        
-        const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const offers = [
-    {
-      title: "Paquete Todo Incluido",
-      subtitle: "Servicios gratuitos en tu primer viaje",
-      description: "Transfer, seguro y guía privado sin costo adicional",
-      icon: <FaGift />,
-      color: "linear-gradient(90deg, #e65c00, #F9423D)",
-      buttonText: "Ver Ofertas"
-    },
-    {
-      title: "Reserva Anticipada",
-      subtitle: "Ahorra hasta €200 reservando con 3 meses de antelación",
-      description: "Planifica tu viaje perfecto y obtén los mejores precios",
-      icon: <FaClock />,
-      color: "linear-gradient(90deg, #2E8B57, #00b09b)",
-      buttonText: "Ver Ofertas"
-    },
-    {
-      title: "¡Oferta Especial Europa!",
-      subtitle: "Hasta 30% de descuento en paquetes seleccionados",
-      description: "Descubre las ciudades más hermosas de Europa con precios increíbles",
-      icon: <FaPercent />,
-      color: "linear-gradient(90deg, #8E2DE2, #4A00E0)",
-      buttonText: "Ver Ofertas"
-    }
-  ];
+  const handleSearch = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
 
-  const features = [
-    {
-      icon: <FaSupport className="feature-icon" />,
-      title: "Viajes Seguros",
-      description: "Seguro completo incluido en todos nuestros paquetes"
-    },
-    {
-      icon: <FaSupport className="feature-icon" />,
-      title: "Soporte 24/7",
-      description: "Asistencia disponible en cualquier momento del día"
-    },
-    {
-      icon: <FaUsers className="feature-icon" />,
-      title: "Guías Expertos",
-      description: "Profesionales locales con amplio conocimiento"
-    },
-    {
-      icon: <FaStar className="feature-icon" />,
-      title: "Experiencias Únicas",
-      description: "Tours exclusivos que no encontrarás en otro lugar"
-    }
-  ];
+    const filtered = packages.filter(pkg =>
+      pkg.title.toLowerCase().includes(term.toLowerCase()) ||
+      pkg.location.toLowerCase().includes(term.toLowerCase())
+    );
+
+    setFilteredPackages(filtered);
+    setCurrentPage(1);
+  };
+
+  const indexOfLastPackage = currentPage * packagesPerPage;
+  const indexOfFirstPackage = indexOfLastPackage - packagesPerPage;
+  const currentPackages = filteredPackages.slice(indexOfFirstPackage, indexOfLastPackage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+
+
 
   return (
     <div className='Home'>
@@ -103,55 +59,17 @@ const Home = () => {
               <input type="text" placeholder="¿A dónde quieres viajar?" />
             </div>
 
-            <button className="search-btn">
+            <button className="search-btn rounded">
               <FaSearch /> Buscar Viajes
             </button>
           </div>
         </div>
       </div>
-      <section className="slider-offers">
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          spaceBetween={30}
-          slidesPerView={1}
-          navigation
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 5000 }}
-          className="offers-swiper"
-        >
-          {offers.map((offer, index) => (
-            <SwiperSlide key={index}>
-              <div className="offer-card" style={{ background: offer.color }}>
-                <div className="offer-content">
-                  <div className="offer-icon">{offer.icon}</div>
-                  <h2>{offer.title}</h2>
-                  <h3>{offer.subtitle}</h3>
-                  <p>{offer.description}</p>
-                  <button className="offer-btn">{offer.buttonText}</button>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </section>
-      <section className="why-us">
-        <div className="why-us-content">
-          <h2>¿Por qué elegir youTour?</h2>
-          <p>Ofrecemos una experiencia de viaje completa con los más altos estándares de calidad y servicio</p>
+      {/* Seccion de Slider Promocional */}
+      <HomeSlider />
+      {/* Seccion de features Promocionales */}
+      <Why />
 
-          <div className="features-grid">
-            {features.map((feature, index) => (
-              <div className="feature-card" key={index}>
-                <div className="feature-icon-wrapper">
-                  {feature.icon}
-                </div>
-                <h3>{feature.title}</h3>
-                <p>{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
       <section className="special-offers-container">
         <div className="special-offers-content">
           <h2>OFERTAS ESPECIALES</h2>
@@ -222,155 +140,16 @@ const Home = () => {
           </div>
         </div>
       </section>
-      
+
       <section className="catalog">
         <div className="catalog-container">
           <h2>Paquetes Turísticos</h2>
           <p>Descubre nuestros paquetes cuidadosamente diseñados para ofrecerte las mejores experiencias de viaje</p>
-
-          <div className="search-filters-container">
-            <div className="search-filters">
-              <div className="filter-item">
-                <label><FaSearch /> Buscar</label>
-                <input
-                  type="text"
-                  placeholder="Buscar"
-                  value={searchTerm}
-                  onChange={handleSearch}
-                />
-              </div>
-
-              <div className="filter-item">
-                <label><FaMapMarkerAlt /> Destino</label>
-                <select>
-                  
-                </select>
-              </div>
-
-              <div className="filter-item">
-                <label><FaCalendarAlt /> Fecha</label>
-                <input type="date" />
-              </div>
-
-              <button className="search-btn">
-                <FaSearch /> Buscar
-              </button>
-
-              <button
-                className="filter-toggle-btn"
-                onClick={() => setShowFilters(!showFilters)}
-              >
-                <FaFilter />
-              </button>
-            </div>
-          </div>
-
-          {showFilters && (
-            <div className="advanced-filters">
-              <h3>Filtros Avanzados</h3>
-              
-              <div className="filters-grid">
-                <div className="filter-group">
-                  <label>Categoría</label>
-                  <select>
-                    <option>Todas las categorías</option>
-                  </select>
-                </div>
-                
-                <div className="filter-group">
-                  <label>Duración</label>
-                  <select>
-                    <option>Cualquier duración</option>
-                  </select>
-                </div>
-                
-                <div className="filter-group">
-                  <label>Viajeros</label>
-                  <input type="number" min="1" defaultValue="1" />
-                </div>
-                
-                <div className="filter-group">
-                  <label>Época del año</label>
-                  <select>
-                    <option>Cualquier época</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="filters-grid">
-                <div className="filter-group">
-                  <label>Transporte</label>
-                  <select>
-                    <option>Cualquier transporte</option>
-                  </select>
-                </div>
-                
-                <div className="filter-group">
-                  <label>Alojamiento</label>
-                  <select>
-                    <option>Cualquier alojamiento</option>
-                  </select>
-                </div>
-                
-                <div className="filter-group">
-                  <label>Comidas</label>
-                  <select>
-                    <option>Sin especificar</option>
-                  </select>
-                </div>
-                
-                <div className="filter-group">
-                  <label>Dificultad</label>
-                  <select>
-                    <option>Cualquier nivel</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="filters-grid">
-                <div className="filter-group">
-                  <label>Idioma del guía</label>
-                  <select>
-                    <option>Cualquier idioma</option>
-                  </select>
-                </div>
-                
-                <div className="filter-group">
-                  <label>Tamaño del grupo</label>
-                  <select>
-                    <option>Cualquier tamaño</option>
-                  </select>
-                </div>
-                
-                <div className="filter-group">
-                  <label>Categoría hotel</label>
-                  <div className="star-rating">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <button key={star} className="star-btn">{star}★</button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="price-range">
-                <label>Rango de precio: €0 - €3000</label>
-                <input type="range" min="0" max="3000" defaultValue="3000" />
-              </div>
-              
-              <div className="filters-actions">
-                <button className="btn-clear">Limpiar Filtros</button>
-                <button className="btn-apply">Aplicar Filtros</button>
-              </div>
-            </div>
-          )}
-
           <div className="packages-grid">
             {currentPackages.map((pkg, index) => (
               <TourPackage key={index} package={pkg} />
             ))}
           </div>
-
-          {filteredPackages.length > packagesPerPage && (
             <div className="pagination">
               {Array.from({ length: Math.ceil(filteredPackages.length / packagesPerPage) }).map((_, index) => (
                 <button
@@ -389,14 +168,13 @@ const Home = () => {
                 Ver más <FaChevronRight />
               </button>
             </div>
-          )}
         </div>
       </section>
       <section className="contact">
         <div className="contact-container">
           <h2>Contáctanos</h2>
           <p>Nuestro equipo de expertos en viajes está aquí para ayudarte a crear la experiencia perfecta. Conecta con nosotros y comienza a planificar tu próxima aventura.</p>
-          
+
           <div className="contact-stats">
             <div className="contact-stat-card">
               <div className="contact-stat-icon">
@@ -405,7 +183,7 @@ const Home = () => {
               <h3>10,000+</h3>
               <p>Clientes Satisfechos</p>
             </div>
-            
+
             <div className="contact-stat-card">
               <div className="contact-stat-icon">
                 <FaClock />
@@ -413,7 +191,7 @@ const Home = () => {
               <h3>15</h3>
               <p>Tiempos Reducidos</p>
             </div>
-            
+
             <div className="contact-stat-card">
               <div className="contact-stat-icon">
                 <FaHeadset />
@@ -422,11 +200,11 @@ const Home = () => {
               <p>Tiempo de Respuesta</p>
             </div>
           </div>
-          
+
           <div className="contact-content">
             <div className="contact-info">
               <h3>Información de Contacto</h3>
-              
+
               <div className="contact-method">
                 <div className="contact-icon">
                   <FaPhone />
@@ -437,7 +215,7 @@ const Home = () => {
                   <span>Lunes a Viernes: 9:00 - 20:00</span>
                 </div>
               </div>
-              
+
               <div className="contact-method">
                 <div className="contact-icon">
                   <FaEnvelope />
@@ -448,7 +226,7 @@ const Home = () => {
                   <span>Respuesta garantizada en 24h</span>
                 </div>
               </div>
-              
+
               <div className="contact-method">
                 <div className="contact-icon">
                   <FaMapMarkerAlt />
@@ -459,7 +237,7 @@ const Home = () => {
                   <span>Calle del Turismo, 123</span>
                 </div>
               </div>
-              
+
               <div className="contact-method">
                 <div className="contact-icon">
                   <FaHeadset />
@@ -471,50 +249,50 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="contact-form">
               <h3>Envíanos un Mensaje</h3>
               <p>Completa el formulario y nos pondremos en contacto contigo lo antes posible.</p>
-              
+
               <form>
                 <div className="form-row">
                   <div className="form-group">
                     <label>Nombre completo *</label>
                     <input type="text" required />
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Correo electrónico *</label>
                     <input type="email" required />
                   </div>
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label>Teléfono</label>
                     <input type="tel" />
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Asunto *</label>
                     <input type="text" required />
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Mensaje *</label>
                   <textarea rows="5" required placeholder="Cuéntanos más detalles sobre tu consulta o viaje que deseas planear."></textarea>
                 </div>
-                
+
                 <div className="form-privacy">
                   <p>Al enviar este formulario, aceptas nuestros términos y política de datos.</p>
                 </div>
-                
+
                 <button type="submit" className="submit-btn">Enviar Mensaje</button>
               </form>
             </div>
           </div>
-          
+
           <div className="location-map">
             <h3>Nuestra ubicación</h3>
             <div className="map-container">
@@ -530,7 +308,7 @@ const Home = () => {
               </div>
               <div className="map-placeholder">
                 {/* Vincular el google maps despues */}
-                <img src="https://maps.googleapis.com/maps/api/staticmap?center=Madrid,Spain&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7CMadrid,Spain&key="/>
+                <img src="https://maps.googleapis.com/maps/api/staticmap?center=Madrid,Spain&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7CMadrid,Spain&key=" />
               </div>
             </div>
           </div>

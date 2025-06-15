@@ -234,3 +234,282 @@
   box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.3);
   outline: none;
 }
+
+.catalog-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.catalog-header {
+  margin-bottom: 2rem;
+}
+
+.catalog-header h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.catalog-header p {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.search-bar-container {
+  margin-bottom: 1.5rem;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 30px;
+  padding: 0.5rem 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+}
+
+.search-icon {
+  color: #999;
+  margin-right: 0.8rem;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 0.8rem 0;
+  font-size: 1rem;
+}
+
+.filter-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f5f5f5;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+}
+
+.filter-btn.active {
+  background: #1e88e5;
+  color: white;
+}
+
+.filter-summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.sort-container select {
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  font-size: 0.9rem;
+}
+
+.filters-panel {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group h3 {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  font-size: 0.9rem;
+}
+
+.price-inputs {
+  position: relative;
+  height: 30px;
+  margin-bottom: 0.5rem;
+}
+
+.price-slider {
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  background: #e0e0e0;
+  -webkit-appearance: none;
+  pointer-events: none;
+}
+
+.price-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1e88e5;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.price-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.duration-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.duration-options button {
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.duration-options button.active {
+  background: #1e88e5;
+  color: white;
+  border-color: #1e88e5;
+}
+
+.months-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.months-grid button {
+  padding: 0.5rem 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.months-grid button.active {
+  background: #1e88e5;
+  color: white;
+  border-color: #1e88e5;
+}
+
+.includes-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.include-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.clear-btn, .apply-btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.clear-btn {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #666;
+}
+
+.apply-btn {
+  background: #1e88e5;
+  border: none;
+  color: white;
+}
+
+.tour-packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.no-results h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.no-results p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .filter-toggle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .filter-summary {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .tour-packages-grid {
+    grid-template-columns: 1fr;
+  }
+}

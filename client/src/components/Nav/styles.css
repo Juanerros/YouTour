@@ -4,12 +4,13 @@
 }
 .nav-container {
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
+  position: fixed;
   padding: 0.5rem 2rem;
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  position: sticky;
   top: 0;
   z-index: 1000;
 }
@@ -140,9 +141,9 @@ a {
 
 .mobile-menu.active {
   right: 0;
+  z-index: 1000000000000000000;
 }
 
-/* Add overlay for mobile menu */
 .menu-overlay {
   display: none;
   position: fixed;
@@ -161,7 +162,7 @@ a {
   opacity: 1;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .nav-links, .nav-actions {
     display: none;
   }
@@ -186,6 +187,7 @@ a {
 
   .mobile-menu.active {
     right: 0;
+    z-index: 10000000;
   }
 
   .mobile-link {
