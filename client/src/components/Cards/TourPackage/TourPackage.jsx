@@ -17,7 +17,7 @@ const TourPackage = ({ package: pkg, onAddToCart }) => {
       </div>
       
       <div className="package-body">
-        <h3 className="package-title">{pkg.title}</h3>
+        <h3 className="package-title">{pkg.nombre}</h3>
         
         <div className="package-details">
           <div className="detail-item">
