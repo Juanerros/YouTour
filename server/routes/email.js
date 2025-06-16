@@ -21,16 +21,13 @@ router.post('/order-confirmation', async (req, res) => {
             
             Detalles de tu reserva:
             - Número de pedido: ${orderId}
-            - Destino: ${orderDetails.location || 'No especificado'}
             - Paquete: ${orderDetails.title || 'No especificado'}
             - Total: ${orderDetails.total} $
-            
-            Nos pondremos en contacto contigo pronto para confirmar todos los detalles.
             
             ¡Gracias por confiar en YouTour!
             
             Atentamente,
-            El equipo de YouTour
+            El equipo de YouTour.
         `;
 
         // Crear el mensaje para el jefe de ventas
@@ -47,20 +44,41 @@ router.post('/order-confirmation', async (req, res) => {
         `;
 
         // Enviar correo al cliente
-        await sendEmail({ body: { email: userInfo.email, subject: clientSubject, message: clientMessage } }, res);
+        const clientSent = await sendEmail({
+            to: userInfo.email, 
+            subject: clientSubject, 
+            text: clientMessage
+        });
 
-        // Enviar correo al jefe de ventas
+        // Obtener correos de administradores
+        const [emails] = await conex.execute('SELECT email FROM login WHERE isAdmin = true AND email IS NOT NULL');
 
-        const [emails] = await conex.execute(
-            'SELECT email FROM users WHERE is = true'
-        );
+        // Validar que hay administradores
+        if (emails.length === 0) return handleError(res, 'No hay administradores registrados', null, 404);
 
+        // Enviar correos a administradores
+        let adminEmailsSent = 0;
         for (const email of emails) {
-            await sendEmail({ body: { email: email.email, subject: salesSubject, message: salesMessage } }, res);
+            if (email.email) { // Validar que el email no sea null
+                const sent = await sendEmail({
+                    to: email.email, 
+                    subject: salesSubject, 
+                    text: salesMessage
+                });
+                if (sent) adminEmailsSent++;
+            }
         }
 
-
-        res.status(200).json({ message: 'Correos de confirmación enviados correctamente' });
+        // Enviar una sola respuesta HTTP
+        if (clientSent && adminEmailsSent > 0) {
+            res.status(200).json({ 
+                message: 'Correos de confirmación enviados correctamente',
+                clientEmailSent: clientSent,
+                adminEmailsSent: adminEmailsSent
+            });
+        } else {
+            return handleError(res, 'Error al enviar algunos correos');
+        }
     } catch (error) {
         handleError(res, 'Error al enviar los correos de confirmación', error);
     }

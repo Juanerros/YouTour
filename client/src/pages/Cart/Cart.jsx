@@ -14,7 +14,7 @@ const Cart = () => {
   const { notify } = useNotification();
   const { confir } = useConfirmation();
 
-  const [view, setView] = useState('cart'); 
+  const [view, setView] = useState('cart'); // cart o checkout
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cartId, setCartId] = useState(null);
@@ -257,65 +257,42 @@ const Cart = () => {
               <div className="cart-items">
                 {cartItems.map(item => (
                   <div key={item.id} className="cart-item">
-                    {item.estado == 'Activo' ? (
-                      <>
-                        <div className="cart-item-image">
-                          <img src={item.image} alt={item.title} />
-                          <button className="remove-item-btn" onClick={() => handleRemoveItem(item.id)}>
-                            <FaTimes />
-                          </button>
-                        </div>
+                    <div className="cart-item-image">
+                      <img src={item.image} alt={item.title} />
+                      <button className="remove-item-btn" onClick={() => handleRemoveItem(item.id)}>
+                        <FaTimes />
+                      </button>
+                    </div>
 
-                        <div className="cart-item-details">
-                          <div className="cart-item-header">
-                            <h3>{item.title}</h3>
-                            <div className="cart-item-location">{item.location}</div>
-                            <div className="cart-item-price">{item.currentPrice} $</div>
-                          </div>
+                    <div className="cart-item-details">
+                      <div className="cart-item-header">
+                        <h3>{item.title}</h3>
+                        <div className="cart-item-location">{item.location}</div>
+                        <div className="cart-item-price">{item.currentPrice} $</div>
+                      </div>
 
-                          <div className="additional-services">
-                            <h4>Servicios adicionales</h4>
-                            <div className="services-list">
-                              {item.additionalServices.map(service => (
-                                <div
-                                  key={service.id}
-                                  className={`service-item ${service.selected ? 'selected' : ''}`}
-                                  onClick={() => handleServiceToggle(item.id, service.id)}
-                                >
-                                  {service.icon === 'car' && <FaCar />}
-                                  {service.icon === 'user' && <FaUser />}
-                                  {service.icon === 'heart' && <FaHeart />}
-                                  <div className="service-details">
-                                    <span className="service-name">{service.name}</span>
-                                    <span className="service-price">{service.price} $</span>
-                                  </div>
-                                </div>
-                              ))}
+                      <div className="additional-services">
+                        <h4>Servicios adicionales</h4>
+                        <div className="services-list">
+                          {item.additionalServices.map(service => (
+                            <div
+                              key={service.id}
+                              className={`service-item ${service.selected ? 'selected' : ''}`}
+                              onClick={() => handleServiceToggle(item.id, service.id)}
+                            >
+                              {service.icon === 'car' && <FaCar />}
+                              {service.icon === 'user' && <FaUser />}
+                              {service.icon === 'heart' && <FaHeart />}
+                              <div className="service-details">
+                                <span className="service-name">{service.name}</span>
+                                <span className="service-price">{service.price} $</span>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div key={item.id} className="cart-item">
-                        <div className="cart-item-image">
-                          <img src={item.image} alt={item.title} />
-                          <button className="remove-item-btn" onClick={() => handleRemoveItem(item.id)}>
-                            <FaTimes />
-                          </button>
-                        </div>
-
-                        <div className="cart-item-details">
-                          <div className="cart-item-header">
-                            <h3>{item.title}</h3>
-                            <div className="cart-item-location">{item.location}</div>
-                            <div className="cart-item-price">{item.currentPrice} $</div>
-                          </div>
+                          ))}
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
-
-
                 ))}
               </div>
 
@@ -327,10 +304,7 @@ const Cart = () => {
                     <div key={item.id} className="cart-item">
                       <div className="">
                         <div className="">
-                          <div className="top-cart">
-                            <h4>Servicios adicionales:</h4>
-                            <span className='total-price'>{calculateTotal()} $</span>
-                          </div>
+                          <h4>Servicios adicionales:</h4>
                           <div className="">
                             {item.additionalServices.map(service => (
                               service.selected && (
