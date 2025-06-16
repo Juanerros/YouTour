@@ -5,6 +5,7 @@ import { useUser } from '../../hooks/useUser';
 import axios from '../../api/axios';
 import useNotification from '../../hooks/useNotification';
 import { FaEye, FaEyeSlash, FaShoppingCart } from 'react-icons/fa';
+import LogoWhite from '/img/LogoWhite.png';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -118,8 +119,8 @@ const Auth = () => {
       <div className="auth-container">
         <div className="auth-left-panel">
           <div className="auth-logo">
-            <FaShoppingCart className="logo-icon" />
-            <span>youTour</span>
+            <img src={LogoWhite} alt="" className="logo-icon"/>
+            <span>YouTour</span>
           </div>
           
           <h1>{isLogin ? '¡Bienvenido de vuelta!' : 'Únete a youTour'}</h1>

@@ -76,7 +76,10 @@
 
 .package-details {
   display: flex;
-  border: solid 1px blue;
+  gap: 8px;
+  border: 1px solid #0044ff28;
+  padding: 4px;
+  border-radius: 6px;
 }
 
 .package-header {
