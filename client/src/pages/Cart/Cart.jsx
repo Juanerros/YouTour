@@ -12,7 +12,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const { notify } = useNotification();
-  const { confir } = useConfirmation();
+  const { confirm } = useConfirmation();
 
   const [view, setView] = useState('cart'); // cart o checkout
   const [cartItems, setCartItems] = useState([]);
@@ -125,7 +125,7 @@ const Cart = () => {
   };
 
   const handleRemoveItem = async (itemId) => {
-    confir('¿Estás seguro de que deseas eliminar este paquete del carrito?', async () => {
+    confirm('¿Estás seguro de que deseas eliminar este paquete del carrito?', async () => {
       try {
         setLoading(true);
         await axios.delete(`/cart/${cartId}`);
