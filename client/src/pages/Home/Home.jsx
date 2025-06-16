@@ -14,14 +14,23 @@ import { useUser } from '../../hooks/useUser';
 import useTourPackages from '../../hooks/useTourPackages';
 
 const Home = () => {
+  const [packages, setPackages] = useState([]);
+  const [filteredPackages, setFilteredPackages] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const packagesPerPage = 6;
+
   const [isLoading, setIsLoading] = useState(false);
   const { notify } = useNotification();
   const { user } = useUser();
+  
+  const [filteredTrips, setFilteredTrips] = useState([]);
+  const totalPages = Math.ceil(filteredTrips.length / packagesPerPage);
   // Hook personalizado para obtener los paquetes turísticos
   const { tourPackages, isLoading: isLoadingPackages, error } = useTourPackages();
 
   // Estado inicial para los viajes filtrados
-  const [filteredTrips, setFilteredTrips] = useState([]);
 
   // Efecto para actualizar los viajes filtrados cuando se reciben los paquetes
   useEffect(() => {
@@ -45,12 +54,6 @@ const Home = () => {
     }
   };
 
-  const [packages, setPackages] = useState([]);
-  const [filteredPackages, setFilteredPackages] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const packagesPerPage = 6;
 
   useEffect(() => {
     setPackages(tourPackages);
