@@ -136,69 +136,6 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="catalog">
-        <div className="catalog-container">
-          <h2>Paquetes Turísticos</h2>
-          <p>Descubre nuestros paquetes cuidadosamente diseñados para ofrecerte las mejores experiencias de viaje</p>
-          <div className="catalog-results">
-        {filteredTrips.length > 0 ? (
-          <>
-            <div className="tour-packages-grid">
-              {currentPackages.map(trip => (
-                <TourPackage key={trip.id} package={trip} onAddToCart={(e) => handleAddToCart(trip.id)} />
-              ))}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="pagination">
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
-                  <button
-                    key={number}
-                    onClick={() => paginate(number)}
-                    className={currentPage === number ? 'active' : ''}
-                  >
-                    {number}
-                  </button>
-                ))}
-
-                <button
-                  className="next-page"
-                  onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  Siguiente
-                </button>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="no-results">
-            <h3>No se encontraron viajes</h3>
-            
-          </div>
-        )}
-      </div>
-            <div className="pagination">
-              {Array.from({ length: Math.ceil(filteredPackages.length / packagesPerPage) }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => paginate(index + 1)}
-                  className={currentPage === index + 1 ? 'active' : ''}
-                >
-                  {index + 1}
-                </button>
-              ))}
-              <button
-                className="next-page"
-                onClick={() => currentPage < Math.ceil(filteredPackages.length / packagesPerPage) && paginate(currentPage + 1)}
-                disabled={currentPage === Math.ceil(filteredPackages.length / packagesPerPage)}
-              >
-                Ver más <FaChevronRight />
-              </button>
-            </div>
-        </div>
-      </section>
       <section className="contact">
         <div className="contact-container">
           <h2>Contáctanos</h2>
