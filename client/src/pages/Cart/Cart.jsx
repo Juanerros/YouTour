@@ -9,6 +9,7 @@ import useConfirmation from '../../hooks/useConfirmation';
 import { LuUsers } from 'react-icons/lu';
 
 const Cart = () => {
+
   const navigate = useNavigate();
   const { user } = useUser();
   const { notify } = useNotification();
@@ -199,6 +200,59 @@ const Cart = () => {
   const handleBackToCart = () => {
     setView('cart');
   };
+
+  const createCheckout = async (title, price) => {
+    const accessToken =
+      "APP_USR-3491276126078984-120209-86c0f97353033dd82faa0835a94d5e66-2115182646"; 
+
+    const validPrice = Number(price) || 0; 
+    const body = {
+      items: [
+        {
+          title: title,
+          quantity: 1,
+          currency_id: "ARS",
+          unit_price: validPrice,
+        },
+      ],
+      back_urls: {
+        success: "https://www.tusitio.com/success",
+        failure: "https://www.tusitio.com/failure",
+        pending: "https://www.tusitio.com/pending",
+      },
+      auto_return: "approved",
+    };
+
+    try {
+      const response = await fetch(
+        "https://api.mercadopago.com/checkout/preferences",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.init_point) {
+        // Redirige al link de pago
+        window.open(data.init_point, "_blank");
+      } else {
+        console.error("Error al generar el link de pago:", data);
+      }
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+    }
+  };
+  
+  const makeCheckout = (item, price) => {
+    handleSubmitOrder();
+    createCheckout(item, price);
+  }
 
   const handleSubmitOrder = async () => {
     try {
@@ -583,7 +637,7 @@ const Cart = () => {
                 </div>
               </div>
 
-              <button className="pay-button" onClick={handleSubmitOrder}>
+              <button className="pay-button" onClick={createCheckout("Paquete de Turismo", 25000)}>
                 Pagar con {formData.paymentMethod === 'uala' ? 'Ualá' : 'Mercado Pago'} {calculateTotal()} $
               </button>
             </div>

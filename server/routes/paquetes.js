@@ -9,8 +9,19 @@ init();
 // Obtener todos los paquetes
 router.get('/', async (req, res) => {
     try {
+        // Obtener paquetes con información de ciudad y país
         const [paquetes] = await conex.execute(
-            'SELECT * FROM paquetes'
+            'SELECT p.*, ' +
+            'c.nombre as ciudad, pa.nombre as pais, co.nombre as continente, ' +
+            'h.nombre as alojamiento, h.rating as hotel_rating ' +
+            'FROM paquetes p ' +
+            'LEFT JOIN paquete_vuelos pv ON p.id_paquete = pv.id_paquete ' +
+            'LEFT JOIN vuelos v ON pv.id_vuelo = v.id_vuelo ' +
+            'LEFT JOIN ciudades c ON v.destino = c.id_ciudad ' +
+            'LEFT JOIN paises pa ON c.id_pais = pa.id_pais ' +
+            'LEFT JOIN continentes co ON pa.id_continente = co.id_continente ' +
+            'LEFT JOIN paquete_hoteles ph ON p.id_paquete = ph.id_paquete ' +
+            'LEFT JOIN hoteles h ON ph.id_hotel = h.id_hotel'
         );
         res.json(paquetes);
     } catch (err) {
@@ -37,7 +48,7 @@ router.get('/:id', async (req, res) => {
             'SELECT v.*, pv.id_paquete_vuelo, ' +
             'origen.nombre as origen_nombre, origen.codigo_aeropuerto as origen_codigo, ' +
             'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo, ' +
-            'destino.id_pais as destino_id_pais ' +  // <- Añadir esta línea
+            'destino.id_pais as destino_id_pais ' +
             'FROM paquete_vuelos pv ' +
             'INNER JOIN vuelos v ON pv.id_vuelo = v.id_vuelo ' +
             'INNER JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
@@ -61,9 +72,9 @@ router.get('/:id', async (req, res) => {
         // Obtener actividades del paquete
         const [actividades] = await conex.execute(
             'SELECT a.*, pa.id_paquete_actividad, pa.fecha, pa.hora, pa.incluido_base, ' +
-            'tipo, c.nombre as ciudad, p.nombre as pais' +
+            'a.tipo, c.nombre as ciudad, p.nombre as pais ' +
             'FROM paquete_actividades pa ' +
-            'INNER JOIN actividades a ON pa.id_actividad = a.id_actividad '+
+            'INNER JOIN actividades a ON pa.id_actividad = a.id_actividad ' +
             'INNER JOIN ciudades c ON a.id_ciudad = c.id_ciudad ' +
             'INNER JOIN paises p ON c.id_pais = p.id_pais ' +
             'WHERE pa.id_paquete = ?',

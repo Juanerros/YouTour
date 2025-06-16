@@ -7,7 +7,7 @@ const init = async () => conex = await createConnection();
 init();
 
 // Obtener todos los carritos para administración
-router.get('/', async (req, res) => {
+router.get('/all', async (req, res) => {
     try {
         const [carts] = await conex.execute(
             `SELECT * FROM carritos`

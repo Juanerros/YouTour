@@ -12,7 +12,7 @@ const usePedidos = () => {
     try {
       setLoading(true);
       // Obtenemos los carritos en lugar de pedidos
-      const response = await axios.get('/api/cart/admin');
+      const response = await axios.get('/cart/admin');
       // Asegurarse de que pedidos siempre sea un array
       setPedidos(Array.isArray(response.data) ? response.data : []);
       setError(null);
@@ -29,7 +29,7 @@ const usePedidos = () => {
     try {
       setLoading(true);
       // Actualizamos el estado del carrito
-      await axios.put(`/api/cart/${idCarrito}/status`, { estado: nuevoEstado });
+      await axios.put(`/cart/${idCarrito}/status`, { estado: nuevoEstado });
       // Refrescar la lista de carritos
       await fetchPedidos();
       return { success: true };
