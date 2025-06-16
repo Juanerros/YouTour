@@ -36,7 +36,8 @@ router.get('/:id', async (req, res) => {
         const [vuelos] = await conex.execute(
             'SELECT v.*, pv.id_paquete_vuelo, ' +
             'origen.nombre as origen_nombre, origen.codigo_aeropuerto as origen_codigo, ' +
-            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo ' +
+            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo, ' +
+            'destino.id_pais as destino_id_pais ' +  // <- Añadir esta línea
             'FROM paquete_vuelos pv ' +
             'INNER JOIN vuelos v ON pv.id_vuelo = v.id_vuelo ' +
             'INNER JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
@@ -60,7 +61,7 @@ router.get('/:id', async (req, res) => {
         // Obtener actividades del paquete
         const [actividades] = await conex.execute(
             'SELECT a.*, pa.id_paquete_actividad, pa.fecha, pa.hora, pa.incluido_base, ' +
-            't.nombre as tipo, c.nombre as ciudad, p.nombre as pais, d.nombre as dificultad ' +
+            'tipo, c.nombre as ciudad, p.nombre as pais' +
             'FROM paquete_actividades pa ' +
             'INNER JOIN actividades a ON pa.id_actividad = a.id_actividad '+
             'INNER JOIN ciudades c ON a.id_ciudad = c.id_ciudad ' +
@@ -100,6 +101,40 @@ router.get('/:id', async (req, res) => {
         res.json(paqueteCompleto);
     } catch (err) {
         handleError(res, 'Error al obtener detalles del paquete', err);
+    }
+});
+
+// En el router de hoteles, añadir este nuevo endpoint:
+router.get('/por-vuelo/:idVuelo', async (req, res) => {
+    const { idVuelo } = req.params;
+    try {
+        // Primero obtener el país de destino del vuelo
+        const [vuelo] = await conex.execute(
+            'SELECT c.id_pais FROM vuelos v ' +
+            'INNER JOIN ciudades c ON v.destino = c.id_ciudad ' +
+            'WHERE v.id_vuelo = ?',
+            [idVuelo]
+        );
+        
+        if (vuelo.length === 0) {
+            return handleError(res, 'Vuelo no encontrado', null, 404);
+        }
+        
+        const idPais = vuelo[0].id_pais;
+        
+        // Luego obtener los hoteles de ese país
+        const [hoteles] = await conex.execute(
+            'SELECT h.*, c.nombre as ciudad, p.nombre as pais ' +
+            'FROM hoteles h ' +
+            'INNER JOIN ciudades c ON h.id_ciudad = c.id_ciudad ' +
+            'INNER JOIN paises p ON c.id_pais = p.id_pais ' +
+            'WHERE c.id_pais = ?',
+            [idPais]
+        );
+        
+        res.json(hoteles);
+    } catch (err) {
+        handleError(res, 'Error al obtener hoteles por vuelo', err);
     }
 });
 
@@ -155,12 +190,6 @@ router.post('/', async (req, res) => {
                 );
             }
         }
-        
-        // Establecer estado inicial del paquete (Creado)
-        await conex.execute(
-            'INSERT INTO paquete_seguimiento (id_paquete, id_estado, notas) VALUES (?, ?, ?)',
-            [idPaquete, 1, 'Paquete creado']
-        );
         
         res.status(201).json({
             id_paquete: idPaquete,

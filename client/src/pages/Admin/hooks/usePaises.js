@@ -7,7 +7,7 @@ const usePaises = () => {
 
   const fetchPaises = async () => {
     try {
-      const response = await fetch('http://localhost:5001/paises');
+      const response = await fetch('http://localhost:5001/api/paises');
       if (!response.ok) {
         throw new Error('Error al obtener los países');
       }
@@ -23,7 +23,7 @@ const usePaises = () => {
 
   const addPais = async (pais) => {
     try {
-      const response = await fetch('http://localhost:5001/paises', {
+      const response = await fetch('http://localhost:5001/api/paises', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

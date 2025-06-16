@@ -9,13 +9,22 @@ const usePaquetes = () => {
   const [error, setError] = useState(null);
   
   // Obtener datos de otros hooks
-  const { vuelos } = useVuelos();
-  const { hoteles } = useHoteles();
+  const { vuelos, selectedVuelo, selectVuelo } = useVuelos();
+  const { hoteles, filteredHoteles, filterHotelesByPais, resetHotelFilter } = useHoteles();
   const { actividades } = useActividades();
+
+  // Efecto para filtrar hoteles cuando se selecciona un vuelo
+  useEffect(() => {
+    if (selectedVuelo && selectedVuelo.destino_id_pais) {
+      filterHotelesByPais(selectedVuelo.destino_id_pais);
+    } else {
+      resetHotelFilter();
+    }
+  }, [selectedVuelo, filterHotelesByPais, resetHotelFilter]);
 
   const fetchPaquetes = async () => {
     try {
-      const response = await fetch('http://localhost:5001/paquetes');
+      const response = await fetch('http://localhost:5001/api/paquetes');
       if (!response.ok) {
         throw new Error('Error al obtener los paquetes');
       }
@@ -31,7 +40,7 @@ const usePaquetes = () => {
 
   const addPaquete = async (paquete) => {
     try {
-      const response = await fetch('http://localhost:5001/paquetes', {
+      const response = await fetch('http://localhost:5001/api/paquetes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +63,7 @@ const usePaquetes = () => {
 
   const addActividadAPaquete = async (idPaquete, actividadData) => {
     try {
-      const response = await fetch(`http://localhost:5001/paquetes/${idPaquete}/actividades`, {
+      const response = await fetch(`http://localhost:5001/api/paquetes/${idPaquete}/actividades`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +76,6 @@ const usePaquetes = () => {
       }
 
       const resultado = await response.json();
-      // Actualizar el estado local si es necesario
       fetchPaquetes();
       return resultado;
     } catch (err) {
@@ -78,7 +86,7 @@ const usePaquetes = () => {
 
   const getPaqueteById = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5001/paquetes/${id}`);
+      const response = await fetch(`http://localhost:5001/api/paquetes/${id}`);
       if (!response.ok) {
         throw new Error('Error al obtener el paquete');
       }
@@ -97,7 +105,9 @@ const usePaquetes = () => {
   return {
     paquetes,
     vuelos,
-    hoteles,
+    selectedVuelo,
+    selectVuelo,
+    hoteles: filteredHoteles, // Usamos los hoteles filtrados
     actividades,
     loading,
     error,

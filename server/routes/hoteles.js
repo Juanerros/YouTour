@@ -16,11 +16,27 @@ router.get('/amenidades', async (req, res) => {
     }
 });
 
+// Obtener amenidades de un hotel específico
+router.get('/:id/amenidades', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [amenidades] = await conex.execute(
+            'SELECT a.* FROM amenidades a ' +
+            'INNER JOIN hotel_amenidades ha ON a.id_amenidad = ha.id_amenidad ' +
+            'WHERE ha.id_hotel = ?',
+            [id]
+        );
+        res.json(amenidades);
+    } catch (err) {
+        handleError(res, 'Error al obtener amenidades del hotel', err);
+    }
+});
+
 // Obtener todos los hoteles
 router.get('/', async (req, res) => {
     try {
         const [hoteles] = await conex.execute(
-            'SELECT h.*, c.nombre as ciudad, p.nombre as pais ' +
+            'SELECT h.*, c.nombre as ciudad, c.id_pais, p.nombre as pais ' +
             'FROM hoteles h ' +
             'INNER JOIN ciudades c ON h.id_ciudad = c.id_ciudad ' +
             'INNER JOIN paises p ON c.id_pais = p.id_pais'

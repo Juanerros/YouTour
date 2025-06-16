@@ -10,6 +10,11 @@ const Packages = () => {
   const [currentTab, setCurrentTab] = useState('resumen');
   const [selectedPaquete, setSelectedPaquete] = useState(null);
   const [selectedActividades, setSelectedActividades] = useState([]);
+  const [showActividadesModal, setShowActividadesModal] = useState(false);
+  const [filteredHoteles, setFilteredHoteles] = useState([]);
+  const [vueloDestinoPais, setVueloDestinoPais] = useState(null);
+  const [vueloDestinoCiudad, setVueloDestinoCiudad] = useState(null);
+  const [availableActividades, setAvailableActividades] = useState([]);
   
   const { 
     paquetes, 
@@ -33,19 +38,118 @@ const Packages = () => {
     fecha_inicio: '',
     fecha_fin: '',
     vuelo_id: '',
-    hotel_id: '',
-    fecha_entrada_hotel: '',
-    fecha_salida_hotel: ''
+    hotel_id: ''
   });
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    
+    if (name === 'fecha_inicio' || name === 'fecha_fin') {
+      // Cuando se cambian las fechas, calcular automáticamente la duración en días
+      const updatedForm = { ...form, [name]: value };
+      
+      if (updatedForm.fecha_inicio && updatedForm.fecha_fin) {
+        const fechaInicio = new Date(updatedForm.fecha_inicio);
+        const fechaFin = new Date(updatedForm.fecha_fin);
+        
+        // Calcular la diferencia en días
+        const diffTime = Math.abs(fechaFin - fechaInicio);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        // Actualizar la duración en días
+        updatedForm.duracion_dias = diffDays;
+        setForm(updatedForm);
+      } else {
+        setForm(updatedForm);
+      }
+    } else if (name === 'vuelo_id' && value) {
+      // Cuando se selecciona un vuelo, filtrar hoteles por el país de destino
+      const selectedVuelo = vuelos.find(v => v.id_vuelo === parseInt(value));
+      if (selectedVuelo) {
+        // Guardar información del destino del vuelo
+        setVueloDestinoPais(selectedVuelo.destino_id_pais);
+        setVueloDestinoCiudad(selectedVuelo.destino);
+        
+        // Filtrar hoteles que estén en el mismo país que el destino del vuelo
+        const hotelesEnDestino = hoteles.filter(hotel => {
+          // Filtrar por país de destino del vuelo
+          return hotel.id_pais === selectedVuelo.destino_id_pais;
+        });
+        
+        setFilteredHoteles(hotelesEnDestino);
+        
+        // Resetear el hotel seleccionado
+        setForm(prev => ({ ...prev, [name]: value, hotel_id: '' }));
+        
+        // Filtrar actividades disponibles según el destino (por ciudad y país)
+        const actividadesEnDestino = actividades.filter(actividad => {
+          return actividad.id_ciudad === selectedVuelo.destino || 
+                 actividad.id_pais === selectedVuelo.destino_id_pais;
+        });
+        setAvailableActividades(actividadesEnDestino);
+      }
+    } else if (name === 'hotel_id' && value) {
+      // Cuando se selecciona un hotel, mostrar actividades del destino y amenidades del hotel
+      const selectedHotel = filteredHoteles.find(h => h.id_hotel === parseInt(value));
+      if (selectedHotel) {
+        // Primero obtener actividades del destino
+        const actividadesDestino = actividades.filter(actividad => {
+          return actividad.id_ciudad === selectedHotel.id_ciudad || 
+                 actividad.id_pais === selectedHotel.id_pais;
+        });
+        
+        // Luego obtener las amenidades del hotel para mostrar como actividades adicionales
+        fetch(`http://localhost:5001/api/hoteles/${value}/amenidades`)  
+          .then(response => response.json())
+          .then(amenidades => {
+            // Combinar actividades del destino con amenidades del hotel
+            const actividadesConAmenidades = [...actividadesDestino];
+            
+            // Agregar amenidades como actividades potenciales si no existen ya
+            amenidades.forEach(amenidad => {
+              const actividadExistente = actividadesDestino.find(act => 
+                act.nombre.toLowerCase().includes(amenidad.nombre.toLowerCase()) ||
+                amenidad.nombre.toLowerCase().includes(act.nombre.toLowerCase())
+              );
+              
+              if (!actividadExistente) {
+                // Crear una actividad virtual basada en la amenidad
+                actividadesConAmenidades.push({
+                  id_actividad: `amenidad_${amenidad.id_amenidad}`,
+                  nombre: `${amenidad.nombre} (Amenidad del Hotel)`,
+                  precio: 0,
+                  duracion: '1 hora',
+                  tipo: 'Amenidad',
+                  id_ciudad: selectedHotel.id_ciudad,
+                  id_pais: selectedHotel.id_pais,
+                  es_amenidad: true
+                });
+              }
+            });
+            
+            setAvailableActividades(actividadesConAmenidades);
+          })
+          .catch(error => {
+            console.error('Error al obtener amenidades del hotel:', error);
+            // Si falla, al menos mostrar las actividades del destino
+            setAvailableActividades(actividadesDestino);
+          });
+      }
+      setForm(prev => ({ ...prev, [name]: value }));
+    } else {
+      setForm(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Validar que el hotel corresponda al destino del vuelo
+      if (filteredHoteles.length > 0 && !filteredHoteles.some(h => h.id_hotel === parseInt(form.hotel_id))) {
+        alert('El hotel seleccionado no corresponde al destino del vuelo.');
+        return;
+      }
+      
       const paqueteData = {
         ...form,
         duracion_dias: parseInt(form.duracion_dias),
@@ -85,11 +189,13 @@ const Packages = () => {
       fecha_inicio: '',
       fecha_fin: '',
       vuelo_id: '',
-      hotel_id: '',
-      fecha_entrada_hotel: '',
-      fecha_salida_hotel: ''
+      hotel_id: ''
     });
     setSelectedActividades([]);
+    setFilteredHoteles([]);
+    setVueloDestinoPais(null);
+    setVueloDestinoCiudad(null);
+    setAvailableActividades([]);
   };
 
   const handleViewDetails = async (paquete) => {
@@ -318,92 +424,63 @@ const Packages = () => {
                       value={form.hotel_id} 
                       onChange={handleChange} 
                       required
+                      disabled={!form.vuelo_id}
                     >
                       <option value="">Seleccionar hotel</option>
-                      {hoteles.map(hotel => (
-                        <option key={hotel.id_hotel} value={hotel.id_hotel}>
-                          {hotel.nombre} - {hotel.ubicacion}
-                        </option>
-                      ))}
+                      {filteredHoteles.length > 0 ? (
+                        filteredHoteles.map(hotel => (
+                          <option key={hotel.id_hotel} value={hotel.id_hotel}>
+                            {hotel.nombre} - {hotel.ubicacion}
+                          </option>
+                        ))
+                      ) : (
+                        form.vuelo_id ? (
+                          <option value="" disabled>No hay hoteles disponibles en el destino</option>
+                        ) : null
+                      )}
                     </select>
-                  </label>
-                </div>
-              </div>
-              
-              <div className="modal-inputs-row">
-                <div className="modal-inputs-col">
-                  <label>
-                    Fecha Entrada Hotel
-                    <input 
-                      type="date" 
-                      name="fecha_entrada_hotel" 
-                      value={form.fecha_entrada_hotel} 
-                      onChange={handleChange} 
-                    />
-                  </label>
-                </div>
-                
-                <div className="modal-inputs-col">
-                  <label>
-                    Fecha Salida Hotel
-                    <input 
-                      type="date" 
-                      name="fecha_salida_hotel" 
-                      value={form.fecha_salida_hotel} 
-                      onChange={handleChange} 
-                    />
+                    {form.vuelo_id && filteredHoteles.length === 0 && (
+                      <div className="error-message">
+                        No hay hoteles disponibles en el destino. 
+                        <a href="/admin/hotel" target="_blank" rel="noopener noreferrer">Crear un hotel</a>
+                      </div>
+                    )}
                   </label>
                 </div>
               </div>
               
               <h3>Actividades</h3>
-              <div className="modal-inputs-row">
-                <div className="modal-inputs-col">
-                  <label>
-                    Agregar Actividad
-                    <select 
-                      onChange={(e) => {
-                        const actividadId = e.target.value;
-                        if (actividadId) {
-                          const actividad = actividades.find(a => a.id_actividad === parseInt(actividadId));
-                          if (actividad) handleAddActividad(actividad);
-                          e.target.value = ""; // Reset select
-                        }
-                      }}
-                    >
-                      <option value="">Seleccionar actividad</option>
-                      {actividades.map(actividad => (
-                        <option key={actividad.id_actividad} value={actividad.id_actividad}>
-                          {actividad.nombre}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-              </div>
-              
-              {selectedActividades.length > 0 && (
-                <div className="actividades-list">
-                  {selectedActividades.map(actividad => (
-                    <div className="actividad-item" key={actividad.id_actividad}>
-                      <div className="actividad-item-info">
-                        <span className="actividad-item-name">{actividad.nombre}</span>
-                        <span className="actividad-item-details">
-                          Precio: ${actividad.precio} - Duración: {actividad.duracion}
-                        </span>
-                      </div>
-                      <div className="actividad-item-actions">
-                        <button 
-                          type="button" 
+              <div className="modal-label-full">
+                <div className="amenidades-container">
+                  <div className="amenidades-selected">
+                    {selectedActividades.map((actividad, index) => (
+                      <span key={index} className="amenidad-tag">
+                        {actividad.nombre}
+                        <button
+                          type="button"
+                          className="remove-amenidad"
                           onClick={() => handleRemoveActividad(actividad.id_actividad)}
                         >
-                          <FaTimes />
+                          ×
                         </button>
-                      </div>
-                    </div>
-                  ))}
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-agregar-amenidad"
+                    onClick={() => {
+                      if (!form.vuelo_id) {
+                        alert('Primero seleccione un vuelo para ver las actividades disponibles en el destino');
+                        return;
+                      }
+                      setShowActividadesModal(true);
+                    }}
+                  >
+                    + Agregar Actividad
+                  </button>
                 </div>
-              )}
+              </div>
               
               <div className="modal-actions">
                 <button 
@@ -419,6 +496,56 @@ const Packages = () => {
                 <button type="submit" className="btn-agregar">Crear Paquete</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      
+      {/* Modal de selección de actividades */}
+      {showActividadesModal && (
+        <div className="modal-backdrop">
+          <div className="modal amenidades-modal">
+            <h2>Seleccionar Actividades</h2>
+            <div className="amenidades-selector">
+              <div className="amenidades-list selected">
+                <h3>Actividades Seleccionadas</h3>
+                {selectedActividades.map((actividad, index) => (
+                  <div key={index} className="amenidad-item">
+                    <span>{actividad.nombre}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveActividad(actividad.id_actividad)}
+                    >
+                      ←
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="amenidades-list available">
+                <h3>Actividades Disponibles</h3>
+                {availableActividades
+                  .filter(a => !selectedActividades.some(sa => sa.id_actividad === a.id_actividad))
+                  .map((actividad, index) => (
+                    <div key={index} className="amenidad-item">
+                      <button
+                        type="button"
+                        onClick={() => handleAddActividad(actividad)}
+                      >
+                        →
+                      </button>
+                      <span>{actividad.nombre} - ${actividad.precio}</span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="btn-agregar"
+                onClick={() => setShowActividadesModal(false)}
+              >
+                Aceptar
+              </button>
+            </div>
           </div>
         </div>
       )}

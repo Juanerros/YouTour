@@ -12,10 +12,12 @@ router.get('/', async (req, res) => {
         const [vuelos] = await conex.execute(
             'SELECT v.*, ' +
             'origen.nombre as origen_nombre, origen.codigo_aeropuerto as origen_codigo, ' +
-            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo ' +
+            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo, ' +
+            'destino_pais.id_pais as destino_id_pais, destino_pais.nombre as destino_pais_nombre ' +
             'FROM vuelos v ' +
             'INNER JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
-            'INNER JOIN ciudades destino ON v.destino = destino.id_ciudad'
+            'INNER JOIN ciudades destino ON v.destino = destino.id_ciudad ' +
+            'INNER JOIN paises destino_pais ON destino.id_pais = destino_pais.id_pais'
         );
         res.json(vuelos);
     } catch (err) {
@@ -30,10 +32,12 @@ router.get('/origen/:id', async (req, res) => {
         const [vuelos] = await conex.execute(
             'SELECT v.*, ' +
             'origen.nombre as origen_nombre, origen.codigo_aeropuerto as origen_codigo, ' +
-            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo ' +
+            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo, ' +
+            'destino_pais.id_pais as destino_id_pais, destino_pais.nombre as destino_pais_nombre ' +
             'FROM vuelos v ' +
             'INNER JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
             'INNER JOIN ciudades destino ON v.destino = destino.id_ciudad ' +
+            'INNER JOIN paises destino_pais ON destino.id_pais = destino_pais.id_pais ' +
             'WHERE v.origen = ?',
             [id]
         );
@@ -50,10 +54,12 @@ router.get('/destino/:id', async (req, res) => {
         const [vuelos] = await conex.execute(
             'SELECT v.*, ' +
             'origen.nombre as origen_nombre, origen.codigo_aeropuerto as origen_codigo, ' +
-            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo ' +
+            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo, ' +
+            'destino_pais.id_pais as destino_id_pais, destino_pais.nombre as destino_pais_nombre ' +
             'FROM vuelos v ' +
             'INNER JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
             'INNER JOIN ciudades destino ON v.destino = destino.id_ciudad ' +
+            'INNER JOIN paises destino_pais ON destino.id_pais = destino_pais.id_pais ' +
             'WHERE v.destino = ?',
             [id]
         );
@@ -70,10 +76,12 @@ router.get('/fecha/:fecha', async (req, res) => {
         const [vuelos] = await conex.execute(
             'SELECT v.*, ' +
             'origen.nombre as origen_nombre, origen.codigo_aeropuerto as origen_codigo, ' +
-            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo ' +
+            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo, ' +
+            'destino_pais.id_pais as destino_id_pais, destino_pais.nombre as destino_pais_nombre ' +
             'FROM vuelos v ' +
             'INNER JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
             'INNER JOIN ciudades destino ON v.destino = destino.id_ciudad ' +
+            'INNER JOIN paises destino_pais ON destino.id_pais = destino_pais.id_pais ' +
             'WHERE v.fecha_vuelo = ?',
             [fecha]
         );
@@ -90,10 +98,12 @@ router.get('/:id', async (req, res) => {
         const [vuelo] = await conex.execute(
             'SELECT v.*, ' +
             'origen.nombre as origen_nombre, origen.codigo_aeropuerto as origen_codigo, ' +
-            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo ' +
+            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo, ' +
+            'destino_pais.id_pais as destino_id_pais, destino_pais.nombre as destino_pais_nombre ' +
             'FROM vuelos v ' +
             'INNER JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
             'INNER JOIN ciudades destino ON v.destino = destino.id_ciudad ' +
+            'INNER JOIN paises destino_pais ON destino.id_pais = destino_pais.id_pais ' +
             'WHERE v.id_vuelo = ?',
             [id]
         );

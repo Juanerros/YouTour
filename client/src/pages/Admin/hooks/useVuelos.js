@@ -7,7 +7,7 @@ const useVuelos = () => {
 
   const fetchVuelos = async () => {
     try {
-      const response = await fetch('http://localhost:5001/vuelos');
+      const response = await fetch('http://localhost:5001/api/vuelos');
       if (!response.ok) {
         throw new Error('Error al obtener los vuelos');
       }
@@ -23,7 +23,7 @@ const useVuelos = () => {
 
   const addVuelo = async (vuelo) => {
     try {
-      const response = await fetch('http://localhost:5001/vuelos', {
+      const response = await fetch('http://localhost:5001/api/vuelos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const useVuelos = () => {
   // Función para eliminar un vuelo
   const deleteVuelo = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5001/vuelos/${id}`, {
+      const response = await fetch(`http://localhost:5001/api/vuelos/${id}`, {
         method: 'DELETE',
       });
 
@@ -66,7 +66,7 @@ const useVuelos = () => {
   // Función para actualizar un vuelo
   const updateVuelo = async (id, vueloActualizado) => {
     try {
-      const response = await fetch(`http://localhost:5001/vuelos/${id}`, {
+      const response = await fetch(`http://localhost:5001/api/vuelos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
