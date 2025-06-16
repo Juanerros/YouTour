@@ -18,6 +18,7 @@ const Cart = () => {
   const [cartItem, setCartItem] = useState(null);
   const [loading, setLoading] = useState(false);
   const [cartId, setCartId] = useState(null);
+  const [otherCarts, setOtherCarts] = useState([]);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -34,6 +35,7 @@ const Cart = () => {
   useEffect(() => {
     if (user) {
       fetchCart();
+      fetchOtherCarts(); // Añadir esta línea
     }
   }, [user]);
 
@@ -62,7 +64,7 @@ const Cart = () => {
           persons: cartData.cantidad_personas ? `1-${cartData.cantidad_personas}` : "2-6",
           quantity: 1,
           additionalServices: [
-            { id: 'transfer', name: 'Transfer Premium', icon: 'car', price: 89, selected: false },
+            { id: 'transfer', name: 'Estacionamiente Premium', icon: 'car', price: 89, selected: false },
             { id: 'guide', name: 'Guía Turístico Privado', icon: 'user', price: 150, selected: false },
             { id: 'insurance', name: 'Seguro Premium', icon: 'user', price: 45, selected: false },
             { id: 'wellness', name: 'Paquete Spa & Wellness', icon: 'heart', price: 120, selected: false }
@@ -81,10 +83,28 @@ const Cart = () => {
     }
   };
 
+  // Función para obtener los demás carritos del usuario
+  const fetchOtherCarts = async () => {
+    if (!user) return;
+
+    try {
+      const response = await axios.get(`/cart/${user.id_user}/all`);
+
+      if (response.data && response.data.carts) {
+        setOtherCarts(response.data.carts);
+      } else {
+        setOtherCarts([]);
+      }
+    } catch (error) {
+      console.error(error.response?.data?.message || 'Error al obtener los carritos:', error);
+      setOtherCarts([]);
+    }
+  };
+
   // Calculate total price
   const calculateItemTotal = () => {
     if (!cartItem) return 0;
-    
+
     const basePrice = cartItem.currentPrice * cartItem.quantity;
     const additionalServicesPrice = cartItem.additionalServices
       .filter(service => service.selected)
@@ -98,7 +118,7 @@ const Cart = () => {
 
   const handleQuantityChange = (action) => {
     if (!cartItem) return;
-    
+
     let newQuantity = cartItem.quantity;
     if (action === 'increase') {
       newQuantity += 1;
@@ -111,14 +131,14 @@ const Cart = () => {
 
   const handleServiceToggle = (serviceId) => {
     if (!cartItem) return;
-    
+
     const updatedServices = cartItem.additionalServices.map(service => {
       if (service.id === serviceId) {
         return { ...service, selected: !service.selected };
       }
       return service;
     });
-    
+
     setCartItem({ ...cartItem, additionalServices: updatedServices });
   };
 
@@ -207,7 +227,7 @@ const Cart = () => {
 
   const totalServicios = () => {
     if (!cartItem) return 0;
-    
+
     let total = 0;
     cartItem.additionalServices.forEach(service => {
       if (service.selected) {
@@ -230,15 +250,15 @@ const Cart = () => {
 
           {!user ? (
             <div className="empty-cart">
-            <div className="empty-cart-icon">
-              <LuUsers />
-            </div>
-            <h2>Inicia sesión para ver tu carrito</h2>
+              <div className="empty-cart-icon">
+                <LuUsers />
+              </div>
+              <h2>Inicia sesión para ver tu carrito</h2>
               <p>Necesitas iniciar sesión para acceder a tu carrito de compras</p>
               <button className="login-btn" onClick={() => navigate('/auth')}>
-              Iniciar Sesion
-            </button>
-          </div>
+                Iniciar Sesion
+              </button>
+            </div>
           ) : !cartItem ? (
             <div className="empty-cart">
               <div className="empty-cart-icon">
@@ -250,7 +270,7 @@ const Cart = () => {
                 Explorar Paquetes
               </button>
             </div>
-          ) : (
+          ) : cartItem && (
             <div className="cart-content">
               <div className="cart-items">
                 <div className="cart-item">
@@ -336,6 +356,24 @@ const Cart = () => {
                 <div className="secure-payment">
                   <FaLock /> Pago 100% seguro y protegido
                 </div>
+              </div>
+            </div>
+          )}
+
+          {otherCarts.length > 0 && (
+            <div className="other-carts-section">
+              <h2>Tus otros pedidos</h2>
+              <div className="other-carts-container">
+                {otherCarts.map(cart => (
+                  <div key={cart.id_carrito} className="other-cart-item">
+                    <div className="other-cart-details">
+                      <h3>{cart.nombre}</h3>
+                      <span className={`status-badge ${cart.estado.toLowerCase()}`}>
+                        {cart.estado}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}

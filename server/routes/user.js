@@ -110,7 +110,9 @@ router.post('/register', async (req, res) => {
                 email,
                 // Oculta la contraseña
                 pass: '[Hidden]',
-                name
+                name,
+                dni,
+                phone,
             }
         });
 

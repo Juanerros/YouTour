@@ -14,7 +14,7 @@ router.get('/:userId', async (req, res) => {
             `SELECT c.*, p.* 
              FROM carritos c 
              INNER JOIN paquetes p ON c.id_paquete = p.id_paquete 
-             WHERE c.id_user = ? AND c.estado = 'Activo'`,
+             WHERE c.id_user = ?`,
             [userId]
         );
 
@@ -23,6 +23,25 @@ router.get('/:userId', async (req, res) => {
         res.json({ cart: cart[0] });
     } catch (err) {
         handleError(res, 'Error al obtener el carrito', err);
+    }
+});
+
+// Obtener todos los carritos del usuario (no solo el activo)
+router.get('/:userId/all', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const [carts] = await conex.execute(
+            `SELECT c.*, p.nombre, p.precio_base, p.duracion_dias, p.fecha_inicio, p.fecha_fin
+             FROM carritos c 
+             INNER JOIN paquetes p ON c.id_paquete = p.id_paquete 
+             WHERE c.id_user = ? AND c.estado != 'Activo'`,
+            [userId]
+        );
+
+        res.json({ carts });
+    } catch (err) {
+        handleError(res, 'Error al obtener los carritos', err);
     }
 });
 
@@ -132,9 +151,7 @@ router.post('/complete-sale', async (req, res) => {
             [pedidoId]
         );
 
-        if (pedido.length === 0) {
-            throw new Error('Pedido no encontrado');
-        }
+        if (pedido.length === 0) return handleError(res, 'El pedido no existe', null, 404);
 
         // Registrar venta
         await conex.execute(
