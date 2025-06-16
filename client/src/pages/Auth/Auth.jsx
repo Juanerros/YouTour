@@ -11,7 +11,7 @@ import { MdModeOfTravel } from 'react-icons/md';
 const Auth = () => {
   const navigate = useNavigate();
   const { notify } = useNotification();
-  const { handleLogin, user  } = useUser();
+  const { handleLogin, user } = useUser();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
@@ -41,11 +41,14 @@ const Auth = () => {
         dni: formData.dni,
         phone: formData.phone
       };
-      const { data } = await axios.post(endpoint, dataToSend);
+      const response = await axios.post(endpoint, dataToSend);
+      const { data } = response;
 
-      handleLogin(data.user);
-      notify(data.message, 'success');
-      navigate('/');
+      if (response.status === 200 || response.status === 201) {
+        handleLogin(data.user);
+        notify(data.message, 'success');
+        navigate('/');
+      }
     } catch (error) {
       notify(error.response?.data?.message || 'Error en la autenticación', 'error');
     } finally {
@@ -115,7 +118,7 @@ const Auth = () => {
     setShowPassword(!showPassword);
   };
 
-  if(user) return navigate('/');
+  if (user) return navigate('/');
 
   return (
     <div className="auth-page">
@@ -125,14 +128,14 @@ const Auth = () => {
             <MdModeOfTravel className="logo-icon white" />
             <span>YouTour</span>
           </div>
-          
+
           <h1>{isLogin ? '¡Bienvenido de vuelta!' : 'Únete a youTour'}</h1>
           <p className="auth-subtitle">
-            {isLogin 
-              ? 'Continúa explorando el mundo con nosotros. Tus aventuras te esperan.' 
+            {isLogin
+              ? 'Continúa explorando el mundo con nosotros. Tus aventuras te esperan.'
               : 'Descubre experiencias de viaje extraordinarias que cambiarán tu perspectiva del mundo.'}
           </p>
-          
+
           <div className="auth-features">
             <div className="feature-item">
               <div className="feature-icon">
@@ -143,7 +146,7 @@ const Auth = () => {
                 <p>Accede a destinos exclusivos y experiencias únicas en más de 150 países.</p>
               </div>
             </div>
-            
+
             <div className="feature-item">
               <div className="feature-icon">
                 <i className="fa fa-heart"></i>
@@ -153,7 +156,7 @@ const Auth = () => {
                 <p>Crea listas de viajes de ensueño y compártelas con familia y amigos.</p>
               </div>
             </div>
-            
+
             <div className="feature-item">
               <div className="feature-icon">
                 <i className="fa fa-shield"></i>
@@ -163,7 +166,7 @@ const Auth = () => {
                 <p>Protección total en todas tus transacciones con garantía de reembolso.</p>
               </div>
             </div>
-            
+
             <div className="feature-item">
               <div className="feature-icon">
                 <i className="fa fa-headset"></i>
@@ -174,7 +177,7 @@ const Auth = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="testimonial">
             <p>"La mejor plataforma para planificar viajes. Experiencia increíble desde el primer día. He visitado 12 países gracias a youTour."</p>
             <div className="testimonial-author">
@@ -186,7 +189,7 @@ const Auth = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="auth-right-panel">
           <div className="auth-form-container">
             <div className="auth-form-header">
@@ -194,12 +197,12 @@ const Auth = () => {
                 <MdModeOfTravel className="logo-icon white" />
               </div>
               <h2>{isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}</h2>
-              <p>{isLogin 
-                ? 'Ingresa a tu cuenta para continuar tu aventura' 
+              <p>{isLogin
+                ? 'Ingresa a tu cuenta para continuar tu aventura'
                 : 'Completa tus datos para comenzar a explorar'}
               </p>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="auth-form">
               {!isLogin && (
                 <div className="form-group">
@@ -219,7 +222,7 @@ const Auth = () => {
                   </div>
                 </div>
               )}
-              
+
               <div className="form-group">
                 <label htmlFor="email">Correo electrónico</label>
                 <div className="input-container">
@@ -236,7 +239,7 @@ const Auth = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="password">Contraseña</label>
                 <div className="input-container password-container">
@@ -251,8 +254,8 @@ const Auth = () => {
                     onChange={handleChange}
                     required
                   />
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="toggle-password"
                     onClick={togglePasswordVisibility}
                   >
@@ -260,7 +263,7 @@ const Auth = () => {
                   </button>
                 </div>
               </div>
-              
+
               {!isLogin && (
                 <>
                   <div className="form-group">
@@ -279,7 +282,7 @@ const Auth = () => {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="form-row">
                     <div className="form-group half">
                       <label htmlFor="dni">DNI</label>
@@ -295,7 +298,7 @@ const Auth = () => {
                         />
                       </div>
                     </div>
-                    
+
                     <div className="form-group half">
                       <label htmlFor="phone">Teléfono</label>
                       <div className="input-container">
@@ -313,15 +316,15 @@ const Auth = () => {
                   </div>
                 </>
               )}
-              
+
               <button type="submit" className="submit-button" disabled={isLoading}>
                 {isLoading ? 'Cargando...' : isLogin ? 'Iniciar sesión' : 'Crear cuenta'}
               </button>
             </form>
-            
+
             <div className="auth-form-footer">
               <p>
-                {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'} 
+                {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}
                 <button
                   type="button"
                   className="switch-auth-btn"

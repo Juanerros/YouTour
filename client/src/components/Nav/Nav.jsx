@@ -32,11 +32,11 @@ const Nav = () => {
           <Link to="/admin" className="nav-link">
             <span>Admin</span>
           </Link>
-        ): null}
+        ) : null}
       </div>
       <div className="nav-actions">
         <Link className="cart-btn" to={'/cart'}>
-          <LuTicketsPlane  size={24} />
+          <LuTicketsPlane size={24} />
         </Link>
         {user ? <button className="login-btn" onClick={handleLogout}>Cerrar sesión</button>
           : <Link className="login-btn" to={'/auth'}>Iniciar sesión</Link>}
@@ -57,9 +57,14 @@ const Nav = () => {
       <div className={`mobile-menu ${isOpen ? 'active' : ''}`}>
         <Link to="/" className="mobile-link">Inicio</Link>
         <Link to="/catalog" className="mobile-link">Catalogo</Link>
+        {(user && user.isAdmin) ? (
+          <Link to="/admin" className="nav-link">
+            <span>Admin</span>
+          </Link>
+        ) : null}
         <div className="mobile-actions">
-        <Link to="/auth" className="mobile-link"><button className="mobile-login-btn">Iniciar sesión</button></Link>
-          
+          <Link to="/auth" className="mobile-link"><button className="mobile-login-btn">Iniciar sesión</button></Link>
+
         </div>
       </div>
     </nav>
