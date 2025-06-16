@@ -15,7 +15,7 @@ const Cart = () => {
   const { confirm } = useConfirmation();
 
   const [view, setView] = useState('cart'); // cart o checkout
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItem, setCartItem] = useState(null);
   const [loading, setLoading] = useState(false);
   const [cartId, setCartId] = useState(null);
 
@@ -69,67 +69,65 @@ const Cart = () => {
           ]
         };
 
-        setCartItems([formattedItem]);
+        setCartItem(formattedItem);
       } else {
-        setCartItems([]);
+        setCartItem(null);
       }
     } catch (error) {
       console.error(error.response?.data?.message || 'Error al obtener el carrito:', error);
-      setCartItems([]);
+      setCartItem(null);
     } finally {
       setLoading(false);
     }
   };
 
   // Calculate total price
-  const calculateItemTotal = (item) => {
-    const basePrice = item.currentPrice * item.quantity;
-    const additionalServicesPrice = item.additionalServices
+  const calculateItemTotal = () => {
+    if (!cartItem) return 0;
+    
+    const basePrice = cartItem.currentPrice * cartItem.quantity;
+    const additionalServicesPrice = cartItem.additionalServices
       .filter(service => service.selected)
       .reduce((sum, service) => sum + service.price, 0);
     return basePrice + additionalServicesPrice;
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + calculateItemTotal(item), 0);
+    return calculateItemTotal();
   };
 
-  const handleQuantityChange = (itemId, action) => {
-    setCartItems(cartItems.map(item => {
-      if (item.id !== itemId) return item;
+  const handleQuantityChange = (action) => {
+    if (!cartItem) return;
+    
+    let newQuantity = cartItem.quantity;
+    if (action === 'increase') {
+      newQuantity += 1;
+    } else if (action === 'decrease' && newQuantity > 1) { // Mínimo 1 persona
+      newQuantity -= 1;
+    }
 
-      let newQuantity = item.quantity;
-      if (action === 'increase') {
-        newQuantity += 1;
-      } else if (action === 'decrease' && newQuantity > 1) { // Mínimo 1 persona
-        newQuantity -= 1;
+    setCartItem({ ...cartItem, quantity: newQuantity });
+  };
+
+  const handleServiceToggle = (serviceId) => {
+    if (!cartItem) return;
+    
+    const updatedServices = cartItem.additionalServices.map(service => {
+      if (service.id === serviceId) {
+        return { ...service, selected: !service.selected };
       }
-
-      return { ...item, quantity: newQuantity };
-    }));
+      return service;
+    });
+    
+    setCartItem({ ...cartItem, additionalServices: updatedServices });
   };
 
-  const handleServiceToggle = (itemId, serviceId) => {
-    setCartItems(cartItems.map(item => {
-      if (item.id === itemId) {
-        const updatedServices = item.additionalServices.map(service => {
-          if (service.id === serviceId) {
-            return { ...service, selected: !service.selected };
-          }
-          return service;
-        });
-        return { ...item, additionalServices: updatedServices };
-      }
-      return item;
-    }));
-  };
-
-  const handleRemoveItem = async (itemId) => {
+  const handleRemoveItem = async () => {
     confirm('¿Estás seguro de que deseas eliminar este paquete del carrito?', async () => {
       try {
         setLoading(true);
         await axios.delete(`/cart/${cartId}`);
-        setCartItems([]);
+        setCartItem(null);
         setCartId(null);
         notify('Paquete eliminado del carrito', 'success');
       } catch (error) {
@@ -189,14 +187,14 @@ const Cart = () => {
           phone: user.phone
         },
         orderDetails: {
-          location: cartItems[0]?.location,
-          title: cartItems[0]?.title,
+          location: cartItem?.location,
+          title: cartItem?.title,
           total: total
         }
       })
 
       notify('¡Pedido realizado con éxito! Gracias por tu compra.', 'success');
-      setCartItems([]);
+      setCartItem(null);
       setCartId(null);
       setView('cart');
     } catch (error) {
@@ -208,13 +206,13 @@ const Cart = () => {
   };
 
   const totalServicios = () => {
+    if (!cartItem) return 0;
+    
     let total = 0;
-    cartItems.forEach(item => {
-      item.additionalServices.forEach(service => {
-        if (service.selected) {
-          total += service.price;
-        }
-      })
+    cartItem.additionalServices.forEach(service => {
+      if (service.selected) {
+        total += service.price;
+      }
     });
     return total;
   }
@@ -241,7 +239,7 @@ const Cart = () => {
               Iniciar Sesion
             </button>
           </div>
-          ) : cartItems.length === 0 ? (
+          ) : !cartItem ? (
             <div className="empty-cart">
               <div className="empty-cart-icon">
                 <FaShoppingCart />
@@ -255,83 +253,77 @@ const Cart = () => {
           ) : (
             <div className="cart-content">
               <div className="cart-items">
-                {cartItems.map(item => (
-                  <div key={item.id} className="cart-item">
-                    <div className="cart-item-image">
-                      <img src={item.image} alt={item.title} />
-                      <button className="remove-item-btn" onClick={() => handleRemoveItem(item.id)}>
-                        <FaTimes />
-                      </button>
+                <div className="cart-item">
+                  <div className="cart-item-image">
+                    <img src={cartItem.image} alt={cartItem.title} />
+                    <button className="remove-item-btn" onClick={() => handleRemoveItem()}>
+                      <FaTimes />
+                    </button>
+                  </div>
+
+                  <div className="cart-item-details">
+                    <div className="cart-item-header">
+                      <h3>{cartItem.title}</h3>
+                      <div className="cart-item-location">{cartItem.location}</div>
+                      <div className="cart-item-price">{cartItem.currentPrice} $</div>
                     </div>
 
-                    <div className="cart-item-details">
-                      <div className="cart-item-header">
-                        <h3>{item.title}</h3>
-                        <div className="cart-item-location">{item.location}</div>
-                        <div className="cart-item-price">{item.currentPrice} $</div>
-                      </div>
-
-                      <div className="additional-services">
-                        <h4>Servicios adicionales</h4>
-                        <div className="services-list">
-                          {item.additionalServices.map(service => (
-                            <div
-                              key={service.id}
-                              className={`service-item ${service.selected ? 'selected' : ''}`}
-                              onClick={() => handleServiceToggle(item.id, service.id)}
-                            >
-                              {service.icon === 'car' && <FaCar />}
-                              {service.icon === 'user' && <FaUser />}
-                              {service.icon === 'heart' && <FaHeart />}
-                              <div className="service-details">
-                                <span className="service-name">{service.name}</span>
-                                <span className="service-price">{service.price} $</span>
-                              </div>
+                    <div className="additional-services">
+                      <h4>Servicios adicionales</h4>
+                      <div className="services-list">
+                        {cartItem.additionalServices.map(service => (
+                          <div
+                            key={service.id}
+                            className={`service-item ${service.selected ? 'selected' : ''}`}
+                            onClick={() => handleServiceToggle(service.id)}
+                          >
+                            {service.icon === 'car' && <FaCar />}
+                            {service.icon === 'user' && <FaUser />}
+                            {service.icon === 'heart' && <FaHeart />}
+                            <div className="service-details">
+                              <span className="service-name">{service.name}</span>
+                              <span className="service-price">{service.price} $</span>
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
 
               <div className="cart-summary">
                 <h3>Resumen del Pedido</h3>
                 <div className="summary-item">
-
-                  {cartItems.map(item => (
-                    <div key={item.id} className="cart-item">
+                  <div className="cart-item">
+                    <div className="">
                       <div className="">
+                        <h4>Servicios adicionales:</h4>
                         <div className="">
-                          <h4>Servicios adicionales:</h4>
-                          <div className="">
-                            {item.additionalServices.map(service => (
-                              service.selected && (
-                                <div
-                                  key={service.id}
-                                  className={'service-item'}
-                                  onClick={() => handleServiceToggle(item.id, service.id)}
-                                >
-                                  {service.icon === 'car' && <FaCar />}
-                                  {service.icon === 'user' && <FaUser />}
-                                  {service.icon === 'heart' && <FaHeart />}
-                                  <div className="service-details">
-                                    <span className="service-name">{service.name}</span>
-                                    <span className="service-price">{service.price} $</span>
-                                  </div>
+                          {cartItem.additionalServices.map(service => (
+                            service.selected && (
+                              <div
+                                key={service.id}
+                                className={'service-item'}
+                                onClick={() => handleServiceToggle(service.id)}
+                              >
+                                {service.icon === 'car' && <FaCar />}
+                                {service.icon === 'user' && <FaUser />}
+                                {service.icon === 'heart' && <FaHeart />}
+                                <div className="service-details">
+                                  <span className="service-name">{service.name}</span>
+                                  <span className="service-price">{service.price} $</span>
                                 </div>
-                              )
-                            ))}
-                            {!item.additionalServices.some(s => s.selected) && (
-                              <p>Ninguno</p>
-                            )}
-                          </div>
+                              </div>
+                            )
+                          ))}
+                          {!cartItem.additionalServices.some(s => s.selected) && (
+                            <p>Ninguno</p>
+                          )}
                         </div>
                       </div>
                     </div>
-                  ))}
-
+                  </div>
                   <span>{totalServicios() + ' $'}</span>
                 </div>
                 <div className="summary-total">
@@ -364,21 +356,21 @@ const Cart = () => {
             <div className="checkout-summary">
               <h3>Resumen de tu Reserva</h3>
               <div className="checkout-trip">
-                <img src={cartItems[0]?.image} alt={cartItems[0]?.title} />
+                <img src={cartItem?.image} alt={cartItem?.title} />
                 <div className="checkout-trip-details">
-                  <h4>{cartItems[0]?.title}</h4>
-                  <p>{cartItems[0]?.location}</p>
+                  <h4>{cartItem?.title}</h4>
+                  <p>{cartItem?.location}</p>
                 </div>
-                <div className="checkout-trip-price">{cartItems[0]?.currentPrice} $</div>
+                <div className="checkout-trip-price">{cartItem?.currentPrice} $</div>
               </div>
               <p>Servicios adicionales: </p>
               <div className="checkout-trip">
-                {cartItems[0]?.additionalServices.map(service => (
+                {cartItem?.additionalServices.map(service => (
                   service.selected && (
                     <div
                       key={service.id}
                       className={'service-item'}
-                      onClick={() => handleServiceToggle(cartItems[0]?.id, service.id)}
+                      onClick={() => handleServiceToggle(service.id)}
                     >
                       {service.icon === 'car' && <FaCar />}
                       {service.icon === 'user' && <FaUser />}
@@ -390,7 +382,7 @@ const Cart = () => {
                     </div>
                   )
                 ))}
-                {!cartItems[0]?.additionalServices.some(s => s.selected) && (
+                {!cartItem?.additionalServices.some(s => s.selected) && (
                   <p>Ninguno</p>
                 )}
               </div>

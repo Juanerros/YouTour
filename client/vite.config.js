@@ -5,12 +5,12 @@ import react from '@vitejs/plugin-react-swc'
 export default defineConfig({
   plugins: [react()],
 
-  base: '/assets/',
+  base: '/',
+  
   build: {
     outDir: '../client/dist',
-    emptyOutDir: true, 
-    assetsDir: 'assets',
-
+    emptyOutDir: true,
+    
     rollupOptions: {
       output: {
         assetFileNames: 'assets/[name]-[hash][extname]',

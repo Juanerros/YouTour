@@ -24,7 +24,8 @@ export function useUser() {
   const handleLogin = (user) => {
     window.localStorage.setItem("user", JSON.stringify(user));
     setUser(user);
-    window.history.back()
+    navigate("/");
+    window.location.reload();
   };
 
   useEffect(() => {

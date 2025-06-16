@@ -28,15 +28,6 @@ const Nav = () => {
         <Link to="/catalog" className="nav-link">
           <span>Catalogo</span>
         </Link>
-        <a href="#offers" className="nav-link">
-          <span>Ofertas </span>
-        </a>
-        <a href="#about" className="nav-link">
-          <span>Sobre Nosotros</span>
-        </a>
-        <a href="#contacto" className="nav-link">
-          <span>Contacto</span>
-        </a>
         {(user && user.isAdmin) ? (
           <Link to="/admin" className="nav-link">
             <span>Admin</span>
@@ -66,9 +57,6 @@ const Nav = () => {
       <div className={`mobile-menu ${isOpen ? 'active' : ''}`}>
         <Link to="/" className="mobile-link">Inicio</Link>
         <Link to="/catalog" className="mobile-link">Catalogo</Link>
-        <Link to="#about" className="mobile-link">Sobre Nosotros</Link>
-        <Link to="#offers" className="mobile-link">Ofertas</Link>
-        <Link to="#contacto" className="mobile-link">Contacto</Link>
         <div className="mobile-actions">
         <Link to="/auth" className="mobile-link"><button className="mobile-login-btn">Iniciar sesión</button></Link>
           
