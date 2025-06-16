@@ -10,7 +10,7 @@ const router = express.Router();
 // Ruta para enviar confirmación de pedido
 router.post('/order-confirmation', async (req, res) => {
     try {
-        const { orderId, userInfo, orderDetails } = req.body;
+        const { cartId, userInfo, orderDetails } = req.body;
 
         // Crear el mensaje para el cliente
         const clientSubject = '¡Confirmación de tu reserva en YouTour!';
@@ -20,7 +20,7 @@ router.post('/order-confirmation', async (req, res) => {
             ¡Gracias por tu reserva en YouTour!
             
             Detalles de tu reserva:
-            - Número de pedido: ${orderId}
+            - Número de carrito: ${cartId}
             - Paquete: ${orderDetails.title || 'No especificado'}
             - Total: ${orderDetails.total} $
             
@@ -31,11 +31,11 @@ router.post('/order-confirmation', async (req, res) => {
         `;
 
         // Crear el mensaje para el jefe de ventas
-        const salesSubject = `Nueva venta realizada - Pedido #${orderId}`;
+        const salesSubject = `Nueva venta realizada - Carrito #${cartId}`;
         const salesMessage = `
             Nueva venta realizada:
             
-            Número de pedido: ${orderId}
+            Número de carrito: ${cartId}
             Cliente: ${userInfo.name}
             Email: ${userInfo.email}
             Teléfono: ${userInfo.phone || 'No especificado'}

@@ -241,7 +241,7 @@ const Cart = () => {
 
         // Enviar correo al cliente y jefe de ventas
         await axios.post('/email/order-confirmation', {
-          orderId: pedidoId,
+          cartId: cartId,
           userInfo: {
             name: user.name,
             email: user.email,
