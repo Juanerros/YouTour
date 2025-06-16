@@ -47,13 +47,18 @@ const Cart = () => {
       setLoading(true);
       const response = await axios.get(`/cart/${user.id_user}`);
 
-      if (response.data && response.data.cart) {
+      if (response.status === 200 && response.data.cart) {
         const cartData = response.data.cart;
         setCartId(cartData.id_carrito);
 
         // Transformar los datos del carrito al formato esperado por el componente
         const formattedItem = {
           id: cartData.id_paquete,
+          nombre: cartData.nombre,
+          descripcion: cartData.descripcion,
+          pais: cartData.pais,
+          ciudad: cartData.ciudad,
+          estado: cartData.estado,
           image: cartData.imagen || "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?q=80&w=2070",
           location: `${cartData.ciudad || ''}, ${cartData.pais || ''}`,
           title: cartData.nombre,
@@ -90,7 +95,7 @@ const Cart = () => {
     try {
       const response = await axios.get(`/cart/${user.id_user}/all`);
 
-      if (response.data && response.data.carts) {
+      if (response.status === 200 && response.data.carts.length > 0) {
         setOtherCarts(response.data.carts);
       } else {
         setOtherCarts([]);
@@ -120,13 +125,18 @@ const Cart = () => {
     if (!cartItem) return;
 
     let newQuantity = cartItem.quantity;
-    if (action === 'increase') {
+    if (action === 'increase' && newQuantity < 6) { // Máximo 6 personas
       newQuantity += 1;
     } else if (action === 'decrease' && newQuantity > 1) { // Mínimo 1 persona
       newQuantity -= 1;
     }
 
-    setCartItem({ ...cartItem, quantity: newQuantity });
+    // Actualizar el cartItem con la nueva cantidad y precio ajustado
+    setCartItem({
+      ...cartItem,
+      quantity: newQuantity,
+      currentPrice: cartItem.originalPrice * newQuantity
+    });
   };
 
   const handleServiceToggle = (serviceId) => {
@@ -146,10 +156,16 @@ const Cart = () => {
     confirm('¿Estás seguro de que deseas eliminar este paquete del carrito?', async () => {
       try {
         setLoading(true);
-        await axios.delete(`/cart/${cartId}`);
-        setCartItem(null);
-        setCartId(null);
-        notify('Paquete eliminado del carrito', 'success');
+
+        const response = await axios.delete(`/cart/${cartId}`);
+
+        if (response.status == 200) {
+          setCartItem(null);
+          setCartId(null);
+          notify('Paquete eliminado del carrito', 'success');
+          window.location.reload();
+        }
+
       } catch (error) {
         console.error(error.response?.data?.message || 'Error al eliminar el paquete:', error);
       } finally {
@@ -193,31 +209,35 @@ const Cart = () => {
         metodoPago: formData.paymentMethod
       });
 
-      const pedidoId = checkoutResponse.data.pedidoId;
+      if (checkoutResponse.status == 200 || checkoutResponse.status == 201) {
+        const pedidoId = checkoutResponse.data.pedidoId;
 
-      // Calcular el total
-      const total = calculateTotal();
+        // Calcular el total
+        const total = calculateTotal();
 
-      // Enviar correo al cliente y jefe de ventas
-      await axios.post('/email/order-confirmation', {
-        orderId: pedidoId,
-        userInfo: {
-          name: user.name,
-          email: user.email,
-          phone: user.phone
-        },
-        orderDetails: {
-          location: cartItem?.location,
-          title: cartItem?.title,
-          total: total
-        }
-      })
+        // Enviar correo al cliente y jefe de ventas
+        await axios.post('/email/order-confirmation', {
+          orderId: pedidoId,
+          userInfo: {
+            name: user.name,
+            email: user.email,
+            phone: user.phone
+          },
+          orderDetails: {
+            location: cartItem?.location,
+            title: cartItem?.title,
+            total: total
+          }
+        })
 
-      notify('¡Pedido realizado con éxito! Gracias por tu compra.', 'success');
-      setCartItem(null);
-      setCartId(null);
-      setView('cart');
+        notify('¡Pedido realizado con éxito! Gracias por tu compra.', 'success');
+        setCartItem(null);
+        setCartId(null);
+        setView('cart');
+        window.location.reload();
+      }
     } catch (error) {
+      notify(error.response?.data?.message || 'Error al procesar el pedido', 'error')
       console.error(error.response?.message || 'Error al procesar el pedido:', error);
       notify('Error al procesar el pedido', 'error');
     } finally {
@@ -235,6 +255,28 @@ const Cart = () => {
       }
     });
     return total;
+  }
+
+  const handleDeleteOrder = async (cartId) => {
+    confirm('¿Estás seguro de que deseas cancelar este paquete?', async () => {
+      try {
+        setLoading(true);
+
+        const response = await axios.post(`/cart/cancel/${cartId}`);
+
+        if (response.status == 200) {
+          setCartItem(null);
+          setCartId(null);
+          notify('Paquete eliminado del carrito', 'success');
+          window.location.reload();
+        }
+      } catch (error) {
+        notify(error.response?.data?.message || 'Error al eliminar el paquete', 'error')
+        console.error(error.response?.data?.message || 'Error al eliminar el paquete:', error);
+      } finally {
+        setLoading(false);
+      }
+    })
   }
 
   return (
@@ -270,7 +312,7 @@ const Cart = () => {
                 Explorar Paquetes
               </button>
             </div>
-          ) : cartItem && (
+          ) : (cartItem && cartItem.estado.toLowerCase() === 'activo') && (
             <div className="cart-content">
               <div className="cart-items">
                 <div className="cart-item">
@@ -284,10 +326,30 @@ const Cart = () => {
                   <div className="cart-item-details">
                     <div className="cart-item-header">
                       <h3>{cartItem.title}</h3>
-                      <div className="cart-item-location">{cartItem.location}</div>
+                      {/* <div className="cart-item-location">{cartItem.location}</div> */}
                       <div className="cart-item-price">{cartItem.currentPrice} $</div>
                     </div>
 
+                    <div className="quantity-control">
+                      <span>Cantidad de pasajeros:</span>
+                      <div className="quantity-buttons">
+                        <button
+                          onClick={() => handleQuantityChange('decrease')}
+                          disabled={cartItem.quantity <= 1}
+                          className="quantity-btn"
+                        >
+                          <FaMinus />
+                        </button>
+                        <span className="quantity-display">{cartItem.quantity}</span>
+                        <button
+                          onClick={() => handleQuantityChange('increase')}
+                          disabled={cartItem.quantity >= 6}
+                          className="quantity-btn"
+                        >
+                          <FaPlus />
+                        </button>
+                      </div>
+                    </div>
                     <div className="additional-services">
                       <h4>Servicios adicionales</h4>
                       <div className="services-list">
@@ -371,6 +433,9 @@ const Cart = () => {
                       <span className={`status-badge ${cart.estado.toLowerCase()}`}>
                         {cart.estado}
                       </span>
+                      {(cart.estado.toLowerCase() !== 'activo' && cart.estado.toLowerCase() !== 'cancelado') && (
+                        <button onClick={() => handleDeleteOrder(cart.id_carrito)} >Cancelar</button>
+                      )}
                     </div>
                   </div>
                 ))}

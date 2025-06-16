@@ -10,11 +10,15 @@ router.get('/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
 
+        console.log(userId);
+
         const [cart] = await conex.execute(
-            `SELECT c.*, p.* 
+            `SELECT c.id_carrito, c.id_user, c.id_paquete, c.estado,
+                    p.nombre, p.descripcion, p.precio_base, p.duracion_dias, 
+                    p.fecha_inicio, p.fecha_fin
              FROM carritos c 
              INNER JOIN paquetes p ON c.id_paquete = p.id_paquete 
-             WHERE c.id_user = ?`,
+             WHERE c.id_user = ? AND c.estado = 'Activo'`,
             [userId]
         );
 
@@ -74,7 +78,6 @@ router.post('/add', async (req, res) => {
 router.put('/:cartId/checkout', async (req, res) => {
     try {
         const { cartId } = req.params;
-        const { metodoPago } = req.body;
 
         // Obtener información del carrito
         const [cart] = await conex.execute(
@@ -87,13 +90,6 @@ router.put('/:cartId/checkout', async (req, res) => {
 
         if (cart.length === 0) return handleError(res, 'El carrito no existe o no esta activo', null, 404);
 
-        // Crear pedido
-        const [pedidoResult] = await conex.execute(
-            `INSERT INTO pedidos (id_user, id_paquete, total, metodo_pago) 
-                 VALUES (?, ?, ?, ?)`,
-            [cart[0].id_user, cart[0].id_paquete, cart[0].total, metodoPago]
-        );
-
         // Actualizar estado del carrito
         await conex.execute(
             "UPDATE carritos SET estado = 'Procesando' WHERE id_carrito = ?",
@@ -101,8 +97,7 @@ router.put('/:cartId/checkout', async (req, res) => {
         );
 
         res.json({
-            message: 'Checkout exitoso, tu pedido sera proce',
-            pedidoId: pedidoResult.insertId
+            message: 'Checkout exitoso, tu pedido sera proce'
         });
 
     } catch (err) {
@@ -115,12 +110,11 @@ router.delete('/:cartId', async (req, res) => {
     try {
         const { cartId } = req.params;
 
+        console.log(cartId);
+
         // Verificar si existe el carrito y obtener información del paquete
         const [cart] = await conex.execute(
-            `SELECT c.*, p.nombre as nombre_paquete 
-             FROM carritos c 
-             INNER JOIN paquetes p ON c.id_paquete = p.id_paquete 
-             WHERE c.id_carrito = ? AND c.estado = 'Activo'`,
+            `SELECT * FROM carritos WHERE id_carrito = ? AND estado = 'Activo'`,
             [cartId]
         );
 
@@ -128,7 +122,7 @@ router.delete('/:cartId', async (req, res) => {
 
         // Eliminar el carrito (cambiar estado a 'Cancelado')
         await conex.execute(
-            "UPDATE carritos SET estado = 'Cancelado' WHERE id_carrito = ?",
+            "DELETE FROM carritos WHERE id_carrito = ?",
             [cartId]
         );
 
@@ -140,43 +134,63 @@ router.delete('/:cartId', async (req, res) => {
     }
 });
 
+// cancelar paquete del carrito
+router.post('/cancel/:cartId', async (req, res) => {
+    const { cartId } = req.params;
+
+    console.log('carrito:' + cartId);
+
+    try {
+
+        // Verificar si existe el carrito y obtener información del paquete
+        const [cart] = await conex.execute(
+            `SELECT * FROM carritos WHERE id_carrito = ? AND estado != 'Activo'`,
+            [cartId]
+        );
+
+        if (cart.length === 0) return handleError(res, 'El carrito no existe o no está activo', null, 404);
+
+        // Cancerlar el carrito
+        await conex.execute(
+            "UPDATE carritos SET estado = 'Cancelado' WHERE id_carrito = ?",
+            [cartId]
+        );
+
+        res.json({
+            message: 'Paquete cancelado del carrito exitosamente'
+        });
+    } catch (err) {
+        handleError(res, 'Error al eliminar el paquete del carrito', err);
+    }
+});
+
 // Completar venta
 router.post('/complete-sale', async (req, res) => {
     try {
-        const { pedidoId, total, comision } = req.body;
+        const { cartId, total, comision, metodoPago } = req.body;
 
         // Obtener información del pedido
         const [pedido] = await conex.execute(
-            'SELECT * FROM pedidos WHERE id_pedido = ?',
-            [pedidoId]
+            'SELECT * FROM carritos WHERE id_carrito = ?',
+            [cartId]
         );
 
         if (pedido.length === 0) return handleError(res, 'El pedido no existe', null, 404);
 
         // Registrar venta
         await conex.execute(
-            `INSERT INTO ventas (id_pedido, total, comision, metodo_pago) 
+            `INSERT INTO ventas (id_carrito, total, comision, metodo_pago) 
                  VALUES (?, ?, ?, ?)`,
-            [pedidoId, total, comision, pedido[0].metodo_pago]
+            [cartId, total, comision, pedido[0].metodo_pago]
         );
 
         // Actualizar estado del pedido
         await conex.execute(
-            "UPDATE pedidos SET estado = 'Completado' WHERE id_pedido = ?",
-            [pedidoId]
-        );
-
-        // Actualizar estado del carrito asociado
-        await conex.execute(
-            `UPDATE carritos c 
-                 INNER JOIN pedidos p ON c.id_paquete = p.id_paquete 
-                 SET c.estado = 'Completado' 
-                 WHERE p.id_pedido = ?`,
-            [pedidoId]
+            "UPDATE carritos SET estado = 'Completado' WHERE id_pedido = ?",
+            [cartId]
         );
 
         res.json({ message: 'Venta completada exitosamente' });
-
     } catch (err) {
         handleError(res, 'Error al completar la venta', err);
     }
