@@ -47,11 +47,11 @@ const port = process.env.API_PORT || 5001;
 app.listen(port, () => console.log(`Server escuchando en el puerto ${port}`));
 
 // Servir archivos estaticos de la build de Vite
-// if (isProduction) {
-//     app.use(express.static(path.join(__dirname, "../client/dist")));
+if (isProduction) {
+    app.use(express.static(path.join(__dirname, "../client/dist")));
 
-//     app.get('*', (req, res) => {
-//         console.log('Sirviendo archivos estaticos');
-//         res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
-//     });
-// }
+    app.get('*', (req, res) => {
+        console.log('Sirviendo archivos estaticos');
+        res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+    });
+}
