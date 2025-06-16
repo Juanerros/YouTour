@@ -703,6 +703,7 @@ const Airplanes = () => {
               <label>
                 Nombre del país:
                 <input
+                  className="input-border-blue"
                   type="text"
                   name="nombre"
                   value={paisForm.nombre}
@@ -713,6 +714,7 @@ const Airplanes = () => {
               <label>
                 Continente:
                 <select
+                  className="ciudad-item ciudad-nueva"
                   name="continente_id"
                   value={paisForm.continente_id}
                   onChange={handleContinenteSelect}
