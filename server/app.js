@@ -42,10 +42,6 @@ app.get('/ping', async (req, res) => {
     res.send('Pong')
 });
 
-// Prender servidor de solicitudes http 
-const port = process.env.API_PORT || 5001;
-app.listen(port, () => console.log(`Server escuchando en el puerto ${port}`));
-
 // Servir archivos estaticos de la build de Vite
 if (isProduction) {
     app.use(express.static(path.join(__dirname, "../client/dist")));
@@ -55,3 +51,7 @@ if (isProduction) {
         res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
     });
 }
+
+// Prender servidor de solicitudes http 
+const port = process.env.API_PORT || 5001;
+app.listen(port, () => console.log(`Server escuchando en el puerto ${port}`));
