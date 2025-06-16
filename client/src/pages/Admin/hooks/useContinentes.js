@@ -7,7 +7,7 @@ const useContinentes = () => {
 
   const fetchContinentes = async () => {
     try {
-      const response = await fetch('http://localhost:5001/paises/continentes');
+      const response = await fetch('http://localhost:5001/api/paises/continentes');
       if (!response.ok) {
         throw new Error('Error al obtener los continentes');
       }
@@ -23,7 +23,7 @@ const useContinentes = () => {
 
   const addContinente = async (continente) => {
     try {
-      const response = await fetch('http://localhost:5001/paises/continentes', {
+      const response = await fetch('http://localhost:5001/api/paises/continentes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

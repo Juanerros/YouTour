@@ -16,7 +16,7 @@ const useActividades = () => {
 
   const fetchActividades = async () => {
     try {
-      const response = await fetch('http://localhost:5001/actividades');
+      const response = await fetch('http://localhost:5001/api/actividades');
       if (!response.ok) {
         throw new Error('Error al obtener las actividades');
       }
@@ -32,7 +32,7 @@ const useActividades = () => {
 
   const addActividad = async (actividad) => {
     try {
-      const response = await fetch('http://localhost:5001/actividades', {
+      const response = await fetch('http://localhost:5001/api/actividades', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const useActividades = () => {
 
   const fetchPaises = async () => {
     try {
-      const response = await fetch('http://localhost:5001/paises');
+      const response = await fetch('http://localhost:5001/api/paises');
       if (!response.ok) throw new Error('Error al obtener los países');
       const data = await response.json();
       setPaises(data);
@@ -66,7 +66,7 @@ const useActividades = () => {
 
   const fetchCiudadesPorPais = async (idPais) => {
     try {
-      const response = await fetch(`http://localhost:5001/ciudades/pais/${idPais}`);
+      const response = await fetch(`http://localhost:5001/api/ciudades/pais/${idPais}`);
       if (!response.ok) throw new Error('Error al obtener las ciudades');
       const data = await response.json();
       setCiudades(data);

@@ -8,7 +8,7 @@ const useCiudades = () => {
 
   const fetchCiudades = async () => {
     try {
-      const response = await fetch('http://localhost:5001/ciudades');
+      const response = await fetch('http://localhost:5001/api/ciudades');
       if (!response.ok) {
         throw new Error('Error al obtener las ciudades');
       }
@@ -30,7 +30,7 @@ const useCiudades = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5001/ciudades/pais/${paisId}`);
+      const response = await fetch(`http://localhost:5001/api/ciudades/pais/${paisId}`);
       if (!response.ok) {
         throw new Error('Error al obtener las ciudades por país');
       }
@@ -53,7 +53,7 @@ const useCiudades = () => {
 
   const addCiudad = async (ciudad) => {
     try {
-      const response = await fetch('http://localhost:5001/ciudades', {
+      const response = await fetch('http://localhost:5001/api/ciudades', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
