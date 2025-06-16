@@ -16,7 +16,6 @@ YouTour es una aplicación web de comercio electrónico escalable para paquetes 
   - Axios (peticiones HTTP)
 
 - **Backend:** Node.js + Express
-  - JWT (autenticación)
   - Bcrypt (cifrado de contraseñas)
   - MySQL2 (conexión a base de datos)
   - Cors (seguridad de API)
@@ -52,7 +51,6 @@ El proyecto está dividido en dos equipos principales:
 La aplicación implementa múltiples capas de seguridad:
 
 - **Autenticación:**
-  - JWT (JSON Web Tokens) para manejo de sesiones
   - Tokens de acceso y renovación
   - Almacenamiento seguro de contraseñas con Bcrypt
 
@@ -65,7 +63,6 @@ La aplicación implementa múltiples capas de seguridad:
 ## Flujo de Compra
 
 1. **Registro/Login de Usuario**
-   - Autenticación segura con JWT
    - Validación de datos
 
 2. **Exploración de Paquetes**
