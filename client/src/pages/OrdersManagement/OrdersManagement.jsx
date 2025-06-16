@@ -163,7 +163,7 @@ const OrdersManagement = () => {
   return (
     <div className="orders-management">
       <h1>Gestión de Carritos</h1>
-      
+
       {loading ? (
         <div className="loading-container">
           <FaSpinner className="spinner" />
@@ -204,14 +204,14 @@ const OrdersManagement = () => {
                   </td>
                   <td>
                     <div className="acciones-container">
-                      <button 
+                      <button
                         className="btn-completar"
                         onClick={() => actualizarEstadoCarrito(carrito.id_carrito, 'Completado')}
                         title="Marcar como completado"
                       >
                         <FaCheck /> Completar
                       </button>
-                      <button 
+                      <button
                         className="btn-cancelar"
                         onClick={() => actualizarEstadoCarrito(carrito.id_carrito, 'Cancelado')}
                         title="Cancelar carrito"

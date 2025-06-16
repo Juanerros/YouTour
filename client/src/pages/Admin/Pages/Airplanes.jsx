@@ -27,13 +27,13 @@ const Airplanes = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentVuelo, setCurrentVuelo] = useState(null);
   const [viewMode, setViewMode] = useState('cards'); // 'cards' o 'table'
-  
+
   // Estado para almacenar los nombres de las ciudades seleccionadas
   const [ciudadesNombres, setCiudadesNombres] = useState({
     origen: '',
     destino: ''
   });
-  
+
   const { vuelos, loading, error, addVuelo, deleteVuelo, updateVuelo } = useVuelos();
   const { paises, loading: paisesLoading, addPais } = usePaises();
   const { ciudades, loading: ciudadesLoading, fetchCiudadesPorPais, addCiudad } = useCiudades();
@@ -71,14 +71,14 @@ const Airplanes = () => {
     if (form.salida && form.llegada) {
       const salidaDate = new Date(form.salida);
       const llegadaDate = new Date(form.llegada);
-      
+
       // Calcular duración en horas (como número decimal)
       const duracionMs = llegadaDate - salidaDate;
       const duracionHoras = duracionMs / (1000 * 60 * 60);
-      
+
       // Formatear fecha de vuelo (solo la fecha, sin hora)
       const fechaVuelo = salidaDate.toISOString().split('T')[0];
-      
+
       setForm(prev => ({
         ...prev,
         duracion: duracionHoras.toFixed(2),
@@ -133,14 +133,14 @@ const Airplanes = () => {
 
   const resetForm = () => {
     setForm({
-      origen: '', 
-      destino: '', 
-      aerolinea: AEROLINEAS[0], 
-      duracion: '', 
-      salida: '', 
-      llegada: '', 
-      precio: '', 
-      aeronave: AERONAVES[0], 
+      origen: '',
+      destino: '',
+      aerolinea: AEROLINEAS[0],
+      duracion: '',
+      salida: '',
+      llegada: '',
+      precio: '',
+      aeronave: AERONAVES[0],
       fecha_vuelo: ''
     });
     setCiudadesNombres({
@@ -187,7 +187,7 @@ const Airplanes = () => {
       setShowAgregarCiudadModal(false);
       setShowCiudadModal(false);
       setCiudadForm({ nombre: '', codigo_aeropuerto: '', id_pais: '' });
-      
+
       // Actualizar la lista de ciudades del país seleccionado
       if (selectedPais) {
         const ciudadesActualizadas = await fetchCiudadesPorPais(selectedPais.id_pais);
@@ -275,14 +275,14 @@ const Airplanes = () => {
 
   const filtrarPaises = () => {
     if (!searchTerm) return paises;
-    return paises.filter(pais => 
+    return paises.filter(pais =>
       pais.nombre.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
   const filtrarCiudades = () => {
     if (!searchTerm) return ciudadesSeleccionadas;
-    return ciudadesSeleccionadas.filter(ciudad => 
+    return ciudadesSeleccionadas.filter(ciudad =>
       ciudad.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (ciudad.codigo_aeropuerto && ciudad.codigo_aeropuerto.toLowerCase().includes(searchTerm.toLowerCase()))
     );
@@ -300,14 +300,14 @@ const Airplanes = () => {
             <h4>Administra los vuelos.</h4>
           </span>
           <div className="view-controls">
-            <button 
+            <button
               className={`view-btn ${viewMode === 'cards' ? 'active' : ''}`}
               onClick={() => setViewMode('cards')}
               title="Ver como tarjetas"
             >
               <FaThLarge />
             </button>
-            <button 
+            <button
               className={`view-btn ${viewMode === 'table' ? 'active' : ''}`}
               onClick={() => setViewMode('table')}
               title="Ver como tabla"
@@ -354,18 +354,18 @@ const Airplanes = () => {
                 <div className="precio-acciones">
                   <div className="info-container">
                     <h1>${vuelo.precio}</h1>
-                    <h3>por persona</h3>
+                    <h3>Por persona</h3>
                   </div>
                   <div className="card-actions">
-                    <button 
-                      className="btn-editar" 
+                    <button
+                      className="btn-editar"
                       onClick={() => handleEditVuelo(vuelo)}
                       title="Editar vuelo"
                     >
                       <FaEdit />
                     </button>
-                    <button 
-                      className="btn-eliminar" 
+                    <button
+                      className="btn-eliminar"
                       onClick={() => handleDeleteVuelo(vuelo)}
                       title="Eliminar vuelo"
                     >
@@ -405,15 +405,15 @@ const Airplanes = () => {
                     <td>${vuelo.precio}</td>
                     <td>
                       <div className="table-actions">
-                        <button 
-                          className="btn-editar" 
+                        <button
+                          className="btn-editar"
                           onClick={() => handleEditVuelo(vuelo)}
                           title="Editar vuelo"
                         >
                           <FaEdit />
                         </button>
-                        <button 
-                          className="btn-eliminar" 
+                        <button
+                          className="btn-eliminar"
                           onClick={() => handleDeleteVuelo(vuelo)}
                           title="Eliminar vuelo"
                         >
@@ -439,13 +439,13 @@ const Airplanes = () => {
                 <div className="modal-inputs-col">
                   <label>
                     Origen:
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="select-ciudad-btn"
                       onClick={() => abrirModalCiudad('origen')}
                     >
-                      {form.origen && ciudadesNombres.origen ? 
-                        ciudadesNombres.origen : 
+                      {form.origen && ciudadesNombres.origen ?
+                        ciudadesNombres.origen :
                         'Seleccionar ciudad'}
                     </button>
                   </label>
@@ -505,13 +505,13 @@ const Airplanes = () => {
                 <div className="modal-inputs-col">
                   <label>
                     Destino:
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="select-ciudad-btn"
                       onClick={() => abrirModalCiudad('destino')}
                     >
-                      {form.destino && ciudadesNombres.destino ? 
-                        ciudadesNombres.destino : 
+                      {form.destino && ciudadesNombres.destino ?
+                        ciudadesNombres.destino :
                         'Seleccionar ciudad'}
                     </button>
                   </label>
@@ -577,14 +577,14 @@ const Airplanes = () => {
             <h2>Confirmar Eliminación</h2>
             <p>¿Estás seguro de que deseas eliminar el vuelo de {currentVuelo.origen_nombre} a {currentVuelo.destino_nombre}?</p>
             <div className="modal-actions">
-              <button 
-                className="btn-eliminar" 
+              <button
+                className="btn-eliminar"
                 onClick={confirmDeleteVuelo}
               >
                 Eliminar
               </button>
-              <button 
-                className="btn-cancelar" 
+              <button
+                className="btn-cancelar"
                 onClick={() => setShowConfirmModal(false)}
               >
                 Cancelar
@@ -609,21 +609,21 @@ const Airplanes = () => {
                 className="search-input"
               />
             </div>
-            
+
             {!selectedPais ? (
               <>
                 <h3>Selecciona un país</h3>
                 <div className="paises-grid">
                   {filtrarPaises().map(pais => (
-                    <div 
-                      key={pais.id_pais} 
+                    <div
+                      key={pais.id_pais}
                       className="pais-item"
                       onClick={() => handlePaisSelect(pais)}
                     >
                       {pais.nombre}
                     </div>
                   ))}
-                  <div 
+                  <div
                     className="pais-item pais-nuevo"
                     onClick={() => {
                       setShowCiudadModal(false);
@@ -638,8 +638,8 @@ const Airplanes = () => {
               <>
                 <div className="selected-pais">
                   <span>País seleccionado: <strong>{selectedPais.nombre}</strong></span>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="btn-volver"
                     onClick={() => {
                       setSelectedPais(null);
@@ -649,15 +649,15 @@ const Airplanes = () => {
                     Cambiar país
                   </button>
                 </div>
-                
+
                 <h3>Selecciona una ciudad</h3>
                 {ciudadesLoading ? (
                   <div>Cargando ciudades...</div>
                 ) : (
                   <div className="ciudades-grid">
                     {filtrarCiudades().map(ciudad => (
-                      <div 
-                        key={ciudad.id_ciudad} 
+                      <div
+                        key={ciudad.id_ciudad}
                         className="ciudad-item"
                         onClick={() => handleCiudadSelect(ciudad)}
                       >
@@ -667,7 +667,7 @@ const Airplanes = () => {
                         )}
                       </div>
                     ))}
-                    <div 
+                    <div
                       className="ciudad-item ciudad-nueva"
                       onClick={() => {
                         setCiudadForm({ ...ciudadForm, id_pais: selectedPais.id_pais });
@@ -680,7 +680,7 @@ const Airplanes = () => {
                 )}
               </>
             )}
-            
+
             <div className="modal-actions">
               <button
                 type="button"
@@ -703,6 +703,7 @@ const Airplanes = () => {
               <label>
                 Nombre del país:
                 <input
+                  className="input-border-blue"
                   type="text"
                   name="nombre"
                   value={paisForm.nombre}
@@ -713,6 +714,7 @@ const Airplanes = () => {
               <label>
                 Continente:
                 <select
+                  className="ciudad-item ciudad-nueva"
                   name="continente_id"
                   value={paisForm.continente_id}
                   onChange={handleContinenteSelect}
