@@ -13,11 +13,16 @@ const OrdersManagement = () => {
   const cargarCarritos = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/cart/admin/all');
-      // Filtrar solo los carritos en estado "Procesando"
-      const carritosEnProceso = response.data.carts.filter(cart => cart.estado === 'Procesando');
-      setCarritos(carritosEnProceso);
-      setError(null);
+      const response = await axios.get('/cart/admin/all');
+
+      if (response.status == 200) {
+        // Filtrar solo los carritos en estado "Procesando"
+        const carritosEnProceso = response.data.carts.filter(cart => cart.estado === 'Procesando');
+        setCarritos(carritosEnProceso);
+        setError(null);
+      }
+
+
     } catch (err) {
       console.error('Error al cargar carritos:', err);
       setError('Error al cargar los carritos. Por favor, intente nuevamente.');
@@ -30,7 +35,7 @@ const OrdersManagement = () => {
   // Actualizar el estado del carrito
   const actualizarEstadoCarrito = async (idCarrito, nuevoEstado) => {
     try {
-      await axios.put(`/api/cart/${idCarrito}/status`, { estado: nuevoEstado });
+      await axios.put(`/cart/${idCarrito}/status`, { estado: nuevoEstado });
       toast.success(`Carrito ${idCarrito} actualizado a estado: ${nuevoEstado}`);
       // Recargar la lista de carritos
       cargarCarritos();
@@ -61,7 +66,7 @@ const OrdersManagement = () => {
   return (
     <div className="orders-management">
       <h1>Gestión de Carritos</h1>
-      
+
       {loading ? (
         <div className="loading-container">
           <FaSpinner className="spinner" />
@@ -102,14 +107,14 @@ const OrdersManagement = () => {
                   </td>
                   <td>
                     <div className="acciones-container">
-                      <button 
+                      <button
                         className="btn-completar"
                         onClick={() => actualizarEstadoCarrito(carrito.id_carrito, 'Completado')}
                         title="Marcar como completado"
                       >
                         <FaCheck /> Completar
                       </button>
-                      <button 
+                      <button
                         className="btn-cancelar"
                         onClick={() => actualizarEstadoCarrito(carrito.id_carrito, 'Cancelado')}
                         title="Cancelar carrito"

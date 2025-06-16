@@ -199,12 +199,16 @@ router.post('/complete-sale', async (req, res) => {
 // Obtener todos los carritos para administración
 router.get('/admin/all', async (req, res) => {
     try {
+        console.log('Iniciando obtener carritos')
+        
         const [carts] = await conex.execute(
             `SELECT c.*, p.nombre, p.precio_base, p.duracion_dias, p.fecha_inicio, p.fecha_fin
              FROM carritos c 
              INNER JOIN paquetes p ON c.id_paquete = p.id_paquete 
              ORDER BY c.fecha_creacion DESC`
         );
+
+        console.log(carts);
 
         res.json({ carts });
     } catch (err) {

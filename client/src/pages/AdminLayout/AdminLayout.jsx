@@ -1,5 +1,5 @@
 import './style.css'
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { BsSuitcaseFill } from "react-icons/bs";
 import { IoIosAirplane } from "react-icons/io";
@@ -7,6 +7,7 @@ import { RiHotelFill } from "react-icons/ri";
 import { PiSunFill, PiAirplaneTiltDuotone } from "react-icons/pi";
 import { IoMdSettings } from "react-icons/io";
 import { FaShoppingBag } from "react-icons/fa";
+import { useUser } from '../../hooks/useUser';
 
 const sidebarOptions = [
   { icon: <BsSuitcaseFill className='op-ico' />, label: "Paquetes Turisticos", path: "/admin/packages" },
@@ -17,6 +18,7 @@ const sidebarOptions = [
 ];
 
 const AdminLayout = () => {
+  const { user } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -27,13 +29,15 @@ const AdminLayout = () => {
     setActiveIndex(idx === -1 ? 0 : idx);
   }, [location.pathname]);
 
+  if (!user || !user.isAdmin) return navigate('/');;
+
   return (
     <>
       {/* Navbar visible en todas las secciones */}
       <div className="navbar">
         <h1>Administracion de YouTour</h1>
         <div className="nav-links">
-          <a href="/admin/settings">Configuración<IoMdSettings size={15}/></a>
+          <Link to={'/'}>Volver a inicio</Link>
         </div>
       </div>
 
@@ -41,7 +45,7 @@ const AdminLayout = () => {
         <aside>
           <div className="sidebar">
             <div className="w-dashboard">
-              <PiAirplaneTiltDuotone className='ico'/>
+              <PiAirplaneTiltDuotone className='ico' />
               <span>
                 <h1>YouTour</h1><h4>Dashboard</h4>
               </span>
@@ -65,7 +69,7 @@ const AdminLayout = () => {
           </div>
         </aside>
         <section className="main-content">
-          <Outlet/>
+          <Outlet />
         </section>
       </div>
     </>
