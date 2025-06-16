@@ -6,12 +6,14 @@ import { IoIosAirplane } from "react-icons/io";
 import { RiHotelFill } from "react-icons/ri";
 import { PiSunFill, PiAirplaneTiltDuotone } from "react-icons/pi";
 import { IoMdSettings } from "react-icons/io";
+import { FaShoppingBag } from "react-icons/fa";
 
 const sidebarOptions = [
   { icon: <BsSuitcaseFill className='op-ico' />, label: "Paquetes Turisticos", path: "/admin/packages" },
   { icon: <IoIosAirplane className='op-ico' />, label: "Vuelos", path: "/admin/airplanes" },
   { icon: <RiHotelFill className='op-ico' />, label: "Hoteles", path: "/admin/hotels" },
   { icon: <PiSunFill className='op-ico' />, label: "Actividades", path: "/admin/activities" },
+  { icon: <FaShoppingBag className='op-ico' />, label: "Pedidos", path: "/admin/orders" },
 ];
 
 const AdminLayout = () => {

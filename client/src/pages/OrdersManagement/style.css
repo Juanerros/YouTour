@@ -1,0 +1,191 @@
+.orders-management {
+  padding: 1.5rem;
+}
+
+.orders-management h1 {
+  margin-bottom: 1.5rem;
+  color: #2563ae;
+  font-size: 1.8rem;
+}
+
+.filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filtro-grupo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filtro-grupo label {
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.filtro-grupo select {
+  padding: 0.5rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  background-color: white;
+  min-width: 150px;
+}
+
+.filtro-grupo.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.filtro-grupo.checkbox input {
+  margin-right: 0.5rem;
+}
+
+.loading-container,
+.error-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  font-size: 1.5rem;
+  color: #2563ae;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container p {
+  color: #e53e3e;
+  font-weight: 500;
+}
+
+.tabla-container {
+  overflow-x: auto;
+  margin-top: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.tabla-pedidos {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.tabla-pedidos th,
+.tabla-pedidos td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tabla-pedidos th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.tabla-pedidos tr:hover {
+  background-color: #f8fafc;
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.estado-pendiente {
+  background-color: #fef3c7;
+  color: #92400e;
+  /* Este estilo se usa para el estado 'Activo' */
+}
+
+.estado-proceso {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.estado-completado {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.estado-cancelado {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.acciones-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-confirmar,
+.btn-completar,
+.btn-cancelar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-confirmar {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.btn-confirmar:hover {
+  background-color: #bae6fd;
+}
+
+.btn-completar {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.btn-completar:hover {
+  background-color: #bbf7d0;
+}
+
+.btn-cancelar {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn-cancelar:hover {
+  background-color: #fecaca;
+}
+
+.btn-confirmar:active,
+.btn-completar:active,
+.btn-cancelar:active {
+  transform: scale(0.95);
+}

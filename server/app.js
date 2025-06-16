@@ -36,6 +36,7 @@ app.use('/api/actividades', require(path.join(__dirname, 'routes', 'actividades'
 app.use('/api/paquetes', require(path.join(__dirname, 'routes', 'paquetes')));
 app.use('/api/cart', require(path.join(__dirname, 'routes', 'cart')));
 app.use('/api/email', require(path.join(__dirname, 'routes', 'email')));
+app.use('/api/pedidos', require(path.join(__dirname, 'routes', 'pedidos')));
 
 // Testeo de api
 app.get('/api/ping', async (req, res) => {
