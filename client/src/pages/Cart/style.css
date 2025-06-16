@@ -173,7 +173,42 @@
 .quantity-control {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.quantity-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity-btn {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.quantity-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-display {
+  font-size: 1.1rem;
+  font-weight: 500;
+  min-width: 2rem;
+  text-align: center;
 }
 
 .quantity-control button {
@@ -570,70 +605,20 @@
   background-color: #1d4ed8;
 }
 
+/* Añadir al final del archivo CSS existente */
+
 .other-carts-section {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background-color: #f8f9fa;
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f9f9f9;
   border-radius: 8px;
-}
-
-.other-carts-section h2 {
-  margin-bottom: 1rem;
-  color: #333;
-  font-size: 1.5rem;
-}
-
-.other-carts-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
-.other-cart-item {
-  background-color: white;
-  border-radius: 8px;
-  padding: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
 }
 
-.other-cart-item:hover {
-  transform: translateY(-2px);
-}
-
-.other-cart-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.other-cart-details h3 {
-  margin: 0;
-  font-size: 1.1rem;
+.other-carts-section h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
   color: #333;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.status-badge.procesando {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.status-badge.completado {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.status-badge.cancelado {
-  background-color: #f8d7da;
-  color: #721c24;
 }
 
 .other-carts-list {
