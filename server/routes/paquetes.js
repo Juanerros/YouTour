@@ -62,11 +62,9 @@ router.get('/:id', async (req, res) => {
             'SELECT a.*, pa.id_paquete_actividad, pa.fecha, pa.hora, pa.incluido_base, ' +
             't.nombre as tipo, c.nombre as ciudad, p.nombre as pais, d.nombre as dificultad ' +
             'FROM paquete_actividades pa ' +
-            'INNER JOIN actividades a ON pa.id_actividad = a.id_actividad ' +
-            'INNER JOIN tipos_actividad t ON a.id_tipo = t.id_tipo ' +
+            'INNER JOIN actividades a ON pa.id_actividad = a.id_actividad '+
             'INNER JOIN ciudades c ON a.id_ciudad = c.id_ciudad ' +
             'INNER JOIN paises p ON c.id_pais = p.id_pais ' +
-            'INNER JOIN niveles_dificultad d ON a.id_dificultad = d.id_nivel ' +
             'WHERE pa.id_paquete = ?',
             [id]
         );
@@ -127,8 +125,6 @@ router.post('/', async (req, res) => {
     }
     
     try {
-        // Iniciar transacción
-        await conex.execute('START TRANSACTION');
         
         // Crear paquete base
         const [resultPaquete] = await conex.execute(
@@ -166,16 +162,11 @@ router.post('/', async (req, res) => {
             [idPaquete, 1, 'Paquete creado']
         );
         
-        // Confirmar transacción
-        await conex.execute('COMMIT');
-        
         res.status(201).json({
             id_paquete: idPaquete,
             mensaje: 'Paquete creado exitosamente'
         });
     } catch (err) {
-        // Revertir transacción en caso de error
-        await conex.execute('ROLLBACK');
         handleError(res, 'Error al crear paquete', err);
     }
 });

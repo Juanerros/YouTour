@@ -3,7 +3,7 @@ import '../../../components/Modal/ModalAirplanes.css'
 import './css/Airplanes.css'
 import { useState, useEffect } from 'react';
 import { PiAirplaneTaxiing, PiAirplaneTiltLight } from "react-icons/pi";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaEdit, FaTrash, FaTable, FaThLarge } from "react-icons/fa";
 import useVuelos from '../hooks/useVuelos';
 import usePaises from '../hooks/usePaises';
 import useCiudades from '../hooks/useCiudades';
@@ -19,12 +19,22 @@ const Airplanes = () => {
   const [showContinenteModal, setShowContinenteModal] = useState(false);
   const [showCiudadModal, setShowCiudadModal] = useState(false);
   const [showAgregarCiudadModal, setShowAgregarCiudadModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [currentField, setCurrentField] = useState(''); // Para saber si es origen o destino
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPais, setSelectedPais] = useState(null);
   const [ciudadesSeleccionadas, setCiudadesSeleccionadas] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentVuelo, setCurrentVuelo] = useState(null);
+  const [viewMode, setViewMode] = useState('cards'); // 'cards' o 'table'
   
-  const { vuelos, loading, error, addVuelo } = useVuelos();
+  // Estado para almacenar los nombres de las ciudades seleccionadas
+  const [ciudadesNombres, setCiudadesNombres] = useState({
+    origen: '',
+    destino: ''
+  });
+  
+  const { vuelos, loading, error, addVuelo, deleteVuelo, updateVuelo } = useVuelos();
   const { paises, loading: paisesLoading, addPais } = usePaises();
   const { ciudades, loading: ciudadesLoading, fetchCiudadesPorPais, addCiudad } = useCiudades();
   const { continentes, loading: continentesLoading, addContinente } = useContinentes();
@@ -107,22 +117,36 @@ const Airplanes = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addVuelo(form);
+      if (isEditing && currentVuelo) {
+        await updateVuelo(currentVuelo.id_vuelo, form);
+        setIsEditing(false);
+        setCurrentVuelo(null);
+      } else {
+        await addVuelo(form);
+      }
       setShowModal(false);
-      setForm({
-        origen: '', 
-        destino: '', 
-        aerolinea: AEROLINEAS[0], 
-        duracion: '', 
-        salida: '', 
-        llegada: '', 
-        precio: '', 
-        aeronave: AERONAVES[0], 
-        fecha_vuelo: ''
-      });
+      resetForm();
     } catch (err) {
-      console.error('Error al agregar vuelo:', err);
+      console.error('Error al procesar vuelo:', err);
     }
+  };
+
+  const resetForm = () => {
+    setForm({
+      origen: '', 
+      destino: '', 
+      aerolinea: AEROLINEAS[0], 
+      duracion: '', 
+      salida: '', 
+      llegada: '', 
+      precio: '', 
+      aeronave: AERONAVES[0], 
+      fecha_vuelo: ''
+    });
+    setCiudadesNombres({
+      origen: '',
+      destino: ''
+    });
   };
 
   const handlePaisSubmit = async (e) => {
@@ -143,7 +167,7 @@ const Airplanes = () => {
     e.preventDefault();
     try {
       const nuevoContinente = await addContinente(continenteForm);
-      setPaisForm({ ...paisForm, continente_id: nuevoContinente.id });
+      setPaisForm({ ...paisForm, continente_id: nuevoContinente.id_continente });
       setShowContinenteModal(false);
       setContinenteForm({ nombre: '' });
     } catch (err) {
@@ -156,7 +180,12 @@ const Airplanes = () => {
     try {
       const nuevaCiudad = await addCiudad(ciudadForm);
       setForm({ ...form, [currentField]: nuevaCiudad.id_ciudad });
+      setCiudadesNombres(prev => ({
+        ...prev,
+        [currentField]: nuevaCiudad.nombre
+      }));
       setShowAgregarCiudadModal(false);
+      setShowCiudadModal(false);
       setCiudadForm({ nombre: '', codigo_aeropuerto: '', id_pais: '' });
       
       // Actualizar la lista de ciudades del país seleccionado
@@ -185,6 +214,10 @@ const Airplanes = () => {
 
   const handleCiudadSelect = (ciudad) => {
     setForm({ ...form, [currentField]: ciudad.id_ciudad });
+    setCiudadesNombres(prev => ({
+      ...prev,
+      [currentField]: ciudad.nombre
+    }));
     setShowCiudadModal(false);
   };
 
@@ -194,6 +227,43 @@ const Airplanes = () => {
     setSelectedPais(null);
     setCiudadesSeleccionadas([]);
     setShowCiudadModal(true);
+  };
+
+  const handleEditVuelo = (vuelo) => {
+    // Buscar los nombres de las ciudades
+    setForm({
+      origen: vuelo.origen,
+      destino: vuelo.destino,
+      aerolinea: vuelo.aerolinea,
+      duracion: vuelo.duracion,
+      salida: vuelo.salida,
+      llegada: vuelo.llegada,
+      precio: vuelo.precio,
+      aeronave: vuelo.aeronave,
+      fecha_vuelo: vuelo.fecha_vuelo
+    });
+    setCiudadesNombres({
+      origen: vuelo.origen_nombre,
+      destino: vuelo.destino_nombre
+    });
+    setCurrentVuelo(vuelo);
+    setIsEditing(true);
+    setShowModal(true);
+  };
+
+  const handleDeleteVuelo = (vuelo) => {
+    setCurrentVuelo(vuelo);
+    setShowConfirmModal(true);
+  };
+
+  const confirmDeleteVuelo = async () => {
+    try {
+      await deleteVuelo(currentVuelo.id_vuelo);
+      setShowConfirmModal(false);
+      setCurrentVuelo(null);
+    } catch (err) {
+      console.error('Error al eliminar vuelo:', err);
+    }
   };
 
   const formatearDuracion = (duracion) => {
@@ -229,51 +299,141 @@ const Airplanes = () => {
             <h1>Gestión de vuelos</h1>
             <h4>Administra los vuelos.</h4>
           </span>
-          <input
-            type="button"
-            value="+ Agregar Vuelo"
-            className='agregar-vuelo-btn'
-            onClick={() => setShowModal(true)}
-          />
+          <div className="view-controls">
+            <button 
+              className={`view-btn ${viewMode === 'cards' ? 'active' : ''}`}
+              onClick={() => setViewMode('cards')}
+              title="Ver como tarjetas"
+            >
+              <FaThLarge />
+            </button>
+            <button 
+              className={`view-btn ${viewMode === 'table' ? 'active' : ''}`}
+              onClick={() => setViewMode('table')}
+              title="Ver como tabla"
+            >
+              <FaTable />
+            </button>
+            <input
+              type="button"
+              value="+ Agregar Vuelo"
+              className='agregar-vuelo-btn'
+              onClick={() => {
+                resetForm();
+                setIsEditing(false);
+                setCurrentVuelo(null);
+                setShowModal(true);
+              }}
+            />
+          </div>
         </div>
-        <div className="vuelos-container">
-          {vuelos.map((vuelo, idx) => (
-            <div className="vuelos-card" key={idx}>
-              <div className="info-general">
-                <PiAirplaneTiltLight className='card-ico' />
-                <div className="info-container">
-                  <div className="info">
-                    <h2>{vuelo.origen_nombre}</h2>
-                    <hr />
-                    <PiAirplaneTaxiing size={30} />
-                    <hr />
-                    <h2>{vuelo.destino_nombre}</h2>
+
+        {viewMode === 'cards' ? (
+          <div className="vuelos-container">
+            {vuelos.map((vuelo, idx) => (
+              <div className="vuelos-card" key={idx}>
+                <div className="info-general">
+                  <PiAirplaneTiltLight className='card-ico' />
+                  <div className="info-container">
+                    <div className="info">
+                      <h2>{vuelo.origen_nombre}</h2>
+                      <hr />
+                      <PiAirplaneTaxiing size={30} />
+                      <hr />
+                      <h2>{vuelo.destino_nombre}</h2>
+                    </div>
+                    <div className="info">
+                      <h3>{vuelo.aerolinea}</h3>
+                      <hr />
+                      <h3>
+                        {vuelo.salida && vuelo.llegada ? `${vuelo.salida} - ${vuelo.llegada}` : ''}
+                      </h3>
+                    </div>
                   </div>
-                  <div className="info">
-                    <h3>{vuelo.aerolinea}</h3>
-                    <hr />
-                    <h3>
-                      {vuelo.salida && vuelo.llegada ? `${vuelo.salida} - ${vuelo.llegada}` : ''}
-                    </h3>
+                </div>
+                <div className="precio-acciones">
+                  <div className="info-container">
+                    <h1>${vuelo.precio}</h1>
+                    <h3>por persona</h3>
+                  </div>
+                  <div className="card-actions">
+                    <button 
+                      className="btn-editar" 
+                      onClick={() => handleEditVuelo(vuelo)}
+                      title="Editar vuelo"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button 
+                      className="btn-eliminar" 
+                      onClick={() => handleDeleteVuelo(vuelo)}
+                      title="Eliminar vuelo"
+                    >
+                      <FaTrash />
+                    </button>
                   </div>
                 </div>
               </div>
-              <div className="precio">
-                <div className="info-container">
-                  <h1>${vuelo.precio}</h1>
-                  <h3>por persona</h3>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="vuelos-table-container">
+            <table className="vuelos-table">
+              <thead>
+                <tr>
+                  <th>Origen</th>
+                  <th>Destino</th>
+                  <th>Aerolínea</th>
+                  <th>Fecha</th>
+                  <th>Salida</th>
+                  <th>Llegada</th>
+                  <th>Duración</th>
+                  <th>Precio</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {vuelos.map((vuelo, idx) => (
+                  <tr key={idx}>
+                    <td>{vuelo.origen_nombre}</td>
+                    <td>{vuelo.destino_nombre}</td>
+                    <td>{vuelo.aerolinea}</td>
+                    <td>{vuelo.fecha_vuelo}</td>
+                    <td>{vuelo.salida}</td>
+                    <td>{vuelo.llegada}</td>
+                    <td>{formatearDuracion(vuelo.duracion)}</td>
+                    <td>${vuelo.precio}</td>
+                    <td>
+                      <div className="table-actions">
+                        <button 
+                          className="btn-editar" 
+                          onClick={() => handleEditVuelo(vuelo)}
+                          title="Editar vuelo"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button 
+                          className="btn-eliminar" 
+                          onClick={() => handleDeleteVuelo(vuelo)}
+                          title="Eliminar vuelo"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
-      {/* Modal para agregar vuelo */}
+      {/* Modal para agregar/editar vuelo */}
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">
-            <h2>Agregar Vuelo</h2>
+            <h2>{isEditing ? 'Editar Vuelo' : 'Agregar Vuelo'}</h2>
             <form onSubmit={handleSubmit}>
               <div className="modal-inputs-row">
                 <div className="modal-inputs-col">
@@ -284,8 +444,8 @@ const Airplanes = () => {
                       className="select-ciudad-btn"
                       onClick={() => abrirModalCiudad('origen')}
                     >
-                      {form.origen ? 
-                        vuelos.find(v => v.origen === form.origen)?.origen_nombre || 'Seleccionar ciudad' : 
+                      {form.origen && ciudadesNombres.origen ? 
+                        ciudadesNombres.origen : 
                         'Seleccionar ciudad'}
                     </button>
                   </label>
@@ -350,8 +510,8 @@ const Airplanes = () => {
                       className="select-ciudad-btn"
                       onClick={() => abrirModalCiudad('destino')}
                     >
-                      {form.destino ? 
-                        vuelos.find(v => v.destino === form.destino)?.destino_nombre || 'Seleccionar ciudad' : 
+                      {form.destino && ciudadesNombres.destino ? 
+                        ciudadesNombres.destino : 
                         'Seleccionar ciudad'}
                     </button>
                   </label>
@@ -395,7 +555,7 @@ const Airplanes = () => {
               </div>
               <div className="modal-actions">
                 <button type="submit" className="btn-agregar">
-                  Agregar
+                  {isEditing ? 'Guardar Cambios' : 'Agregar'}
                 </button>
                 <button
                   type="button"
@@ -406,6 +566,30 @@ const Airplanes = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación para eliminar */}
+      {showConfirmModal && currentVuelo && (
+        <div className="modal-backdrop">
+          <div className="modal modal-small">
+            <h2>Confirmar Eliminación</h2>
+            <p>¿Estás seguro de que deseas eliminar el vuelo de {currentVuelo.origen_nombre} a {currentVuelo.destino_nombre}?</p>
+            <div className="modal-actions">
+              <button 
+                className="btn-eliminar" 
+                onClick={confirmDeleteVuelo}
+              >
+                Eliminar
+              </button>
+              <button 
+                className="btn-cancelar" 
+                onClick={() => setShowConfirmModal(false)}
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -581,7 +765,7 @@ const Airplanes = () => {
                 />
               </label>
               <label>
-                Código de aeropuerto (opcional):
+                Código de aeropuerto:
                 <input
                   type="text"
                   name="codigo_aeropuerto"
