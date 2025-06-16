@@ -354,10 +354,7 @@ const Cart = () => {
                     </div>
                   ))}
 
-<<<<<<< Updated upstream
-=======
                   <span>{totalServicios() + ' $'}</span>
->>>>>>> Stashed changes
                 </div>
                 <div className="summary-total">
                   <span>Total:</span>
