@@ -35,7 +35,6 @@ const Home = () => {
   // Efecto para actualizar los viajes filtrados cuando se reciben los paquetes
   useEffect(() => {
     if (tourPackages) {
-      console.log('Paquetes recibidos:', tourPackages);
       setFilteredTrips(tourPackages);
     }
   }, [tourPackages]);

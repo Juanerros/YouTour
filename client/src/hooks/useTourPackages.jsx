@@ -43,11 +43,9 @@ const useTourPackages = () => {
         }));
         setTourPackages(formattedData);
         setIsLoading(false);
-        console.log("funciona")
       } catch (error) {
         setError(error.message);
         setIsLoading(false);
-        console.log("no funciona")
       }
     };
 

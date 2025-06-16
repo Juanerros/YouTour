@@ -38,6 +38,7 @@ const Nav = () => {
         <Link className="cart-btn" to={'/cart'}>
           <LuTicketsPlane size={24} />
         </Link>
+        <span>{user && user.name}</span>
         {user ? <button className="login-btn" onClick={handleLogout}>Cerrar sesión</button>
           : <Link className="login-btn" to={'/auth'}>Iniciar sesión</Link>}
       </div>
