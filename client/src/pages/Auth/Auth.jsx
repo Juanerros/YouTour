@@ -115,6 +115,8 @@ const Auth = () => {
     setShowPassword(!showPassword);
   };
 
+  if(user) return navigate('/');
+
   return (
     <div className="auth-page">
       <div className="auth-container">
