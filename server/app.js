@@ -1,4 +1,6 @@
 const path = require('path');
+process.loadEnvFile();
+
 const isProduction = process.env.NODE_ENV === 'production';
 const { express } = require(path.join(__dirname, 'config', 'setup'));
 
@@ -37,11 +39,12 @@ app.get('/api/ping', async (req, res) => {
 
 // Servir archivos estaticos de la build de Vite
 if (isProduction) {
+    console.log('Sirviendo archivos estaticos')
     // Ruta específica para archivos estáticos
     app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets')));
 
     // Captura todas las rutas no API para el frontend
-    app.get('*', (req, res) => {
+    app.get('/*', (req, res) => {
         res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
 }
