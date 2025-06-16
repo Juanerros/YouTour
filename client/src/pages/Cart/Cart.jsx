@@ -9,6 +9,7 @@ import useConfirmation from '../../hooks/useConfirmation';
 import { LuUsers } from 'react-icons/lu';
 
 const Cart = () => {
+
   const navigate = useNavigate();
   const { user } = useUser();
   const { notify } = useNotification();
@@ -199,6 +200,29 @@ const Cart = () => {
   const handleBackToCart = () => {
     setView('cart');
   };
+  const createCheckout = async (title, price) => {
+    try {
+      const response = await fetch('/api/mercadopago/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, price }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.init_point) {
+        window.open(data.init_point, '_blank');
+      } else {
+        console.error('Error generando el link de pago', data);
+      }
+    } catch (error) {
+      console.error('Error al crear checkout', error);
+    }
+  };
+  const makeCheckout = (item, price) => {
+    handleSubmitOrder();
+    createCheckout(item, price);
+  }
 
   const handleSubmitOrder = async () => {
     try {
@@ -583,7 +607,7 @@ const Cart = () => {
                 </div>
               </div>
 
-              <button className="pay-button" onClick={handleSubmitOrder}>
+              <button className="pay-button" onClick={createCheckout(cart?.name, cart?.price)}>
                 Pagar con {formData.paymentMethod === 'uala' ? 'Ualá' : 'Mercado Pago'} {calculateTotal()} $
               </button>
             </div>
