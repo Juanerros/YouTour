@@ -14,7 +14,7 @@ router.get('/:userId', async (req, res) => {
             `SELECT c.*, p.* 
              FROM carritos c 
              INNER JOIN paquetes p ON c.id_paquete = p.id_paquete 
-             WHERE c.id_user = ? AND c.estado = 'Activo'`,
+             WHERE c.id_user = ?`,
             [userId]
         );
 

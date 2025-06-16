@@ -47,16 +47,18 @@ router.post('/order-confirmation', async (req, res) => {
         `;
 
         // Enviar correo al cliente
-        await sendEmail({ body: { email: userEmail, subject: clientSubject, message: clientMessage } });
+        await sendEmail({ body: { email: userInfo.email, subject: clientSubject, message: clientMessage } }, res);
 
         // Enviar correo al jefe de ventas
+
         const [emails] = await conex.execute(
             'SELECT email FROM users WHERE is = true'
         );
 
         for (const email of emails) {
-            await sendEmail({ body: { email: email.email, subject: salesSubject, message: salesMessage } });
+            await sendEmail({ body: { email: email.email, subject: salesSubject, message: salesMessage } }, res);
         }
+
 
         res.status(200).json({ message: 'Correos de confirmación enviados correctamente' });
     } catch (error) {

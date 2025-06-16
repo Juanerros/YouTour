@@ -106,6 +106,7 @@ router.post('/register', async (req, res) => {
             message: 'Usuario registrado correctamente',
             user: {
                 id_login: loginResult.insertId,
+                id_user: userId,
                 email,
                 // Oculta la contraseña
                 pass: '[Hidden]',

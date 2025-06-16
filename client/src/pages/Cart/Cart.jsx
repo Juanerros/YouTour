@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './style.css';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaArrowLeft, FaPlus, FaMinus, FaTimes, FaCar, FaUser, FaHeart, FaLock, FaCreditCard, FaMobileAlt, FaSpinner } from 'react-icons/fa';
 import axios from '../../api/axios';
 import { useUser } from '../../hooks/useUser';
@@ -55,14 +55,11 @@ const Cart = () => {
           location: `${cartData.ciudad || ''}, ${cartData.pais || ''}`,
           title: cartData.nombre,
           currentPrice: cartData.precio_base,
-          originalPrice: cartData.precio_base * 1.2,
+          originalPrice: cartData.precio_base,
           duration: cartData.duracion_dias || 5,
           date: cartData.fecha_inicio ? new Date(cartData.fecha_inicio).toLocaleDateString() : "Próximamente",
           persons: cartData.cantidad_personas ? `1-${cartData.cantidad_personas}` : "2-6",
-          quantity: {
-            adults: 1,
-            children: 0
-          },
+          quantity: 1,
           additionalServices: [
             { id: 'transfer', name: 'Transfer Premium', icon: 'car', price: 89, selected: false },
             { id: 'guide', name: 'Guía Turístico Privado', icon: 'user', price: 150, selected: false },
@@ -85,7 +82,7 @@ const Cart = () => {
 
   // Calculate total price
   const calculateItemTotal = (item) => {
-    const basePrice = item.currentPrice * (item.quantity.adults + item.quantity.children * 0.7);
+    const basePrice = item.currentPrice * item.quantity;
     const additionalServicesPrice = item.additionalServices
       .filter(service => service.selected)
       .reduce((sum, service) => sum + service.price, 0);
@@ -96,18 +93,18 @@ const Cart = () => {
     return cartItems.reduce((total, item) => total + calculateItemTotal(item), 0);
   };
 
-  const handleQuantityChange = (itemId, type, action) => {
+  const handleQuantityChange = (itemId, action) => {
     setCartItems(cartItems.map(item => {
-      if (item.id === itemId) {
-        const newQuantity = { ...item.quantity };
-        if (action === 'increase') {
-          newQuantity[type] += 1;
-        } else if (action === 'decrease' && newQuantity[type] > 0) {
-          newQuantity[type] -= 1;
-        }
-        return { ...item, quantity: newQuantity };
+      if (item.id !== itemId) return item;
+
+      let newQuantity = item.quantity;
+      if (action === 'increase') {
+        newQuantity += 1;
+      } else if (action === 'decrease' && newQuantity > 1) { // Mínimo 1 persona
+        newQuantity -= 1;
       }
-      return item;
+
+      return { ...item, quantity: newQuantity };
     }));
   };
 
@@ -179,18 +176,10 @@ const Cart = () => {
 
       const pedidoId = checkoutResponse.data.pedidoId;
 
-      // Calcular el total y la comisión
+      // Calcular el total
       const total = calculateTotal();
-      const comision = total * 0.05; // 5% de comisión
 
-      // Completar la venta
-      await axios.post('/cart/complete-sale', {
-        pedidoId,
-        total,
-        comision
-      });
-
-      // Enviar correo al cliente
+      // Enviar correo al cliente y jefe de ventas
       await axios.post('/email/order-confirmation', {
         orderId: pedidoId,
         userInfo: {
@@ -210,12 +199,24 @@ const Cart = () => {
       setCartId(null);
       setView('cart');
     } catch (error) {
-      console.error('Error al procesar el pedido:', error);
+      console.error(error.response?.message || 'Error al procesar el pedido:', error);
       notify('Error al procesar el pedido', 'error');
     } finally {
       setLoading(false);
     }
   };
+
+  const totalServicios = () => {
+    let total = 0;
+    cartItems.forEach(item => {
+      item.additionalServices.forEach(service => {
+        if (service.selected) {
+          total += service.price;
+        }
+      })
+    });
+    return total;
+  }
 
   return (
     <div className="cart-page">
@@ -252,42 +253,65 @@ const Cart = () => {
               <div className="cart-items">
                 {cartItems.map(item => (
                   <div key={item.id} className="cart-item">
-                    <div className="cart-item-image">
-                      <img src={item.image} alt={item.title} />
-                      <button className="remove-item-btn" onClick={() => handleRemoveItem(item.id)}>
-                        <FaTimes />
-                      </button>
-                    </div>
+                    {item.estado == 'Activo' ? (
+                      <>
+                        <div className="cart-item-image">
+                          <img src={item.image} alt={item.title} />
+                          <button className="remove-item-btn" onClick={() => handleRemoveItem(item.id)}>
+                            <FaTimes />
+                          </button>
+                        </div>
 
-                    <div className="cart-item-details">
-                      <div className="cart-item-header">
-                        <h3>{item.title}</h3>
-                        <div className="cart-item-location">{item.location}</div>
-                        <div className="cart-item-price">{item.currentPrice} $</div>
-                      </div>
+                        <div className="cart-item-details">
+                          <div className="cart-item-header">
+                            <h3>{item.title}</h3>
+                            <div className="cart-item-location">{item.location}</div>
+                            <div className="cart-item-price">{item.currentPrice} $</div>
+                          </div>
 
-                      <div className="additional-services">
-                        <h4>Servicios adicionales</h4>
-                        <div className="services-list">
-                          {item.additionalServices.map(service => (
-                            <div
-                              key={service.id}
-                              className={`service-item ${service.selected ? 'selected' : ''}`}
-                              onClick={() => handleServiceToggle(item.id, service.id)}
-                            >
-                              {service.icon === 'car' && <FaCar />}
-                              {service.icon === 'user' && <FaUser />}
-                              {service.icon === 'heart' && <FaHeart />}
-                              <div className="service-details">
-                                <span className="service-name">{service.name}</span>
-                                <span className="service-price">{service.price} $</span>
-                              </div>
+                          <div className="additional-services">
+                            <h4>Servicios adicionales</h4>
+                            <div className="services-list">
+                              {item.additionalServices.map(service => (
+                                <div
+                                  key={service.id}
+                                  className={`service-item ${service.selected ? 'selected' : ''}`}
+                                  onClick={() => handleServiceToggle(item.id, service.id)}
+                                >
+                                  {service.icon === 'car' && <FaCar />}
+                                  {service.icon === 'user' && <FaUser />}
+                                  {service.icon === 'heart' && <FaHeart />}
+                                  <div className="service-details">
+                                    <span className="service-name">{service.name}</span>
+                                    <span className="service-price">{service.price} $</span>
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                          ))}
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div key={item.id} className="cart-item">
+                        <div className="cart-item-image">
+                          <img src={item.image} alt={item.title} />
+                          <button className="remove-item-btn" onClick={() => handleRemoveItem(item.id)}>
+                            <FaTimes />
+                          </button>
+                        </div>
+
+                        <div className="cart-item-details">
+                          <div className="cart-item-header">
+                            <h3>{item.title}</h3>
+                            <div className="cart-item-location">{item.location}</div>
+                            <div className="cart-item-price">{item.currentPrice} $</div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
+
+
                 ))}
               </div>
 
@@ -321,12 +345,19 @@ const Cart = () => {
                                 </div>
                               )
                             ))}
+                            {!item.additionalServices.some(s => s.selected) && (
+                              <p>Ninguno</p>
+                            )}
                           </div>
                         </div>
                       </div>
                     </div>
                   ))}
 
+<<<<<<< Updated upstream
+=======
+                  <span>{totalServicios() + ' $'}</span>
+>>>>>>> Stashed changes
                 </div>
                 <div className="summary-total">
                   <span>Total:</span>
@@ -364,6 +395,29 @@ const Cart = () => {
                   <p>{cartItems[0]?.location}</p>
                 </div>
                 <div className="checkout-trip-price">{cartItems[0]?.currentPrice} $</div>
+              </div>
+              <p>Servicios adicionales: </p>
+              <div className="checkout-trip">
+                {cartItems[0]?.additionalServices.map(service => (
+                  service.selected && (
+                    <div
+                      key={service.id}
+                      className={'service-item'}
+                      onClick={() => handleServiceToggle(cartItems[0]?.id, service.id)}
+                    >
+                      {service.icon === 'car' && <FaCar />}
+                      {service.icon === 'user' && <FaUser />}
+                      {service.icon === 'heart' && <FaHeart />}
+                      <div className="service-details">
+                        <span className="service-name">{service.name}</span>
+                        <span className="service-price">{service.price} $</span>
+                      </div>
+                    </div>
+                  )
+                ))}
+                {!cartItems[0]?.additionalServices.some(s => s.selected) && (
+                  <p>Ninguno</p>
+                )}
               </div>
               <div className="checkout-total">
                 <span>Total:</span>

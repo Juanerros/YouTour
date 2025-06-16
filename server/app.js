@@ -1,5 +1,4 @@
 const path = require('path');
-const { sendEmail } = require('./utils/sendEmail');
 const isProduction = process.env.NODE_ENV === 'production';
 const { express } = require(path.join(__dirname, 'config', 'setup'));
 
@@ -9,19 +8,18 @@ else {
     console.log('Modo de desarrollo')
 }
 
+
 const app = express();
 app.use(express.json());
 
+const cors = require('cors');
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://url-vercel'],
+    credentials: true
+}));
+
 if (!isProduction) {
-//no olviden instalar cors como desarrolladores (npm i -D cors)
-    const cors = require('cors');
-
-    app.use(cors({
-        origin: ['http://localhost:5173'],
-        credentials: true
-    }));
-
-// muestra las peticiones en consola
+    // muestra las peticiones en consola
     app.use((req, res, next) => {
         console.log(`📌 Recibido: ${req.method} ${req.url}`);
         next();

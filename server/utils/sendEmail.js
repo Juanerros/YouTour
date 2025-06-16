@@ -7,6 +7,9 @@ const transport = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL,
         pass: process.env.APP_PASSWORD
+    },
+    tls: {
+        rejectUnauthorized: false // Ignorar certificados autofirmados (solo para desarrollo)
     }
 });
 
