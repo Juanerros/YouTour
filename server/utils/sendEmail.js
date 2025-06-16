@@ -1,12 +1,17 @@
 const { handleError } = require("../config/setup");
 const nodemailer = require('nodemailer');
-process.loadEnvFile();
+const isProduction = process.env.NODE_ENV === 'production';
+
+if(!isProduction) process.loadEnvFile();
 
 const transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.EMAIL,
         pass: process.env.APP_PASSWORD
+    },
+    tls: {
+        rejectUnauthorized: false // Ignorar certificados autofirmados (solo para desarrollo)
     }
 });
 
