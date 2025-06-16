@@ -185,6 +185,7 @@ h1 {
   width: 40px;
   height: 40px;
   border-radius: 20px;
+  background-color: #1e88e5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -192,10 +193,11 @@ h1 {
 }
 
 .feature-icon {
-  color: white;
+  color: white !important;
   border-radius: 50% !important;
+  z-index: 999999999999;
   font-size: 1.2rem;
-  padding: 16px !important;
+  padding: 2px !important;
 }
 
 .feature-card h3 {
@@ -376,7 +378,9 @@ h1 {
   align-items: center;
   transition: transform 0.3s ease;
 }
-
+.feature-icon {
+  border: solid 1px blue;
+}
 .offers-column {
   display: flex;
   flex-direction: column;
@@ -453,8 +457,10 @@ h1 {
   }
 }
 .you-tour-features {
+  margin-top: 2rem;
   padding: 4rem 2rem;
   background: #f8f9fa;
+  transform: scale(0.9);
 }
 
 .features-stats {
@@ -468,9 +474,9 @@ h1 {
 .stat-card {
   background: white;
   padding: 2rem;
-  border-radius: 15px;
+  border-radius: 25px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
   flex: 1;
   max-width: 300px;
   transition: transform 0.3s ease;
@@ -483,7 +489,7 @@ h1 {
 .stat-icon {
   width: 60px;
   height: 60px;
-  border-radius: 12px;
+  border-radius: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -495,11 +501,13 @@ h1 {
 .stat-card h3 {
   font-size: 2.5rem;
   font-weight: 700;
+  font-family: 'Poppins-Bold';
   margin-bottom: 0.5rem;
 }
 
 .stat-card p {
-  color: #666;
+  color: #333;
+  font-family: 'Poppins-Light';
   font-size: 1rem;
 }
 
@@ -722,6 +730,7 @@ h1 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 1.5rem;
+  width: fit-content;
   margin-bottom: 2.5rem;
 }
 
@@ -767,15 +776,6 @@ h1 {
   gap: 0.5rem;
 }
 
-@media (max-width: 992px) {
-  .packages-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .filters-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
 @media (max-width: 768px) {
   .search-filters {
@@ -792,19 +792,22 @@ h1 {
 }
 
 .contact {
-  padding: 5rem 0;
+  padding: 0;
   background-color: #f8f9fa;
 }
 
 .contact-container {
   max-width: 1200px;
   margin: 0 auto;
+  
+  transform: scale(0.85);
   padding: 0 2rem;
 }
 
 .contact h2 {
   text-align: center;
   font-size: 2.2rem;
+  font-family: 'Poppins-Bold';
   color: #333;
   margin-bottom: 1rem;
 }
@@ -823,15 +826,19 @@ h1 {
   justify-content: space-between;
   margin-bottom: 3rem;
   gap: 1.5rem;
+  
+  width: 70%;
+  justify-self: center;
 }
 
 .contact-stat-card {
   background: white;
-  border-radius: 8px;
+  border-radius: 25px;
   padding: 1.5rem;
   text-align: center;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   flex: 1;
+  max-width: 240px !important;
   transition: transform 0.3s ease;
 }
 

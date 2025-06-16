@@ -12,9 +12,22 @@
 
 body {
   background-color: #f8f9fa;
+  
+}
+.router {
+  min-height: 100vh;
+  height: fit-content;
 }
 
-/* Fonts */
+.white {
+  color: snow !important;
+}
+
+.logo-container img {
+  width: 40px;
+  height: 40px;
+  transform: scale(1.3) translateY(4px);
+}
 @font-face {
   font-family: 'Poppins-Bold';
   src: url('./assets/fonts/Poppins-Bold.ttf');
@@ -34,4 +47,83 @@ body {
 @font-face {
   font-family: 'Poppins-Light';
   src: url('./assets/fonts/Poppins-Light.ttf');
+}
+
+.footer {
+  background-color: #111827;
+  color: white;
+  padding: 2rem 0;
+  margin-top: 2rem;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  color: #3b82f6;
+  font-size: 1.5rem;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.highlight {
+  color: #3b82f6;
+}
+
+.footer-tagline {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-links a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #3b82f6;
+}
+
+.footer-copyright {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .footer-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
 }

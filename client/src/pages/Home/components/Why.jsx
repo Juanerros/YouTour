@@ -14,7 +14,7 @@ const Why = () => {
             description: "Asistencia disponible en cualquier momento del día"
         },
         {
-            icon: <LuUsers className="feature-icon" size={12}/>,
+            icon: <LuUsers className="feature-icon" size={12} color="snow"/>,
             title: "Guías Expertos",
             description: "Profesionales locales con amplio conocimiento"
         },

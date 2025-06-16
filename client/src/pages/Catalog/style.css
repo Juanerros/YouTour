@@ -26,7 +26,9 @@
   
   padding: 10px;
 }
-
+.search-bar input {
+  padding: 5px !important;
+}
 .search-input:focus {
   outline: none;
   border-color: #4285f4;
@@ -299,7 +301,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #eceef1;
+  background: #ffffff;
   border: none;
   padding: 0.6rem 1.2rem;
   border: solid 1px #3333331c;

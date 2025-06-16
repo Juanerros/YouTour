@@ -120,7 +120,7 @@ const Auth = () => {
       <div className="auth-container">
         <div className="auth-left-panel">
           <div className="auth-logo">
-            <MdModeOfTravel className="logo-icon" />
+            <MdModeOfTravel className="logo-icon white" />
             <span>YouTour</span>
           </div>
           
@@ -189,7 +189,7 @@ const Auth = () => {
           <div className="auth-form-container">
             <div className="auth-form-header">
               <div className="auth-logo-small">
-                <MdModeOfTravel className="logo-icon" />
+                <MdModeOfTravel className="logo-icon white" />
               </div>
               <h2>{isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}</h2>
               <p>{isLogin 

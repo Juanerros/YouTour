@@ -64,13 +64,16 @@ const Home = () => {
 
       {/* Seccion de Slider Promocional */}
       <HomeSlider />
-      {/* Seccion de features Promocionales */}
-      <Why />
+      {/* Seccion de features Promocionales | Desactivada temporalmente <Why /> */}
+      
       {/* Seccion de Ofertas Especiales */}
-      <SpecialOffers/>
+      <div id="offers">
+      <SpecialOffers />
+      </div>
+      
       
       <section className="you-tour-features">
-        <div className="features-stats">
+        <div className="features-stats" id="about">
           <div className="stat-card">
             <div className="stat-icon" style={{ background: '#6C5CE7' }}>
               <FaMapMarkerAlt />
@@ -131,7 +134,7 @@ const Home = () => {
           <h2>Contáctanos</h2>
           <p>Nuestro equipo de expertos en viajes está aquí para ayudarte a crear la experiencia perfecta. Conecta con nosotros y comienza a planificar tu próxima aventura.</p>
 
-          <div className="contact-stats">
+          <div className="contact-stats" id="contacto">
             <div className="contact-stat-card">
               <div className="contact-stat-icon">
                 <FaUsers />

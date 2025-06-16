@@ -1,10 +1,13 @@
 .auth-page {
   min-height: 100vh;
   display: flex;
+  height: fit-content;
   align-items: center;
   justify-content: center;
   background-color: #f5f7fa;
   padding: 2rem;
+  overflow-y: auto;
+  margin-top: 15vh;
 }
 
 .auth-container {
@@ -12,11 +15,12 @@
   width: 100%;
   max-width: 1200px;
   
+  
+  
   transform: scale(0.9);
   min-height: 600px;
   background-color: #fff;
-  border-radius: 12px;
-  overflow: hidden;
+  border-radius: 35px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
@@ -28,6 +32,7 @@
   background-position: center;
   color: white;
   padding: 3rem;
+  border-radius: 35px;
   display: flex;
   flex-direction: column;
 }

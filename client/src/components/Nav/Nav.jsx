@@ -28,9 +28,15 @@ const Nav = () => {
         <Link to="/catalog" className="nav-link">
           <span>Catalogo</span>
         </Link>
-        <Link to="/contacto" className="nav-link">
+        <a href="#offers" className="nav-link">
+          <span>Ofertas </span>
+        </a>
+        <a href="#about" className="nav-link">
+          <span>Sobre Nosotros</span>
+        </a>
+        <a href="#contacto" className="nav-link">
           <span>Contacto</span>
-        </Link>
+        </a>
         {(user && user.isAdmin) ? (
           <Link to="/admin" className="nav-link">
             <span>Admin</span>
@@ -59,12 +65,13 @@ const Nav = () => {
       {/* Sidebar Nav */}
       <div className={`mobile-menu ${isOpen ? 'active' : ''}`}>
         <Link to="/" className="mobile-link">Inicio</Link>
-        <Link to="/destinos" className="mobile-link">Destinos</Link>
-        <Link to="/paquetes" className="mobile-link">Paquetes</Link>
-        <Link to="/ofertas" className="mobile-link">Ofertas</Link>
-        <Link to="/contacto" className="mobile-link">Contacto</Link>
+        <Link to="/catalog" className="mobile-link">Catalogo</Link>
+        <Link to="#about" className="mobile-link">Sobre Nosotros</Link>
+        <Link to="#offers" className="mobile-link">Ofertas</Link>
+        <Link to="#contacto" className="mobile-link">Contacto</Link>
         <div className="mobile-actions">
-          <button className="mobile-login-btn">Iniciar sesión</button>
+        <Link to="/auth" className="mobile-link"><button className="mobile-login-btn">Iniciar sesión</button></Link>
+          
         </div>
       </div>
     </nav>

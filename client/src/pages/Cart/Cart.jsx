@@ -6,6 +6,7 @@ import axios from '../../api/axios';
 import { useUser } from '../../hooks/useUser';
 import useNotification from '../../hooks/useNotification';
 import useConfirmation from '../../hooks/useConfirmation';
+import { LuUsers } from 'react-icons/lu';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Cart = () => {
   const { notify } = useNotification();
   const { confir } = useConfirmation();
 
-  const [view, setView] = useState('cart'); // 'cart' or 'checkout'
+  const [view, setView] = useState('cart'); 
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cartId, setCartId] = useState(null);
@@ -229,13 +230,16 @@ const Cart = () => {
           <h1>Tu Carrito de Viajes</h1>
 
           {!user ? (
-            <div className="login-required">
-              <h2>Inicia sesión para ver tu carrito</h2>
+            <div className="empty-cart">
+            <div className="empty-cart-icon">
+              <LuUsers />
+            </div>
+            <h2>Inicia sesión para ver tu carrito</h2>
               <p>Necesitas iniciar sesión para acceder a tu carrito de compras</p>
               <button className="login-btn" onClick={() => navigate('/auth')}>
-                Iniciar Sesión
-              </button>
-            </div>
+              Iniciar Sesion
+            </button>
+          </div>
           ) : cartItems.length === 0 ? (
             <div className="empty-cart">
               <div className="empty-cart-icon">

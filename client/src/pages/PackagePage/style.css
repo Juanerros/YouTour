@@ -1,9 +1,12 @@
 .package-page {
   max-width: 1200px;
   margin: 0 auto;
-  margin-top: 14vh;
+  margin-top: 22vh;
   padding: 1.5rem;
-  
+  transform: scale(0.85) translateY(-12vh);
+  background-color: #ffffff;
+  border-radius: 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .back-button {
@@ -82,10 +85,14 @@
 }
 
 .package-header {
-  margin-bottom: 1rem;
-  position: relative !important;
+  display: flex;
+  height: 140px;
+  flex-direction: column;
 }
+.package-header .bot {
+  flex-wrap: wrap;
 
+}
 .package-header h1 {
   font-size: 1.5rem;
   font-weight: 700;
@@ -104,8 +111,8 @@
 
 .package-rating {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
+  transform: translateY( 40px);
 }
 
 .stars {
@@ -221,9 +228,9 @@
 .booking-card {
   grid-column: 3;
   background-color: white;
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 1.25rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   border: 1px solid #f0f0f0;
   height: fit-content;
 }

@@ -22,22 +22,21 @@ import OrdersManagement from "./pages/OrdersManagement/OrdersManagement.jsx";
 import Cart from './pages/Cart/Cart.jsx';
 import PackagePage from './pages/PackagePage/PackagePage.jsx';
 
-const App = () => {
+function App() {
   return (
     <Router>
       <ToastContainer
-          position="top-left"
-          autoClose={5000}
-          hideProgressBar={true}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          limit={3}
-          pauseOnFocusLoss
-          pauseOnHover
-        />
+        position="top-left"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        limit={3}
+        pauseOnFocusLoss
+        pauseOnHover />
       <Routes>
-        
+
         {/* Rutas de Admin */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Admin />} />
@@ -49,18 +48,19 @@ const App = () => {
           {/* Rutas de gestion de pedidos */}
           <Route path="orders" element={<OrdersManagement />} />
         </Route>
-        <Route path="/auth" element={<Auth />} />
+        
 
         {/* Rutas del Cliente */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/package/:id" element={<PackagePage/>} />
+          <Route path="/package/:id" element={<PackagePage />} />
+          <Route path="/auth" element={<Auth />} />
         </Route>
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;

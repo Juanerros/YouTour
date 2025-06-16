@@ -6,13 +6,13 @@ const TourPackage = ({ package: pkg, onAddToCart }) => {
     <div className="tour-package">
       <div className="package-header">
         <img src={pkg.image} alt={pkg.title} className="package-image" />
-        <div className="package-location">
+        <div className="package-location-2">
           <span>{pkg.location}</span>
         </div>
-        <div className="package-rating">
+        <div className="package-rating-2">
           <FaStar className="star-icon" />
           <span>{pkg.rating}</span>
-          <span className="reviews">({pkg.reviews})</span>
+          <span className="reviews-2">({pkg.reviews})</span>
         </div>
       </div>
       
