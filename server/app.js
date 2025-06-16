@@ -1,6 +1,4 @@
 const path = require('path');
-process.loadEnvFile();
-
 const isProduction = process.env.NODE_ENV === 'production';
 const { express } = require(path.join(__dirname, 'config', 'setup'));
 
