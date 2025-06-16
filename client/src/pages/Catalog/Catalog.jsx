@@ -5,255 +5,25 @@ import TourPackage from '../../components/Cards/TourPackage/TourPackage';
 import axios from '../../api/axios';
 import { useUser } from '../../hooks/useUser';
 import useNotification from '../../hooks/useNotification';
+import useTourPackages from '../../hooks/useTourPackages';
 
 const Catalog = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { notify } = useNotification();
   const { user } = useUser();
+  // Hook personalizado para obtener los paquetes turísticos
+  const { tourPackages, isLoading: isLoadingPackages, error } = useTourPackages();
 
-  const tourPackages = [
-    {
-      id: 1,
-      image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
-      location: "París, Francia",
-      title: "Escapada Romántica a París",
-      rating: 4.8,
-      reviews: 254,
-      originalPrice: 1599,
-      currentPrice: 1299,
-      duration: 4,
-      nights: 3,
-      persons: "2-6",
-      date: "14 jul",
-      includes: [
-        "Vuelos ida y vuelta",
-        "Hotel 4 estrellas",
-        "Desayuno incluido",
-        "Tour Torre Eiffel"
-      ],
-      continent: "Europa",
-      country: "Francia",
-      province: "París",
-      category: "Romántico",
-      difficulty: "Fácil",
-      transport: "Avión",
-      accommodation: "Hotel 4★",
-      meals: "Desayuno",
-      guideLanguage: "Español, Inglés",
-      groupSize: "Pequeño"
-    },
-    {
-      id: 2,
-      image: "https://images.unsplash.com/photo-1531804055935-76f44d7c3621?q=80&w=2088",
-      location: "Interlaken, Suiza",
-      title: "Aventura en los Alpes Suizos",
-      rating: 4.9,
-      reviews: 186,
-      originalPrice: 2199,
-      currentPrice: 1899,
-      duration: 5,
-      nights: 4,
-      persons: "2-8",
-      date: "21 jul",
-      includes: [
-        "Vuelos ida y vuelta",
-        "Hotel de montaña",
-        "Excursión alpinismo",
-        "Vuelo en parapente"
-      ],
-      continent: "Europa",
-      country: "Suiza",
-      province: "Interlaken",
-      category: "Aventura",
-      difficulty: "Difícil",
-      transport: "Avión",
-      accommodation: "Hotel 3★",
-      meals: "Media pensión",
-      guideLanguage: "Español, Inglés, Alemán",
-      groupSize: "Mediano"
-    },
-    {
-      id: 3,
-      image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996",
-      location: "Roma, Italia",
-      title: "Tour Histórico por Roma",
-      rating: 4.7,
-      reviews: 163,
-      originalPrice: 1699,
-      currentPrice: 999,
-      duration: 4,
-      nights: 3,
-      persons: "2-8",
-      date: "5 sep",
-      includes: [
-        "Vuelos ida y vuelta",
-        "Hotel céntrico",
-        "Desayuno",
-        "Visita Coliseo",
-        "Visita Vaticano"
-      ],
-      continent: "Europa",
-      country: "Italia",
-      province: "Roma",
-      category: "Cultural",
-      difficulty: "Fácil",
-      transport: "Avión",
-      accommodation: "Hotel 3★",
-      meals: "Desayuno",
-      guideLanguage: "Español, Inglés, Italiano",
-      groupSize: "Grande"
-    },
-    {
-      id: 4,
-      image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?q=80&w=2070",
-      location: "Santorini, Grecia",
-      title: "Relax en las Islas Griegas",
-      rating: 4.9,
-      reviews: 210,
-      originalPrice: 2299,
-      currentPrice: 1899,
-      duration: 7,
-      nights: 6,
-      persons: "2-4",
-      date: "10 ago",
-      includes: [
-        "Vuelos ida y vuelta",
-        "Villa con vista al mar",
-        "Desayuno incluido",
-        "Tour en barco"
-      ],
-      continent: "Europa",
-      country: "Grecia",
-      province: "Santorini",
-      category: "Playa",
-      difficulty: "Fácil",
-      transport: "Avión",
-      accommodation: "Villa",
-      meals: "Desayuno",
-      guideLanguage: "Español, Inglés",
-      groupSize: "Pequeño"
-    },
-    {
-      id: 5,
-      image: "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?q=80&w=2070",
-      location: "Praga, República Checa",
-      title: "Magia Medieval en Praga",
-      rating: 4.6,
-      reviews: 142,
-      originalPrice: 1399,
-      currentPrice: 1099,
-      duration: 5,
-      nights: 4,
-      persons: "2-6",
-      date: "3 oct",
-      includes: [
-        "Vuelos ida y vuelta",
-        "Hotel boutique",
-        "Desayuno incluido",
-        "Tour nocturno"
-      ],
-      continent: "Europa",
-      country: "República Checa",
-      province: "Praga",
-      category: "Cultural",
-      difficulty: "Fácil",
-      transport: "Avión",
-      accommodation: "Hotel Boutique",
-      meals: "Desayuno",
-      guideLanguage: "Español, Inglés",
-      groupSize: "Pequeño"
-    },
-    {
-      id: 6,
-      image: "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=2070",
-      location: "Barcelona, España",
-      title: "Descubre Barcelona",
-      rating: 4.8,
-      reviews: 178,
-      originalPrice: 1499,
-      currentPrice: 1199,
-      duration: 5,
-      nights: 4,
-      persons: "2-8",
-      date: "17 sep",
-      includes: [
-        "Vuelos ida y vuelta",
-        "Hotel 4 estrellas",
-        "Desayuno incluido",
-        "Tour Sagrada Familia"
-      ],
-      continent: "Europa",
-      country: "España",
-      province: "Barcelona",
-      category: "Cultural",
-      difficulty: "Fácil",
-      transport: "Avión",
-      accommodation: "Hotel 4★",
-      meals: "Desayuno",
-      guideLanguage: "Español, Inglés, Catalán",
-      groupSize: "Mediano"
-    },
-    {
-      id: 7,
-      image: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?q=80&w=2071",
-      location: "Venecia, Italia",
-      title: "Romántica Venecia",
-      rating: 4.7,
-      reviews: 156,
-      originalPrice: 1799,
-      currentPrice: 1499,
-      duration: 4,
-      nights: 3,
-      persons: "2-4",
-      date: "25 ago",
-      includes: [
-        "Vuelos ida y vuelta",
-        "Hotel junto al canal",
-        "Paseo en góndola",
-        "Desayuno incluido"
-      ],
-      continent: "Europa",
-      country: "Italia",
-      province: "Venecia",
-      category: "Romántico",
-      difficulty: "Fácil",
-      transport: "Avión",
-      accommodation: "Hotel 4★",
-      meals: "Desayuno",
-      guideLanguage: "Español, Inglés, Italiano",
-      groupSize: "Pequeño"
-    },
-    {
-      id: 8,
-      image: "https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?q=80&w=2070",
-      location: "Ámsterdam, Países Bajos",
-      title: "Encanto de Ámsterdam",
-      rating: 4.6,
-      reviews: 132,
-      originalPrice: 1399,
-      currentPrice: 1199,
-      duration: 4,
-      nights: 3,
-      persons: "2-6",
-      date: "8 oct",
-      includes: [
-        "Vuelos ida y vuelta",
-        "Hotel céntrico",
-        "Tour en bicicleta",
-        "Crucero por los canales"
-      ],
-      continent: "Europa",
-      country: "Países Bajos",
-      province: "Ámsterdam",
-      category: "Cultural",
-      difficulty: "Fácil",
-      transport: "Avión",
-      accommodation: "Hotel 3★",
-      meals: "Desayuno",
-      guideLanguage: "Español, Inglés, Holandés",
-      groupSize: "Mediano"
+  // Estado inicial para los viajes filtrados
+  const [filteredTrips, setFilteredTrips] = useState([]);
+
+  // Efecto para actualizar los viajes filtrados cuando se reciben los paquetes
+  useEffect(() => {
+    if (tourPackages) {
+      console.log('Paquetes recibidos:', tourPackages);
+      setFilteredTrips(tourPackages);
     }
-  ];
+  }, [tourPackages]);
 
   const handleAddToCart = async (paqueteId) => {
     try {
@@ -269,9 +39,11 @@ const Catalog = () => {
     }
   };
 
-  const [filteredTrips, setFilteredTrips] = useState(tourPackages);
+  // Estados para el término de búsqueda y visibilidad de filtros
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  // Estados para los diferentes filtros
   const [priceRange, setPriceRange] = useState([0, 3000]);
   const [selectedMonths, setSelectedMonths] = useState([]);
   const [selectedDuration, setSelectedDuration] = useState([1, 30]);
@@ -285,6 +57,8 @@ const Catalog = () => {
   const [selectedAccommodation, setSelectedAccommodation] = useState('');
   const [selectedMeals, setSelectedMeals] = useState('');
   const [selectedGroupSize, setSelectedGroupSize] = useState('');
+
+  // Estados para la paginación
   const [currentPage, setCurrentPage] = useState(1);
   const packagesPerPage = 6;
 
@@ -483,26 +257,28 @@ const Catalog = () => {
   };
 
 
-  useEffect(() => {
-    const filtered = applyFilters();
-    setFilteredTrips(filtered);
-    setCurrentPage(1);
-  }, [
-    searchTerm,
-    selectedDestination,
-    selectedCountry,
-    selectedCategory,
-    selectedRating,
-    selectedDifficulty,
-    selectedAccommodation,
-    selectedMeals,
-    selectedGroupSize,
-    priceRange,
-    selectedMonths,
-    selectedDuration,
-    selectedIncludes,
-    sortBy
-  ]);
+  // Efecto para aplicar filtros cuando cambian los criterios de filtrado
+  // useEffect(() => {
+  //   const filtered = applyFilters();
+  //   setFilteredTrips(filtered);
+  //   setCurrentPage(1);
+  // }, [
+  //   searchTerm,
+  //   selectedDestination,
+  //   selectedCountry,
+  //   selectedCategory,
+  //   selectedRating,
+  //   selectedDifficulty,
+  //   selectedAccommodation,
+  //   selectedMeals,
+  //   selectedGroupSize,
+  //   priceRange,
+  //   selectedMonths,
+  //   selectedDuration,
+  //   selectedIncludes,
+  //   sortBy,
+  //   tourPackages
+  // ]);
 
 
   const indexOfLastPackage = currentPage * packagesPerPage;

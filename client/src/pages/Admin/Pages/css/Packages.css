@@ -1,5 +1,9 @@
+.Packages {
+  padding: 1rem;
+}
+
 .agregar-paquete-btn {
-border: 1px solid #2563ae;
+  border: 1px solid #2563ae;
   background: rgba(37, 99, 174, 0.12);
   color: #2563ae;
   border-radius: 6px;
@@ -8,6 +12,364 @@ border: 1px solid #2563ae;
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .agregar-paquete-btn:hover {
   background: rgba(37, 99, 174, 0.22);
+}
+
+.paquetes-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.paquete-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.paquete-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.paquete-header {
+  background-color: #2563ae;
+  color: white;
+  padding: 1rem;
+  font-weight: 600;
+}
+
+.paquete-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.paquete-header p {
+  margin: 0.3rem 0 0 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.paquete-body {
+  padding: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.paquete-precio {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2563ae;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.paquete-rating {
+  display: flex;
+  align-items: center;
+  color: #f5a623;
+}
+
+.paquete-info {
+  margin: 0.8rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.paquete-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.paquete-info-item svg {
+  color: #2563ae;
+  font-size: 1.1rem;
+}
+
+.paquete-hotel {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eee;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.paquete-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #eee;
+}
+
+.paquete-btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-editar {
+  border: 1px solid #2563ae;
+  background: rgba(37, 99, 174, 0.12);
+  color: #2563ae;
+}
+
+.btn-editar:hover {
+  background: rgba(37, 99, 174, 0.22);
+}
+
+.btn-detalles {
+  border: 1px solid #2563ae;
+  background: #2563ae;
+  color: white;
+}
+
+.btn-detalles:hover {
+  background: #1e5091;
+}
+
+/* Modal de detalles */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  min-width: 420px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #2563ae;
+}
+
+.modal-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 1.5rem;
+}
+
+.modal-tab {
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  color: #666;
+}
+
+.modal-tab.active {
+  border-bottom: 2px solid #2563ae;
+  color: #2563ae;
+}
+
+.modal-content {
+  margin-bottom: 1.5rem;
+}
+
+.modal-section {
+  margin-bottom: 1.5rem;
+}
+
+.modal-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.modal-section-content {
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.modal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.modal-info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-info-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.2rem;
+}
+
+.modal-info-value {
+  font-weight: 500;
+  color: #333;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Estilos para el formulario de creación de paquetes */
+.modal-inputs-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-inputs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+.modal-inputs-col label {
+  font-weight: 500;
+  color: #11233f;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.modal-inputs-col input, .modal-inputs-col select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #2563ea63;
+}
+
+.modal-label-full {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 500;
+  color: #11233f;
+  margin-bottom: 1rem;
+}
+
+.modal-label-full textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #2563ea63;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.actividades-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.actividad-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem;
+  background-color: #f5f7fa;
+  border-radius: 6px;
+  border-left: 3px solid #2563ae;
+}
+
+.actividad-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.actividad-item-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.actividad-item-details {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.actividad-item-actions button {
+  background: none;
+  border: none;
+  color: #e53935;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.btn-agregar {
+  border: 1px solid #2563ae;
+  background: rgba(37, 99, 174, 0.12);
+  color: #2563ae;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-agregar:hover {
+  background: rgba(37, 99, 174, 0.22);
+}
+
+.btn-cancelar {
+  border: 1px solid #e53935;
+  background: rgba(229, 57, 53, 0.12);
+  color: #e53935;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-cancelar:hover {
+  background: rgba(229, 57, 53, 0.22);
 }

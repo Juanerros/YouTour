@@ -44,6 +44,51 @@ const useVuelos = () => {
     }
   };
 
+  // Función para eliminar un vuelo
+  const deleteVuelo = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5001/vuelos/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar el vuelo');
+      }
+
+      setVuelos(prev => prev.filter(vuelo => vuelo.id_vuelo !== id));
+      return true;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  // Función para actualizar un vuelo
+  const updateVuelo = async (id, vueloActualizado) => {
+    try {
+      const response = await fetch(`http://localhost:5001/vuelos/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(vueloActualizado),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar el vuelo');
+      }
+
+      const vueloUpdated = await response.json();
+      setVuelos(prev => prev.map(vuelo => 
+        vuelo.id_vuelo === id ? vueloUpdated : vuelo
+      ));
+      return vueloUpdated;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
   useEffect(() => {
     fetchVuelos();
   }, []);
@@ -53,6 +98,8 @@ const useVuelos = () => {
     loading,
     error,
     addVuelo,
+    deleteVuelo,
+    updateVuelo,
     refreshVuelos: fetchVuelos
   };
 };

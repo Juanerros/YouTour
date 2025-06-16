@@ -158,7 +158,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Actualizar un vuelo
+// Actualizar un vuelo existente
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { origen, destino, aerolinea, precio, duracion, aeronave, salida, llegada, fecha_vuelo } = req.body;
@@ -168,6 +168,16 @@ router.put('/:id', async (req, res) => {
     }
     
     try {
+        // Verificar que el vuelo exista
+        const [vueloExistente] = await conex.execute(
+            'SELECT * FROM vuelos WHERE id_vuelo = ?',
+            [id]
+        );
+        
+        if (vueloExistente.length === 0) {
+            return handleError(res, 'Vuelo no encontrado', null, 404);
+        }
+        
         // Verificar que origen y destino existan
         const [ciudadOrigen] = await conex.execute(
             'SELECT * FROM ciudades WHERE id_ciudad = ?',
@@ -187,27 +197,24 @@ router.put('/:id', async (req, res) => {
             return handleError(res, 'Ciudad de destino no encontrada', null, 404);
         }
         
-        const [result] = await conex.execute(
+        await conex.execute(
             'UPDATE vuelos SET origen = ?, destino = ?, aerolinea = ?, precio = ?, duracion = ?, aeronave = ?, salida = ?, llegada = ?, fecha_vuelo = ? WHERE id_vuelo = ?',
             [origen, destino, aerolinea, precio, duracion, aeronave, salida, llegada, fecha_vuelo, id]
         );
         
-        if (result.affectedRows === 0) {
-            return handleError(res, 'Vuelo no encontrado', null, 404);
-        }
+        // Obtener el vuelo actualizado con los nombres de las ciudades
+        const [vueloActualizado] = await conex.execute(
+            'SELECT v.*, ' +
+            'origen.nombre as origen_nombre, origen.codigo_aeropuerto as origen_codigo, ' +
+            'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo ' +
+            'FROM vuelos v ' +
+            'INNER JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
+            'INNER JOIN ciudades destino ON v.destino = destino.id_ciudad ' +
+            'WHERE v.id_vuelo = ?',
+            [id]
+        );
         
-        res.json({
-            id_vuelo: parseInt(id),
-            origen,
-            destino,
-            aerolinea,
-            precio,
-            duracion,
-            aeronave,
-            salida,
-            llegada,
-            fecha_vuelo
-        });
+        res.json(vueloActualizado[0]);
     } catch (err) {
         handleError(res, 'Error al actualizar vuelo', err);
     }
@@ -218,14 +225,20 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     
     try {
-        const [result] = await conex.execute(
-            'DELETE FROM vuelos WHERE id_vuelo = ?',
+        // Verificar que el vuelo exista
+        const [vueloExistente] = await conex.execute(
+            'SELECT * FROM vuelos WHERE id_vuelo = ?',
             [id]
         );
         
-        if (result.affectedRows === 0) {
+        if (vueloExistente.length === 0) {
             return handleError(res, 'Vuelo no encontrado', null, 404);
         }
+        
+        await conex.execute(
+            'DELETE FROM vuelos WHERE id_vuelo = ?',
+            [id]
+        );
         
         res.json({ message: 'Vuelo eliminado correctamente' });
     } catch (err) {
