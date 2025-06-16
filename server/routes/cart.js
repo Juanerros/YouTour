@@ -14,7 +14,7 @@ router.get('/:userId', async (req, res) => {
             `SELECT c.*, p.* 
              FROM carritos c 
              INNER JOIN paquetes p ON c.id_paquete = p.id_paquete 
-             WHERE c.id_user = ?`,
+             WHERE c.id_user = ? AND c.estado = 'Activo'`,
             [userId]
         );
 
@@ -37,7 +37,7 @@ router.post('/add', async (req, res) => {
             [userId]
         );
 
-        if (existingCart.length > 0) return handleError(res, 'Ya existe un carrito activo', null, 409);
+        if (existingCart.length > 0) return handleError(res, 'Ya tiene un paquete en el carrito', null, 409);
 
         // Crear nuevo carrito
         await conex.execute(

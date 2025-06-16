@@ -15,24 +15,20 @@ const transport = nodemailer.createTransport({
     }
 });
 
-const sendEmail = async (req, res) => {
-    const { email, subject, message } = req.body;
-
+const sendEmail = async (mailOptions) => {
     try {
-        const mailOptions = {
+        const options = {
             from: process.env.EMAIL,
-            to: email,
-            subject: subject,
-            text: message
+            to: mailOptions.to,
+            subject: mailOptions.subject,
+            text: mailOptions.text
         };
-
-        await transport.sendMail(mailOptions);
-
-        return res.status(200).json({
-            message: 'Correo enviado correctamente'
-        })
+        
+        await transport.sendMail(options);
+        return true;
     } catch (error) {
-       return handleError(res, 'Error al enviar el correo', error);
+        console.error('Error al enviar el correo:', error);
+        return false;
     }
 }
 
