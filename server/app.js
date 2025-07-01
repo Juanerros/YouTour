@@ -16,6 +16,7 @@ import cors from 'cors';
 import logger from './middlewares/logger.js';
 import loadEnv from './utils/loadEnv.js';
 import cookieParser from 'cookie-parser';
+import loadStaticFiles from './utils/loadStaticsFiles.js'
 
 // Middlewares
 const app = express();
