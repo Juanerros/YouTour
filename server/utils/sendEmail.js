@@ -1,8 +1,7 @@
-const { handleError } = require("../config/setup");
-const nodemailer = require('nodemailer');
-const isProduction = process.env.NODE_ENV === 'production';
+import nodemailer from 'nodemailer';
+import loadEnv from './loadEnv.js';
 
-if(!isProduction) process.loadEnvFile();
+loadEnv();
 
 const transport = nodemailer.createTransport({
     service: 'gmail',
@@ -23,7 +22,11 @@ const sendEmail = async (mailOptions) => {
             subject: mailOptions.subject,
             text: mailOptions.text
         };
-        
+
+        if (!options.to || (Array.isArray(options.to) && options.to.length === 0)) {
+            throw { status: 400, message: 'No se definieron destinatarios (to) para el correo.' };
+        }
+
         await transport.sendMail(options);
         return true;
     } catch (error) {
@@ -32,6 +35,4 @@ const sendEmail = async (mailOptions) => {
     }
 }
 
-module.exports = {
-    sendEmail
-}
+export default sendEmail;

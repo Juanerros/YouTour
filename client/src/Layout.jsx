@@ -3,8 +3,9 @@ import Nav from './components/Nav/Nav.jsx';
 // Dependencias
 import { Outlet, Link, useLocation } from "react-router-dom";
 import './globals.css';
-import logo from '../public/img/LogoNoText.png'; 
+import logo from '/img/LogoNoText.png';
 import { useEffect } from 'react';
+
 const Layout = () => {
   const location = useLocation();
 
@@ -31,15 +32,14 @@ const Layout = () => {
             </div>
             <p className="footer-tagline">Explora el mundo con nosotros</p>
           </div>
-          
+
           <div className="footer-links">
-            <Link to="/packages">Paquetes</Link>
-            <Link to="/services">Servicios</Link>
-            <Link to="/contact">Contacto</Link>
+            <Link to="/">Inicio</Link>
+            <Link to="/catalog">Catalogo</Link>
           </div>
-          
+
           <div className="footer-copyright">
-            <p>© 2024 youTour. Todos los derechos reservados.</p>
+            <p>© {new Date().getFullYear()} youTour. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>

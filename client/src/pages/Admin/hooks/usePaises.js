@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { paisesService } from '../service/paisesService';
 
 const usePaises = () => {
   const [paises, setPaises] = useState([]);
@@ -7,11 +8,7 @@ const usePaises = () => {
 
   const fetchPaises = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/paises');
-      if (!response.ok) {
-        throw new Error('Error al obtener los países');
-      }
-      const data = await response.json();
+      const data = await paisesService.getAll();
       setPaises(data);
       setError(null);
     } catch (err) {
@@ -23,17 +20,7 @@ const usePaises = () => {
 
   const addPais = async (pais) => {
     try {
-      const response = await fetch('http://localhost:5001/api/paises', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(pais),
-      });
-      if (!response.ok) {
-        throw new Error('Error al agregar el país');
-      }
-      const nuevoPais = await response.json();
+      const nuevoPais = await paisesService.create(pais);
       setPaises(prev => [...prev, nuevoPais]);
       return nuevoPais;
     } catch (err) {

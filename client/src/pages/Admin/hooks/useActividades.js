@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { actividadesService } from '../service/actividadesService';
 
 const useActividades = () => {
   const [actividades, setActividades] = useState([]);
@@ -16,11 +17,7 @@ const useActividades = () => {
 
   const fetchActividades = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/actividades');
-      if (!response.ok) {
-        throw new Error('Error al obtener las actividades');
-      }
-      const data = await response.json();
+      const data = await actividadesService.getAll();
       setActividades(data);
       setError(null);
     } catch (err) {
@@ -32,19 +29,7 @@ const useActividades = () => {
 
   const addActividad = async (actividad) => {
     try {
-      const response = await fetch('http://localhost:5001/api/actividades', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(actividad),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al agregar la actividad');
-      }
-
-      const nuevaActividad = await response.json();
+      const nuevaActividad = await actividadesService.create(actividad);
       setActividades(prev => [...prev, nuevaActividad]);
       return nuevaActividad;
     } catch (err) {
@@ -55,9 +40,7 @@ const useActividades = () => {
 
   const fetchPaises = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/paises');
-      if (!response.ok) throw new Error('Error al obtener los países');
-      const data = await response.json();
+      const data = await actividadesService.getPaises();
       setPaises(data);
     } catch (err) {
       setError(err.message);
@@ -66,9 +49,7 @@ const useActividades = () => {
 
   const fetchCiudadesPorPais = async (idPais) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/ciudades/pais/${idPais}`);
-      if (!response.ok) throw new Error('Error al obtener las ciudades');
-      const data = await response.json();
+      const data = await actividadesService.getCiudadesByPais(idPais);
       setCiudades(data);
     } catch (err) {
       setError(err.message);

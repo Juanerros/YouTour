@@ -1,9 +1,7 @@
-// /services/mercadoPago/createMercadoPagoCheckout.js
-
 import fetch from 'node-fetch';
-import dotenv from 'dotenv';
+import loadEnv from './loadEnv';
 
-dotenv.config();
+loadEnv();
 
 export async function createCheckout(title, price) {
   const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;

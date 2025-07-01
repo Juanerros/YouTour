@@ -6,7 +6,7 @@
   background-color: #f8f9fa;
   min-height: 100vh;
   width: 100%;
-  padding-top: 20vh !important;  
+  padding-top: 20vh !important;
   transform: scale(0.9);
 }
 
@@ -23,12 +23,14 @@
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
-  
+
   padding: 10px;
 }
+
 .search-bar input {
   padding: 5px !important;
 }
+
 .search-input:focus {
   outline: none;
   border-color: #4285f4;
@@ -109,7 +111,7 @@
 
 /* Grid de productos */
 .products-grid {
-  
+
   gap: 20px;
   padding: 0;
 }
@@ -140,7 +142,7 @@
   .catalog-container {
     padding: 15px;
   }
-  
+
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 15px;
@@ -151,33 +153,33 @@
   .catalog-content {
     flex-direction: column;
   }
-  
+
   .catalog-sidebar {
     position: static;
     order: 2;
   }
-  
+
   .catalog-main {
     order: 1;
   }
-  
+
   .search-filters {
     flex-direction: column;
   }
-  
+
   .province-select,
   .sort-select {
     min-width: 100%;
   }
-  
+
   .products-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .search-bar {
     flex-direction: column;
   }
-  
+
   .search-input {
     margin-bottom: 10px;
   }
@@ -187,22 +189,22 @@
   .catalog-container {
     padding: 10px;
   }
-  
+
   .search-section {
     padding: 15px;
   }
-  
+
   .results-header {
     padding: 12px 15px;
   }
-  
+
   .results-header h2 {
     font-size: 16px;
   }
 }
 
 /* Animaciones */
-.products-grid > * {
+.products-grid>* {
   animation: fadeInUp 0.5s ease-out;
 }
 
@@ -211,6 +213,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -459,7 +462,8 @@
   border-top: 1px solid #e0e0e0;
 }
 
-.clear-btn, .apply-btn {
+.clear-btn,
+.apply-btn {
   padding: 0.7rem 1.5rem;
   border-radius: 4px;
   cursor: pointer;
@@ -512,13 +516,28 @@
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .filter-summary {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .tour-packages-grid {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 700px) {
+  .catalog-page {
+    min-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 12px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    width: 100%;
+    padding-top: 2vh !important;
+    transform: scale(1);
+  }
+
 }

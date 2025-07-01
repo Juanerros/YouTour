@@ -1,16 +1,16 @@
 import './styles.css';
-import { FaSearch, FaFilter, FaGift, FaClock, FaPercent, FaClock as FaSupport, FaUsers, FaStar, FaMapMarkerAlt, FaCalendarAlt, FaChevronRight } from 'react-icons/fa';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import TourPackage from '../../components/Cards/TourPackage/TourPackage';
+import { FaSearch, FaClock, FaClock as FaUsers, FaMapMarkerAlt, FaCalendarAlt } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import { FaPhone, FaEnvelope, FaHeadset } from 'react-icons/fa';
 import HomeSlider from './components/HomeSlider';
-import Why from './components/Why';
 import SpecialOffers from './components/SpecialOffers';
 import useNotification from '../../hooks/useNotification';
-import { useUser } from '../../hooks/useUser';
+import { UserContext } from '../../contexts/UserContext.jsx';
+import { useContext } from 'react';
+
 import useTourPackages from '../../hooks/useTourPackages';
 
 const Home = () => {
@@ -23,21 +23,7 @@ const Home = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const { notify } = useNotification();
-  const { user } = useUser();
-  
-  const [filteredTrips, setFilteredTrips] = useState([]);
-  const totalPages = Math.ceil(filteredTrips.length / packagesPerPage);
-  // Hook personalizado para obtener los paquetes turísticos
-  const { tourPackages, isLoading: isLoadingPackages, error } = useTourPackages();
-
-  // Estado inicial para los viajes filtrados
-
-  // Efecto para actualizar los viajes filtrados cuando se reciben los paquetes
-  useEffect(() => {
-    if (tourPackages) {
-      setFilteredTrips(tourPackages);
-    }
-  }, [tourPackages]);
+  const { user } = useContext(UserContext);
 
   const handleAddToCart = async (paqueteId) => {
     try {
@@ -92,7 +78,7 @@ const Home = () => {
             </div>
 
             <button className="search-btn rounded">
-              <FaSearch /> Buscar Viajes
+              <FaSearch /> <p>Buscar Viajes</p>
             </button>
           </div>
         </div>
@@ -101,13 +87,13 @@ const Home = () => {
       {/* Seccion de Slider Promocional */}
       <HomeSlider />
       {/* Seccion de features Promocionales | Desactivada temporalmente <Why /> */}
-      
+
       {/* Seccion de Ofertas Especiales */}
       <div id="offers">
-      <SpecialOffers />
+        <SpecialOffers />
       </div>
-      
-      
+
+
       <section className="you-tour-features">
         <div className="features-stats" id="about">
           <div className="stat-card">
@@ -273,13 +259,21 @@ const Home = () => {
                 </div>
               </div>
               <div className="map-placeholder">
-                {/* Vincular el google maps despues */}
-                <img src="https://maps.googleapis.com/maps/api/staticmap?center=Madrid,Spain&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7CMadrid,Spain&key=" />
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.0168878895468!2d-58.38375908477038!3d-34.60373688045943!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4aa9f0a6da5edb%3A0x11bead4e234e558b!2sObelisco!5e0!3m2!1ses!2sar!4v1645454585645"
+                  width="100%"
+                  height="450"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  title="Ubicación"
+                ></iframe>
               </div>
             </div>
           </div>
         </div>
-      </section>    </div>
+      </section>    
+    </div>
   );
 };
 

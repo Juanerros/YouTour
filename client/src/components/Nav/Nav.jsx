@@ -1,12 +1,13 @@
 import './styles.css';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBars, FaTimes, FaShoppingCart } from 'react-icons/fa';
-import { useUser } from '../../hooks/useUser';
+import { FaBars, FaTimes } from 'react-icons/fa';
+import { UserContext } from '../../contexts/UserContext.jsx';
 import { LuTicketsPlane } from 'react-icons/lu';
+
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, handleLogout } = useUser();
+  const { user, handleLogout } = useContext(UserContext);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);

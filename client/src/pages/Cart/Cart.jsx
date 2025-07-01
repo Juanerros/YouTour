@@ -1,17 +1,16 @@
 import './style.css';
-import { useState, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaArrowLeft, FaPlus, FaMinus, FaTimes, FaCar, FaUser, FaHeart, FaLock, FaCreditCard, FaMobileAlt, FaSpinner } from 'react-icons/fa';
 import axios from '../../api/axios';
-import { useUser } from '../../hooks/useUser';
+import { UserContext } from '../../contexts/UserContext.jsx';
 import useNotification from '../../hooks/useNotification';
 import useConfirmation from '../../hooks/useConfirmation';
 import { LuUsers } from 'react-icons/lu';
 
 const Cart = () => {
-
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { user } = useContext(UserContext);
   const { notify } = useNotification();
   const { confirm } = useConfirmation();
 
@@ -61,28 +60,56 @@ const Cart = () => {
           ciudad: cartData.ciudad,
           estado: cartData.estado,
           image: cartData.imagen || "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?q=80&w=2070",
-          location: `${cartData.ciudad || ''}, ${cartData.pais || ''}`,
+          // location: `${cartData.ciudad || ''}, ${cartData.pais || ''}`,
+          location: '',
           title: cartData.nombre,
           currentPrice: cartData.precio_base,
           originalPrice: cartData.precio_base,
           duration: cartData.duracion_dias || 5,
-          date: cartData.fecha_inicio ? new Date(cartData.fecha_inicio).toLocaleDateString() : "Próximamente",
-          persons: cartData.cantidad_personas ? `1-${cartData.cantidad_personas}` : "2-6",
-          quantity: 1,
-          additionalServices: [
-            { id: 'transfer', name: 'Estacionamiente Premium', icon: 'car', price: 89, selected: false },
-            { id: 'guide', name: 'Guía Turístico Privado', icon: 'user', price: 150, selected: false },
-            { id: 'insurance', name: 'Seguro Premium', icon: 'user', price: 45, selected: false },
-            { id: 'wellness', name: 'Paquete Spa & Wellness', icon: 'heart', price: 120, selected: false }
-          ]
+          dateInit: cartData.fecha_inicio ? new Date(cartData.fecha_inicio).toLocaleDateString() : "Próximamente",
+          maxPersons: cartData.cantidad_personas,
+          persons: 1,
+          additionalServices: cartData.servicios.map(service => ({
+            selected: false,
+            price: service.precio,
+            icon: service.icono,
+            name: service.nombre,
+            id: service.id_servicio
+          })),
+          activities: cartData.actividades.map(activity => ({
+            id: activity.id_actividad,
+            name: activity.nombre,
+            type: activity.tipo,
+            price: activity.precio,
+            duration: activity.duracion,
+            description: activity.descripcion,
+            city: activity.ciudad_nombre,
+          })),
+          hotel: {
+            id: cartData.hotel.id_hotel,
+            name: cartData.hotel.nombre,
+            rating: cartData.hotel.rating,
+            description: cartData.hotel.descripcion,
+          },
+          vuelo: {
+            id: cartData.vuelo.id_vuelo,
+            airline: cartData.vuelo.aerolinea,
+            duration: cartData.vuelo.duracion,
+            // fecha y hora de salida:
+            departureDate: new Date(cartData.vuelo.fecha_salida).toLocaleDateString(),
+            departureTime: cartData.vuelo.hora_salida,
+            // fecha y hora de llegada:
+            arrivalDate: new Date(cartData.vuelo.fecha_llegada).toLocaleDateString(),
+            arrivalTime: cartData.vuelo.hora_llegada,
+          }
         };
 
+        console.log(formattedItem);
         setCartItem(formattedItem);
       } else {
         setCartItem(null);
       }
     } catch (error) {
-      console.error(error.response?.data?.message || 'Error al obtener el carrito:', error);
       setCartItem(null);
     } finally {
       setLoading(false);
@@ -108,34 +135,29 @@ const Cart = () => {
   };
 
   // Calculate total price
-  const calculateItemTotal = () => {
-    if (!cartItem) return 0;
+  const calculateTotal = () => {
+    const basePrice = cartItem.currentPrice * cartItem.persons;
 
-    const basePrice = cartItem.currentPrice * cartItem.quantity;
     const additionalServicesPrice = cartItem.additionalServices
       .filter(service => service.selected)
       .reduce((sum, service) => sum + service.price, 0);
-    return basePrice + additionalServicesPrice;
-  };
-
-  const calculateTotal = () => {
-    return calculateItemTotal();
+    return (basePrice + additionalServicesPrice);
   };
 
   const handleQuantityChange = (action) => {
     if (!cartItem) return;
 
-    let newQuantity = cartItem.quantity;
-    if (action === 'increase' && newQuantity < 6) { // Máximo 6 personas
-      newQuantity += 1;
-    } else if (action === 'decrease' && newQuantity > 1) { // Mínimo 1 persona
-      newQuantity -= 1;
+    let newQuantity = cartItem.persons;
+    if (action === 'increase' && newQuantity < cartItem.maxPersons) {
+      newQuantity++;
+    } else if (action === 'decrease' && newQuantity > 1) {
+      newQuantity--;
     }
 
     // Actualizar el cartItem con la nueva cantidad y precio ajustado
     setCartItem({
       ...cartItem,
-      quantity: newQuantity,
+      persons: newQuantity,
       currentPrice: cartItem.originalPrice * newQuantity
     });
   };
@@ -164,7 +186,7 @@ const Cart = () => {
           setCartItem(null);
           setCartId(null);
           notify('Paquete eliminado del carrito', 'success');
-          window.location.reload();
+          fetchCart();
         }
 
       } catch (error) {
@@ -201,11 +223,39 @@ const Cart = () => {
     setView('cart');
   };
 
-  const createCheckout = async (title, price) => {
-    const accessToken =
-      "APP_USR-3491276126078984-120209-86c0f97353033dd82faa0835a94d5e66-2115182646"; 
+  const createCheckout = async () => {
+    const metodo = formData.paymentMethod;
 
-    const validPrice = Number(price) || 0; 
+    try {
+      const response = await axios.put(`/cart/${cartId}/checkout`,
+        {
+          total: calculateTotal()
+        }
+      );
+
+      if (response.status == 200) {
+        notify(response.data.message, 'success');
+        setCartItem(null);
+        setCartId(null);
+        setView('cart');
+        fetchOtherCarts();
+      }
+    } catch (err) {
+      console.error('Error al realizar el pago:', err);
+      notify(err.response?.data?.message || 'Error al realizar el pago', 'error')
+    }
+
+    if (metodo == 'mercad-opago') checkoutMP();
+  };
+
+  const checkoutMP = async () => {
+    const title = cartItem.nombre;
+    const price = calculateTotal();
+
+    const accessToken =
+      "APP_USR-3491276126078984-120209-86c0f97353033dd82faa0835a94d5e66-2115182646";
+
+    const validPrice = Number(price) || 0;
     const body = {
       items: [
         {
@@ -224,34 +274,33 @@ const Cart = () => {
     };
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "https://api.mercadopago.com/checkout/preferences",
         {
-          method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify(body),
+          body
         }
       );
 
-      const data = await response.json();
-
-      if (data.init_point) {
-        // Redirige al link de pago
-        window.open(data.init_point, "_blank");
-      } else {
-        console.error("Error al generar el link de pago:", data);
+      if (response.status == 200) {
+        if (data.init_point) {
+          // Redirige al link de pago
+          window.open(data.init_point, "_blank");
+        } else {
+          console.error("Error al generar el link de pago:", data);
+        }
       }
     } catch (error) {
+      notify(error.response?.data?.message || 'Error al realizar el pago', 'error')
       console.error("Error en la solicitud:", error);
     }
-  };
-  
-  const makeCheckout = (item, price) => {
+  }
+
+  const makeCheckout = () => {
     handleSubmitOrder();
-    createCheckout(item, price);
+    createCheckout();
   }
 
   const handleSubmitOrder = async () => {
@@ -264,13 +313,11 @@ const Cart = () => {
       });
 
       if (checkoutResponse.status == 200 || checkoutResponse.status == 201) {
-        const pedidoId = checkoutResponse.data.pedidoId;
-
         // Calcular el total
         const total = calculateTotal();
 
         // Enviar correo al cliente y jefe de ventas
-        await axios.post('/email/order-confirmation', {
+        const response = await axios.post('/email/order-confirmation', {
           cartId: cartId,
           userInfo: {
             name: user.name,
@@ -284,6 +331,8 @@ const Cart = () => {
           }
         })
 
+        console.log('Email enviado', response.data);
+
         notify('¡Pedido realizado con éxito! Gracias por tu compra.', 'success');
         setCartItem(null);
         setCartId(null);
@@ -293,7 +342,6 @@ const Cart = () => {
     } catch (error) {
       notify(error.response?.data?.message || 'Error al procesar el pedido', 'error')
       console.error(error.response?.message || 'Error al procesar el pedido:', error);
-      notify('Error al procesar el pedido', 'error');
     } finally {
       setLoading(false);
     }
@@ -321,8 +369,8 @@ const Cart = () => {
         if (response.status == 200) {
           setCartItem(null);
           setCartId(null);
-          notify('Paquete eliminado del carrito', 'success');
-          window.location.reload();
+          fetchOtherCarts();
+          notify(response.data.message, 'success');
         }
       } catch (error) {
         notify(error.response?.data?.message || 'Error al eliminar el paquete', 'error')
@@ -380,30 +428,46 @@ const Cart = () => {
                   <div className="cart-item-details">
                     <div className="cart-item-header">
                       <h3>{cartItem.title}</h3>
-                      {/* <div className="cart-item-location">{cartItem.location}</div> */}
-                      <div className="cart-item-price">{cartItem.currentPrice} $</div>
+                      <div className="cart-item-location">{cartItem.location}</div>
+                      <div className="cart-item-price">Precio base: {cartItem.originalPrice} $</div>
+                      <div className="cart-item-duration">Duración: {cartItem.duration} días</div>
+                      <div className="cart-item-date-init">Fecha de inicio: {cartItem.dateInit}</div>
                     </div>
 
-                    <div className="quantity-control">
-                      <span>Cantidad de pasajeros:</span>
-                      <div className="quantity-buttons">
-                        <button
-                          onClick={() => handleQuantityChange('decrease')}
-                          disabled={cartItem.quantity <= 1}
-                          className="quantity-btn"
-                        >
-                          <FaMinus />
-                        </button>
-                        <span className="quantity-display">{cartItem.quantity}</span>
-                        <button
-                          onClick={() => handleQuantityChange('increase')}
-                          disabled={cartItem.quantity >= 6}
-                          className="quantity-btn"
-                        >
-                          <FaPlus />
-                        </button>
+                    <div className="hotel-info">
+                      <h4>Hotel incluido</h4>
+                      <div className="hotel-details">
+                        <h5>{cartItem.hotel.name}</h5>
+                        <p>Rating: {cartItem.hotel.rating}/5</p>
+                        <p>{cartItem.hotel.description}</p>
                       </div>
                     </div>
+
+                    <div className="flight-info">
+                      <h4>Vuelo incluido</h4>
+                      <div className="flight-details">
+                        <h5>{cartItem.vuelo.airline}</h5>
+                        <p>Duración: {cartItem.vuelo.duration}</p>
+                        <p>Salida: {cartItem.vuelo.departureDate} a las {cartItem.vuelo.departureTime}</p>
+                        <p>Llegada: {cartItem.vuelo.arrivalDate} a las {cartItem.vuelo.arrivalTime}</p>
+                      </div>
+                    </div>
+
+                    <div className="activities-info">
+                      <h4>Actividades incluidas</h4>
+                      <div className="activities-list">
+                        {cartItem.activities.map(activity => (
+                          <div key={activity.id} className="activity-item">
+                            <h5>{activity.name}</h5>
+                            <p>Tipo: {activity.type}</p>
+                            <p>Duración: {activity.duration}</p>
+                            <p>Ciudad: {activity.city}</p>
+                            <p>{activity.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                     <div className="additional-services">
                       <h4>Servicios adicionales</h4>
                       <div className="services-list">
@@ -430,6 +494,26 @@ const Cart = () => {
 
               <div className="cart-summary">
                 <h3>Resumen del Pedido</h3>
+                <div className="quantity-control">
+                  <span>Cantidad de pasajeros:</span>
+                  <div className="quantity-buttons">
+                    <button
+                      onClick={() => handleQuantityChange('decrease')}
+                      disabled={cartItem.persons <= 1}
+                      className="quantity-btn"
+                    >
+                      <FaMinus />
+                    </button>
+                    <span className="quantity-display">{cartItem.persons}</span>
+                    <button
+                      onClick={() => handleQuantityChange('increase')}
+                      disabled={cartItem.persons >= cartItem.maxPersons}
+                      className="quantity-btn"
+                    >
+                      <FaPlus />
+                    </button>
+                  </div>
+                </div>
                 <div className="summary-item">
                   <div className="cart-item">
                     <div className="">
@@ -464,7 +548,7 @@ const Cart = () => {
                 </div>
                 <div className="summary-total">
                   <span>Total:</span>
-                  <span>{calculateTotal()} $</span>
+                  <span>{calculateTotal().toFixed(2)} $</span>
                 </div>
                 <button className="checkout-btn" onClick={handleCheckout}>
                   Proceder al Checkout
@@ -487,7 +571,7 @@ const Cart = () => {
                       <span className={`status-badge ${cart.estado.toLowerCase()}`}>
                         {cart.estado}
                       </span>
-                      {(cart.estado.toLowerCase() !== 'activo' && cart.estado.toLowerCase() !== 'cancelado') && (
+                      {(cart.estado.toLowerCase() === 'procesando') && (
                         <button onClick={() => handleDeleteOrder(cart.id_carrito)} >Cancelar</button>
                       )}
                     </div>
@@ -545,7 +629,7 @@ const Cart = () => {
               </div>
               <div className="checkout-total">
                 <span>Total:</span>
-                <span>{calculateTotal()} $</span>
+                <span>{calculateTotal().toFixed(2)} $</span>
               </div>
               <div className="secure-payment-info">
                 <FaLock /> Pago 100% Seguro
@@ -637,8 +721,8 @@ const Cart = () => {
                 </div>
               </div>
 
-              <button className="pay-button" onClick={createCheckout("Paquete de Turismo", 25000)}>
-                Pagar con {formData.paymentMethod === 'uala' ? 'Ualá' : 'Mercado Pago'} {calculateTotal()} $
+              <button className="pay-button" onClick={() => makeCheckout()}>
+                Pagar con {formData.paymentMethod === 'uala' ? 'Ualá' : 'Mercado Pago'} {calculateTotal().toFixed(2)} $
               </button>
             </div>
           </div>

@@ -1,9 +1,11 @@
-const mysql = require('mysql2/promise');
-isProduction = process.env.NODE_ENV === 'production';
+import mysql from 'mysql2/promise';
+import loadEnv from './../utils/loadEnv.js';
+
+loadEnv();
 
 async function createConnection() {
     try {
-        const conex = await mysql.createPool({
+        const conex = mysql.createPool({
             // la url que propociona railway
             uri: process.env.DB_URL,
             waitForConnections: true,
@@ -12,7 +14,6 @@ async function createConnection() {
         });
 
         conex.getConnection()
-            .then(() => console.log('Conexión exitosa a la base de datos'))
             .catch(err => console.error('Error al conectar a la base de datos:', err.message));
         return conex;
 
@@ -21,4 +22,4 @@ async function createConnection() {
     }
 };
 
-module.exports = createConnection;
+export default createConnection;

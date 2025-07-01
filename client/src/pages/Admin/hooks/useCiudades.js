@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ciudadesService } from '../service/ciudadesService';
 
 const useCiudades = () => {
   const [ciudades, setCiudades] = useState([]);
@@ -8,11 +9,7 @@ const useCiudades = () => {
 
   const fetchCiudades = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/ciudades');
-      if (!response.ok) {
-        throw new Error('Error al obtener las ciudades');
-      }
-      const data = await response.json();
+      const data = await ciudadesService.getAll();
       setCiudades(data);
       setError(null);
     } catch (err) {
@@ -30,11 +27,7 @@ const useCiudades = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5001/api/ciudades/pais/${paisId}`);
-      if (!response.ok) {
-        throw new Error('Error al obtener las ciudades por país');
-      }
-      const data = await response.json();
+      const data = await ciudadesService.getByPais(paisId);
       
       // Actualizamos el caché
       setCiudadesPorPais(prev => ({
@@ -53,17 +46,7 @@ const useCiudades = () => {
 
   const addCiudad = async (ciudad) => {
     try {
-      const response = await fetch('http://localhost:5001/api/ciudades', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(ciudad),
-      });
-      if (!response.ok) {
-        throw new Error('Error al agregar la ciudad');
-      }
-      const nuevaCiudad = await response.json();
+      const nuevaCiudad = await ciudadesService.create(ciudad);
       
       // Actualizamos la lista general de ciudades
       setCiudades(prev => [...prev, nuevaCiudad]);

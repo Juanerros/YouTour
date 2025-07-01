@@ -2,6 +2,7 @@
   font-family: 'Poppins-Medium';
   src: url('../../assets/fonts/Poppins-Medium.ttf');
 }
+
 .nav-container {
   display: flex;
   width: 100%;
@@ -10,7 +11,7 @@
   position: fixed;
   padding: 0.5rem 2rem;
   background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   top: 0;
   z-index: 1000;
 }
@@ -21,18 +22,22 @@
   color: #1e88e5;
   font-size: 2rem;
 }
+
 .logo-text {
   color: black;
   font-size: 1.6rem;
-  font-family: 'Poppins-Bold' !important; 
+  font-family: 'Poppins-Bold' !important;
 }
+
 .logo-text span {
   color: #1e88e5;
-  font-family: 'Poppins-Bold' !important; 
+  font-family: 'Poppins-Bold' !important;
 }
+
 a {
   text-decoration: none;
 }
+
 .logo-image {
   height: 60px;
   transform: scale(1.5) translateY(8%);
@@ -50,11 +55,13 @@ a {
   padding: 0.4rem 0;
   font-size: 0.9rem;
 }
+
 .nav-link span {
   font-family: 'Poppins-Medium';
   transition: all 0.3s ease;
-  
+
 }
+
 .nav-link::after {
   content: '';
   position: absolute;
@@ -66,9 +73,11 @@ a {
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }
+
 .nav-link:hover {
   color: #1e88e5;
 }
+
 .nav-link:hover::after {
   width: 100%;
 }
@@ -135,7 +144,7 @@ a {
   background-color: #ffffff;
   padding: 2rem;
   transition: all 0.3s ease;
-  box-shadow: -2px 0 4px rgba(0,0,0,0.1);
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
 
@@ -163,7 +172,45 @@ a {
 }
 
 @media (max-width: 900px) {
-  .nav-links, .nav-actions {
+
+  .nav-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    padding: 1rem .6rem;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    top: 0;
+    z-index: 1000;
+  }
+
+  .logo-image {
+    height: 40px;
+    transform: scale(1.5) translateY(8%);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    color: #1e88e5;
+    font-size: 2rem;
+  }
+
+  .logo-text {
+    color: black;
+    font-size: 1.4rem;
+    font-family: 'Poppins-Bold' !important;
+  }
+
+  .logo-text span {
+    color: #1e88e5;
+    font-family: 'Poppins-Bold' !important;
+  }
+
+  .nav-links,
+  .nav-actions {
     display: none;
   }
 
@@ -182,7 +229,7 @@ a {
     background-color: #ffffff;
     padding: 2rem;
     transition: right 0.3s ease;
-    box-shadow: -2px 0 4px rgba(0,0,0,0.1);
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
   }
 
   .mobile-menu.active {

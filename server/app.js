@@ -1,42 +1,57 @@
-const path = require('path');
-const isProduction = process.env.NODE_ENV === 'production';
-const { express } = require(path.join(__dirname, 'config', 'setup'));
-const cors = require('cors');
+// Importaciones de rutas
+import paisesRoutes from './routes/paises.js';
+import ciudadesRoutes from './routes/ciudades.js';
+import vuelosRoutes from './routes/vuelos.js';
+import hotelesRoutes from './routes/hoteles.js';
+import actividadesRoutes from './routes/actividades.js';
+import paquetesRoutes from './routes/paquetes.js';
+import cartRoutes from './routes/cart.js';
+import emailRoutes from './routes/email.js';
+import authRoutes from './routes/Auth.js';
+import adminRoutes from './routes/admin.js'
 
-if (isProduction) console.log('Modo de produccion')
-else {
-    process.loadEnvFile();
-    console.log('Modo de desarrollo')
-}
+// Importaciones de dependencias 
+import express from 'express';
+import cors from 'cors';
+import logger from './middlewares/logger.js';
+import loadEnv from './utils/loadEnv.js';
+import cookieParser from 'cookie-parser';
 
+// Middlewares
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
+// Cargar variables de entorno
+loadEnv();
+
+// Validar entorno (Desarrollo o Produccion)
+const isProduction = process.env.NODE_ENV === 'production';
 if (!isProduction) {
-    // CORS
+    console.log('Modo de desarrollo')
+
+    app.use(logger);
     app.use(cors({
-        origin: '*',
+        origin: 'http://localhost:5173',
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-        allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
+        allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+        credentials: true,
     }));
-    // muestra las peticiones en consola
-    app.use((req, res, next) => {
-        console.log(`📌 Recibido: ${req.method} ${req.url}`);
-        next();
-    });
+} else  {
+    console.log('Modo de produccion')
 }
 
 // Rutas
-app.use('/api/user', require(path.join(__dirname, 'routes', 'user')));
-app.use('/api/paises', require(path.join(__dirname, 'routes', 'paises')));
-app.use('/api/ciudades', require(path.join(__dirname, 'routes', 'ciudades')));
-app.use('/api/vuelos', require(path.join(__dirname, 'routes', 'vuelos')));
-app.use('/api/hoteles', require(path.join(__dirname, 'routes', 'hoteles')));
-app.use('/api/actividades', require(path.join(__dirname, 'routes', 'actividades')));
-app.use('/api/paquetes', require(path.join(__dirname, 'routes', 'paquetes')));
-app.use('/api/cart', require(path.join(__dirname, 'routes', 'cart')));
-app.use('/api/email', require(path.join(__dirname, 'routes', 'email')));
-app.use('/api/pedidos', require(path.join(__dirname, 'routes', 'pedidos')));
+app.use('/api/user', authRoutes);
+app.use('/api/paises', paisesRoutes);
+app.use('/api/ciudades', ciudadesRoutes);
+app.use('/api/vuelos', vuelosRoutes);
+app.use('/api/hoteles', hotelesRoutes);
+app.use('/api/actividades', actividadesRoutes);
+app.use('/api/paquetes', paquetesRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/email', emailRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Testeo de api
 app.get('/api/ping', async (req, res) => {
@@ -44,23 +59,7 @@ app.get('/api/ping', async (req, res) => {
 });
 
 // Servir archivos estaticos de la build de Vite
-if (isProduction) {
-    console.log('Sirviendo archivos estaticos')
-    // Ruta específica para archivos estáticos
-    app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets')));
-    
-    // Servir el archivo index.html para rutas del frontend
-    app.use(express.static(path.join(__dirname, '../client/dist')));
-    
-    // Ruta fallback para SPA
-    app.use((req, res, next) => {
-        if (!req.path.startsWith('/api/')) {
-            res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-        } else {
-            next();
-        }
-    });
-}
+if (isProduction) loadStaticFiles(app);
 
 // Prender servidor de solicitudes http 
 const port = process.env.API_PORT || 5001;

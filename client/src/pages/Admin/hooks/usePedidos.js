@@ -1,25 +1,24 @@
 import { useState, useEffect } from 'react';
-import axios from '../../../api/axios';
+import { pedidosService } from '../service/pedidosService';
+import useNotification from '../../../hooks/useNotification';
 
 const usePedidos = () => {
+  const { notify } = useNotification();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filtroEstado, setFiltroEstado] = useState('Procesando'); // Por defecto muestra los carritos en procesando
+  const [filtroEstado, setFiltroEstado] = useState('Procesando');
   const [mostrarCompletados, setMostrarCompletados] = useState(false);
 
   const fetchPedidos = async () => {
     try {
       setLoading(true);
-      // Obtenemos los carritos en lugar de pedidos
-      const response = await axios.get('/cart/admin');
-      // Asegurarse de que pedidos siempre sea un array
-      setPedidos(Array.isArray(response.data) ? response.data : []);
+      const data = await pedidosService.getAll();
+      setPedidos(data);
       setError(null);
     } catch (err) {
-      console.error('Error al obtener carritos:', err);
-      setError('Error al cargar los carritos. Por favor, intente nuevamente.');
-      setPedidos([]); // Establecer un array vacío en caso de error
+      notify(err.message || 'Error al obtener los pedidos');
+      setPedidos([]);
     } finally {
       setLoading(false);
     }
@@ -28,9 +27,7 @@ const usePedidos = () => {
   const actualizarEstadoPedido = async (idCarrito, nuevoEstado) => {
     try {
       setLoading(true);
-      // Actualizamos el estado del carrito
-      await axios.put(`/cart/${idCarrito}/status`, { estado: nuevoEstado });
-      // Refrescar la lista de carritos
+      await pedidosService.updateStatus(idCarrito, nuevoEstado);
       await fetchPedidos();
       return { success: true };
     } catch (err) {
@@ -43,7 +40,6 @@ const usePedidos = () => {
   };
 
   // Filtrar carritos según el estado seleccionado y la opción de mostrar completados
-  // Asegurarse de que pedidos sea un array antes de filtrar
   const pedidosFiltrados = Array.isArray(pedidos) ? pedidos.filter(carrito => {
     if (mostrarCompletados && carrito.estado === 'Completado') return true;
     if (!mostrarCompletados && carrito.estado === 'Completado') return false;

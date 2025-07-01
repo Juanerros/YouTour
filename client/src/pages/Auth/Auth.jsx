@@ -1,7 +1,7 @@
 import './style.css'
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../../hooks/useUser';
+import { UserContext } from '../../contexts/UserContext.jsx';
 import axios from '../../api/axios';
 import useNotification from '../../hooks/useNotification';
 import { FaEye, FaEyeSlash, FaShoppingCart } from 'react-icons/fa';
@@ -11,7 +11,7 @@ import { MdModeOfTravel } from 'react-icons/md';
 const Auth = () => {
   const navigate = useNavigate();
   const { notify } = useNotification();
-  const { handleLogin, user } = useUser();
+  const { handleLogin, user } = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
@@ -47,7 +47,6 @@ const Auth = () => {
       if (response.status === 200 || response.status === 201) {
         handleLogin(data.user);
         notify(data.message, 'success');
-        navigate('/');
       }
     } catch (error) {
       notify(error.response?.data?.message || 'Error en la autenticación', 'error');
@@ -129,7 +128,7 @@ const Auth = () => {
             <span>YouTour</span>
           </div>
 
-          <h1>{isLogin ? '¡Bienvenido de vuelta!' : 'Únete a youTour'}</h1>
+          <h1>{isLogin ? '¡Bienvenido de vuelta!' : 'Únete a YouTour'}</h1>
           <p className="auth-subtitle">
             {isLogin
               ? 'Continúa explorando el mundo con nosotros. Tus aventuras te esperan.'
@@ -178,24 +177,30 @@ const Auth = () => {
             </div>
           </div>
 
-          <div className="testimonial">
-            <p>"La mejor plataforma para planificar viajes. Experiencia increíble desde el primer día. He visitado 12 países gracias a youTour."</p>
-            <div className="testimonial-author">
-              <div className="author-avatar">MG</div>
-              <div className="author-info">
-                <h4>María González</h4>
-                <span>Viajera frecuente</span>
+          {!isLogin && (
+            <div className="auth-extra-info">
+              <div className="testimonial">
+                <blockquote>
+                  “¡Registrarme en YouTour fue el primer paso para vivir mis mejores aventuras! La plataforma es segura y el soporte es excelente.”
+                </blockquote>
+                <cite>- Ana Torres, Viajera frecuente</cite>
+              </div>
+              <div className="more-info">
+                <h4>¿Por qué crear una cuenta?</h4>
+                <ul>
+                  <li>Accede a ofertas y destinos exclusivos solo para miembros.</li>
+                  <li>Guarda y organiza tus viajes favoritos.</li>
+                  <li>Recibe asistencia personalizada en todo momento.</li>
+                  <li>Tu información está protegida con los más altos estándares de seguridad.</li>
+                </ul>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="auth-right-panel">
           <div className="auth-form-container">
             <div className="auth-form-header">
-              <div className="auth-logo-small">
-                <MdModeOfTravel className="logo-icon white" />
-              </div>
               <h2>{isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}</h2>
               <p>{isLogin
                 ? 'Ingresa a tu cuenta para continuar tu aventura'
@@ -204,6 +209,7 @@ const Auth = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="auth-form">
+
               {!isLogin && (
                 <div className="form-group">
                   <label htmlFor="name">Nombre completo</label>

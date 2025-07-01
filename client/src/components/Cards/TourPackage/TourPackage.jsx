@@ -1,7 +1,11 @@
 import { FaStar, FaRegClock, FaMoon, FaUsers, FaCalendarAlt, FaCheck } from 'react-icons/fa';
 import './styles.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const TourPackage = ({ package: pkg, onAddToCart }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="tour-package">
       <div className="package-header">
@@ -17,7 +21,7 @@ const TourPackage = ({ package: pkg, onAddToCart }) => {
       </div>
       
       <div className="package-body">
-        <h3 className="package-title">{pkg.nombre}</h3>
+        <h3 className="package-title">{pkg.title}</h3>
         
         <div className="package-details">
           <div className="detail-item">
@@ -58,7 +62,7 @@ const TourPackage = ({ package: pkg, onAddToCart }) => {
         </div>
         
         <div className="package-actions">
-          <button className="btn-details">Ver Detalles</button>
+          <button className="btn-details" onClick={() => navigate(`/package/${pkg.id}`)} >Ver Detalles</button>
           <button className="btn-add-cart" onClick={onAddToCart} >Añadir al Carrito</button>
         </div>
       </div>

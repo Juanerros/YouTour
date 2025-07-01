@@ -1,0 +1,15 @@
+/* Estilos compartidos del Admin */
+@import './Modal.css';
+@import './ProfileModal.css';
+
+/* Variables globales para el tema del cielo */
+:root {
+  --sky-blue-dark: #0d1ca8;
+  --sky-blue-medium: #3b85e6;
+  --sky-blue-light: #87ceeb;
+  --sky-blue-lighter: #add8e6;
+  --sky-blue-bg: rgba(135, 206, 235, 0.1);
+  --sky-blue-border: rgba(135, 206, 235, 0.2);
+  --sky-white: #ffffff;
+  --sky-bg-gradient: linear-gradient(135deg, #f8fbff 0%, #e6f3ff 100%);
+} 

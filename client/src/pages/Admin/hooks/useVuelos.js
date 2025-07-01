@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
+import { vuelosService } from '../service/vuelosService';
 
 const useVuelos = () => {
   const [vuelos, setVuelos] = useState([]);
+  const [selectedVuelo, setSelectedVuelo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchVuelos = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/vuelos');
-      if (!response.ok) {
-        throw new Error('Error al obtener los vuelos');
-      }
-      const data = await response.json();
+      const data = await vuelosService.getAll();
       setVuelos(data);
       setError(null);
     } catch (err) {
@@ -23,19 +21,7 @@ const useVuelos = () => {
 
   const addVuelo = async (vuelo) => {
     try {
-      const response = await fetch('http://localhost:5001/api/vuelos', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(vuelo),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al agregar el vuelo');
-      }
-
-      const nuevoVuelo = await response.json();
+      const nuevoVuelo = await vuelosService.create(vuelo);
       setVuelos(prev => [...prev, nuevoVuelo]);
       return nuevoVuelo;
     } catch (err) {
@@ -44,17 +30,9 @@ const useVuelos = () => {
     }
   };
 
-  // Función para eliminar un vuelo
   const deleteVuelo = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/vuelos/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al eliminar el vuelo');
-      }
-
+      await vuelosService.delete(id);
       setVuelos(prev => prev.filter(vuelo => vuelo.id_vuelo !== id));
       return true;
     } catch (err) {
@@ -63,22 +41,9 @@ const useVuelos = () => {
     }
   };
 
-  // Función para actualizar un vuelo
   const updateVuelo = async (id, vueloActualizado) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/vuelos/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(vueloActualizado),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al actualizar el vuelo');
-      }
-
-      const vueloUpdated = await response.json();
+      const vueloUpdated = await vuelosService.update(id, vueloActualizado);
       setVuelos(prev => prev.map(vuelo => 
         vuelo.id_vuelo === id ? vueloUpdated : vuelo
       ));
@@ -89,12 +54,18 @@ const useVuelos = () => {
     }
   };
 
+  const selectVuelo = (vuelo) => {
+    setSelectedVuelo(vuelo);
+  };
+
   useEffect(() => {
     fetchVuelos();
   }, []);
 
   return {
     vuelos,
+    selectedVuelo,
+    selectVuelo,
     loading,
     error,
     addVuelo,

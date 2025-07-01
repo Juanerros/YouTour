@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { paquetesService } from '../service/paquetesService';
 import useVuelos from './useVuelos';
 import useHoteles from './useHoteles';
 import useActividades from './useActividades';
@@ -24,11 +25,7 @@ const usePaquetes = () => {
 
   const fetchPaquetes = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/paquetes');
-      if (!response.ok) {
-        throw new Error('Error al obtener los paquetes');
-      }
-      const data = await response.json();
+      const data = await paquetesService.getAll();
       setPaquetes(data);
       setError(null);
     } catch (err) {
@@ -40,19 +37,7 @@ const usePaquetes = () => {
 
   const addPaquete = async (paquete) => {
     try {
-      const response = await fetch('http://localhost:5001/api/paquetes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(paquete),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al agregar el paquete');
-      }
-
-      const nuevoPaquete = await response.json();
+      const nuevoPaquete = await paquetesService.create(paquete);
       setPaquetes(prev => [...prev, nuevoPaquete]);
       return nuevoPaquete;
     } catch (err) {
@@ -63,19 +48,7 @@ const usePaquetes = () => {
 
   const addActividadAPaquete = async (idPaquete, actividadData) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/paquetes/${idPaquete}/actividades`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(actividadData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al agregar actividad al paquete');
-      }
-
-      const resultado = await response.json();
+      const resultado = await paquetesService.addActividad(idPaquete, actividadData);
       fetchPaquetes();
       return resultado;
     } catch (err) {
@@ -86,12 +59,7 @@ const usePaquetes = () => {
 
   const getPaqueteById = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/paquetes/${id}`);
-      if (!response.ok) {
-        throw new Error('Error al obtener el paquete');
-      }
-      const data = await response.json();
-      return data;
+      return await paquetesService.getById(id);
     } catch (err) {
       setError(err.message);
       throw err;
@@ -107,7 +75,7 @@ const usePaquetes = () => {
     vuelos,
     selectedVuelo,
     selectVuelo,
-    hoteles: filteredHoteles, // Usamos los hoteles filtrados
+    hoteles: filteredHoteles,
     actividades,
     loading,
     error,

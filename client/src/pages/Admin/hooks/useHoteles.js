@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { hotelesService } from '../service/hotelesService';
 
 const useHoteles = () => {
   const [hoteles, setHoteles] = useState([]);
@@ -11,13 +12,9 @@ const useHoteles = () => {
 
   const fetchHoteles = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/hoteles');
-      if (!response.ok) {
-        throw new Error('Error al obtener los hoteles');
-      }
-      const data = await response.json();
+      const data = await hotelesService.getAll();
       setHoteles(data);
-      setFilteredHoteles(data); // Inicialmente mostramos todos los hoteles
+      setFilteredHoteles(data);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -26,12 +23,9 @@ const useHoteles = () => {
     }
   };
 
-  // Nueva función para filtrar hoteles por país
   const filterHotelesByPais = async (idPais) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/hoteles/pais/${idPais}`);
-      if (!response.ok) throw new Error('Error al filtrar hoteles por país');
-      const data = await response.json();
+      const data = await hotelesService.getByPais(idPais);
       setFilteredHoteles(data);
     } catch (err) {
       setError(err.message);
@@ -39,27 +33,13 @@ const useHoteles = () => {
     }
   };
 
-  // Función para resetear el filtro y mostrar todos los hoteles
   const resetHotelFilter = () => {
     setFilteredHoteles(hoteles);
   };
 
-  // Resto de las funciones permanecen igual...
   const addHotel = async (hotel) => {
     try {
-      const response = await fetch('http://localhost:5001/api/hoteles', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(hotel),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al agregar el hotel');
-      }
-
-      const nuevoHotel = await response.json();
+      const nuevoHotel = await hotelesService.create(hotel);
       setHoteles(prev => [...prev, nuevoHotel]);
       setFilteredHoteles(prev => [...prev, nuevoHotel]);
       return nuevoHotel;
@@ -71,9 +51,7 @@ const useHoteles = () => {
 
   const fetchPaises = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/paises');
-      if (!response.ok) throw new Error('Error al obtener los países');
-      const data = await response.json();
+      const data = await hotelesService.getPaises();
       setPaises(data);
     } catch (err) {
       setError(err.message);
@@ -82,9 +60,7 @@ const useHoteles = () => {
 
   const fetchCiudadesPorPais = async (idPais) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/ciudades/pais/${idPais}`);
-      if (!response.ok) throw new Error('Error al obtener las ciudades');
-      const data = await response.json();
+      const data = await hotelesService.getCiudadesByPais(idPais);
       setCiudades(data);
     } catch (err) {
       setError(err.message);
@@ -94,10 +70,8 @@ const useHoteles = () => {
 
   const fetchAmenidades = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/hoteles/amenidades');
-      if (!response.ok) throw new Error('Error al obtener las amenidades');
-      const data = await response.json();
-      setAmenidadesDisponibles(data.map(a => a.nombre));
+      const data = await hotelesService.getAmenidades();
+      setAmenidadesDisponibles(data);
     } catch (err) {
       setError(err.message);
       setAmenidadesDisponibles([]);

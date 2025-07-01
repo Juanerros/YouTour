@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { continentesService } from '../service/continentesService';
 
 const useContinentes = () => {
   const [continentes, setContinentes] = useState([]);
@@ -7,11 +8,7 @@ const useContinentes = () => {
 
   const fetchContinentes = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/paises/continentes');
-      if (!response.ok) {
-        throw new Error('Error al obtener los continentes');
-      }
-      const data = await response.json();
+      const data = await continentesService.getAll();
       setContinentes(data);
       setError(null);
     } catch (err) {
@@ -23,17 +20,7 @@ const useContinentes = () => {
 
   const addContinente = async (continente) => {
     try {
-      const response = await fetch('http://localhost:5001/api/paises/continentes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(continente),
-      });
-      if (!response.ok) {
-        throw new Error('Error al agregar el continente');
-      }
-      const nuevoContinente = await response.json();
+      const nuevoContinente = await continentesService.create(continente);
       setContinentes(prev => [...prev, nuevoContinente]);
       return nuevoContinente;
     } catch (err) {
