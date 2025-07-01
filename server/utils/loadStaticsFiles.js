@@ -1,3 +1,5 @@
+import express from 'express';
+
 const loadStaticFiles = (app) => {
     console.log('Sirviendo archivos estaticos')
     // Ruta específica para archivos estáticos
