@@ -56,12 +56,12 @@ const Cart = () => {
           id: cartData.id_paquete,
           nombre: cartData.nombre,
           descripcion: cartData.descripcion,
-          pais: cartData.pais,
-          ciudad: cartData.ciudad,
+          pais: cartData.pais_nombre,
+          ciudad: cartData.ciudad_nombre,
+          // location: `${cartData.ciudad_nombre || ''}, ${cartData.pais_nombre || ''}`,
+          location: '',
           estado: cartData.estado,
           image: cartData.imagen || "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?q=80&w=2070",
-          // location: `${cartData.ciudad || ''}, ${cartData.pais || ''}`,
-          location: '',
           title: cartData.nombre,
           currentPrice: cartData.precio_base,
           originalPrice: cartData.precio_base,
@@ -309,7 +309,8 @@ const Cart = () => {
 
       // Procesar el checkout
       const checkoutResponse = await axios.put(`/cart/${cartId}/checkout`, {
-        metodoPago: formData.paymentMethod
+        metodoPago: formData.paymentMethod,
+        total: calculateTotal()
       });
 
       if (checkoutResponse.status == 200 || checkoutResponse.status == 201) {
@@ -434,6 +435,27 @@ const Cart = () => {
                       <div className="cart-item-date-init">Fecha de inicio: {cartItem.dateInit}</div>
                     </div>
 
+                    <div className="additional-services">
+                      <h4>Servicios adicionales</h4>
+                      <div className="services-list">
+                        {cartItem.additionalServices.map(service => (
+                          <div
+                            key={service.id}
+                            className={`service-item ${service.selected ? 'selected' : ''}`}
+                            onClick={() => handleServiceToggle(service.id)}
+                          >
+                            {service.icon === 'car' && <FaCar />}
+                            {service.icon === 'user' && <FaUser />}
+                            {service.icon === 'heart' && <FaHeart />}
+                            <div className="service-details">
+                              <span className="service-name">{service.name}</span>
+                              <span className="service-price">{service.price} $</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                     <div className="hotel-info">
                       <h4>Hotel incluido</h4>
                       <div className="hotel-details">
@@ -463,27 +485,6 @@ const Cart = () => {
                             <p>Duración: {activity.duration}</p>
                             <p>Ciudad: {activity.city}</p>
                             <p>{activity.description}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="additional-services">
-                      <h4>Servicios adicionales</h4>
-                      <div className="services-list">
-                        {cartItem.additionalServices.map(service => (
-                          <div
-                            key={service.id}
-                            className={`service-item ${service.selected ? 'selected' : ''}`}
-                            onClick={() => handleServiceToggle(service.id)}
-                          >
-                            {service.icon === 'car' && <FaCar />}
-                            {service.icon === 'user' && <FaUser />}
-                            {service.icon === 'heart' && <FaHeart />}
-                            <div className="service-details">
-                              <span className="service-name">{service.name}</span>
-                              <span className="service-price">{service.price} $</span>
-                            </div>
                           </div>
                         ))}
                       </div>

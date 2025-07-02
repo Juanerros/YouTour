@@ -61,9 +61,6 @@ class CartController {
         const { cartId } = req.params;
         const { estado } = req.body;
         try {
-            // Verificar si existe el carrito
-            await this.cartService.getCartById(cartId);
-
             const isSuccess = await this.cartService.updateCartStatus(cartId, estado);
             if (!isSuccess) {
                 return handleError(res, {
@@ -82,9 +79,10 @@ class CartController {
 
     checkoutCart = async (req, res) => {
         const { cartId } = req.params;
-        const total = req.body.total || 0;
+        const { total, metodoPago } = req.body;
+
         try {
-            const isSuccess = await this.cartService.checkoutCart(cartId, total);
+            const isSuccess = await this.cartService.checkoutCart(cartId, total, metodoPago);
 
             if (!isSuccess) return handleError(res, {
                 message: 'Error al realizar checkout',

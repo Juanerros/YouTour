@@ -1,5 +1,3 @@
-import AppError from "../utils/appError.js";
-
 class PaquetesService {
     constructor(conex) {
         this.conex = conex;
@@ -8,7 +6,7 @@ class PaquetesService {
     getAllPaquetes = async () => {
         try {
             const [paquetes] = await this.conex.execute(
-                'SELECT * FROM paquetes WHERE estado = "Creado"'
+                'SELECT * FROM paquetes WHERE esta_reservado = 0'
             );
 
             return paquetes;
@@ -22,7 +20,7 @@ class PaquetesService {
     getPaqueteById = async (id) => {
         try {
             const [paquete] = await this.conex.execute(
-                'SELECT * FROM paquetes WHERE estado = "Creado" AND id_paquete = ?',
+                'SELECT * FROM paquetes WHERE id_paquete = ?',
                 [id]
             );
 

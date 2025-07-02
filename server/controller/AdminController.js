@@ -24,16 +24,12 @@ class AdminController {
     };
 
     updateCartStatus = async (req, res) => {
+        const { estado } = req.body;
+        const { cartId } = req.params;
+
         try {
-            const { cartId } = req.params;
-            const { estado } = req.body;
-
-            // Verificar si existe el carrito
-            await this.adminService.getCartById(cartId);
-
             // Actualizar estado del carrito
-            const affectedRows = await this.adminService.updateCartStatus(cartId, estado);
-            if (affectedRows === 0) return handleError(res, { status: 500, message: 'No se pudo actualizar el carrito' });
+            await this.adminService.updateCartStatus(cartId, estado);
 
             res.json({
                 message: `Estado del carrito actualizado a ${estado} exitosamente`

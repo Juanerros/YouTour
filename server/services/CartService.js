@@ -6,7 +6,7 @@ class CartService {
     getPaqueteById = async (id) => {
         try {
             const [paquete] = await this.conex.execute(
-                'SELECT * FROM paquetes WHERE estado = "Creado" AND id_paquete = ?',
+                'SELECT * FROM paquetes WHERE id_paquete = ?',
                 [id]
             );
 
@@ -200,17 +200,23 @@ class CartService {
         return paquete.length > 0;
     }
 
-    checkoutCart = async (cartId, total) => {
+    checkoutCart = async (cartId, total, metodo_pago) => {
+
         try {
             await this.getCartById(cartId);
-
-            console.log("Los datos de front: ", cartId, total)
 
             // Actualizar estado del carrito
             const [result] = await this.conex.execute(
                 "UPDATE carritos SET estado = 'Procesando', total = ? WHERE id_carrito = ?",
                 [total, cartId]
             );
+
+            const [transaccion] = await this.conex.execute(
+                'INSERT INTO transacciones(id_user, total, metodo_pago) VALUES (?, ?, ?)',
+                [cartId, total, metodo_pago]
+            );
+
+            if (transaccion.affectedRows == 0) throw { status: 500, message: 'Error al crear transacción' };
 
             return result.affectedRows > 0;
         } catch (err) {
