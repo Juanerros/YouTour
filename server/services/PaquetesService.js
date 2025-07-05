@@ -90,7 +90,7 @@ class PaquetesService {
                 return paquetes.map(paquete => ({
                     ...paquete,
                     vuelo: vuelos[0],
-                    hoteles,
+                    hotel: hoteles[0],
                     actividades,
                 }));
             }

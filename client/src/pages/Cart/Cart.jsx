@@ -104,7 +104,6 @@ const Cart = () => {
           }
         };
 
-        console.log(formattedItem);
         setCartItem(formattedItem);
       } else {
         setCartItem(null);

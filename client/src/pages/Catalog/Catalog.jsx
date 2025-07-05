@@ -35,6 +35,10 @@ const Catalog = () => {
   // Hook personalizado para obtener los paquetes turísticos
   const { tourPackages, isLoading: isLoadingPackages, error } = useTourPackages();
 
+  useEffect(() => {
+    console.log('Los paquetes en Catalog.jsx: ', tourPackages);
+  }, [])
+
   // Obtener rango de precios
   const minMaxPrice = tourPackages ? getPriceRange(tourPackages) : [0, 10000];
 
