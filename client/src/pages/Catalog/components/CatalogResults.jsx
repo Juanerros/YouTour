@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import TourPackage from '../../../components/Cards/TourPackage/TourPackage';
 
 const CatalogResults = ({
@@ -9,19 +10,10 @@ const CatalogResults = ({
   filteredCount,
   onClearFilters
 }) => {
-  if (filteredCount === 0) {
-    return (
-      <div className="catalog-results">
-        <div className="no-results">
-          <h3>No se encontraron viajes</h3>
-          <p>Intenta ajustar los filtros de búsqueda</p>
-          <button className="clear-btn" onClick={onClearFilters}>
-            Limpiar filtros
-          </button>
-        </div>
-      </div>
-    );
-  }
+ 
+  useEffect(() => {
+    console.log('currentPackages', currentPackages);
+  }, []);
 
   return (
     <div className="catalog-results">

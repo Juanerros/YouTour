@@ -164,9 +164,8 @@ const OrdersManagement = () => {
                 <tr>
                   <th>ID</th>
                   <th>ID Carrito</th>
+                  <th>ID Transacción</th>
                   <th>Fecha y hora</th>
-                  <th>Total</th>
-                  <th>Metodo de pago</th>
                 </tr>
               </thead>
               <tbody>
@@ -174,9 +173,8 @@ const OrdersManagement = () => {
                   <tr key={venta.id_venta}>
                     <td>{venta.id_venta}</td>
                     <td>{venta.id_carrito}</td>
+                    <td>{venta.id_transaccion}</td>
                     <td>{formatearFecha(venta.fecha_venta)}</td>
-                    <td>{venta.total}</td>
-                    <td>{venta.metodo_pago}</td>
                   </tr>
                 ))}
               </tbody>

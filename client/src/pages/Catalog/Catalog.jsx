@@ -37,7 +37,7 @@ const Catalog = () => {
 
   useEffect(() => {
     console.log('Los paquetes en Catalog.jsx: ', tourPackages);
-  }, [])
+  }, [tourPackages, isLoadingPackages, error])
 
   // Obtener rango de precios
   const minMaxPrice = tourPackages ? getPriceRange(tourPackages) : [0, 10000];
@@ -95,8 +95,8 @@ const Catalog = () => {
   };
 
   // Hook para obtener paquetes filtrados
-  const filteredPackages = useFilteredPackages(tourPackages, filters);
-
+  const filteredPackages = tourPackages
+  
   // Hook para paginación
   const {
     currentItems: currentPackages,
