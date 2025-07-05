@@ -201,3 +201,9 @@
 .btn-add-cart:hover {
   background: #1565c0;
 }
+
+@media (max-width: 768px) {
+  .tour-package {
+    width: 70%;
+  }
+}
