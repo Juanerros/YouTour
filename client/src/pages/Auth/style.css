@@ -285,6 +285,7 @@
   
   .auth-left-panel {
     padding: 2rem;
+    border-radius: 35px 35px 0px 0px;
   }
   
   .auth-features {
