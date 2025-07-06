@@ -1,7 +1,7 @@
 import './style.css';
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaStar, FaRegStar, FaStarHalfAlt, FaCalendarAlt, FaUsers, FaCheck, FaArrowLeft, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaStar, FaRegStar, FaStarHalfAlt, FaCalendarAlt, FaUsers, FaCheck, FaArrowLeft, FaClock, FaMapMarkerAlt, FaWifi, FaSwimmingPool, FaUtensils, FaParking, FaDumbbell, FaSpa, FaPlane, FaHotel, FaUmbrellaBeach, FaMountain, FaCamera, FaWalking } from 'react-icons/fa';
 import { FaSpinner } from 'react-icons/fa';
 import axios from './../../api/axios';
 import useNotification from '../../hooks/useNotification';
@@ -61,12 +61,13 @@ const PackagePage = () => {
             description: activity.descripcion,
             city: activity.ciudad_nombre,
           })),
-          hotel: {
-            id: packageData.hotel.id_hotel,
-            name: packageData.hotel.nombre,
-            rating: packageData.hotel.rating,
-            description: packageData.hotel.descripcion,
-          },
+                      hotel: {
+              id: packageData.hotel.id_hotel,
+              name: packageData.hotel.nombre,
+              rating: packageData.hotel.rating,
+              description: packageData.hotel.descripcion,
+              amenidades: packageData.hotel.amenidades || []
+            },
           vuelo: {
             id: packageData.vuelo.id_vuelo,
             airline: packageData.vuelo.aerolinea,
@@ -130,6 +131,36 @@ const PackagePage = () => {
     return stars;
   };
 
+  const getAmenityIcon = (amenityName) => {
+    const name = amenityName.toLowerCase();
+    if (name.includes('wifi') || name.includes('internet')) return <FaWifi />;
+    if (name.includes('piscina') || name.includes('pool')) return <FaSwimmingPool />;
+    if (name.includes('restaurante') || name.includes('comida') || name.includes('desayuno')) return <FaUtensils />;
+    if (name.includes('parking') || name.includes('estacionamiento')) return <FaParking />;
+    if (name.includes('gimnasio') || name.includes('fitness')) return <FaDumbbell />;
+    if (name.includes('spa') || name.includes('masaje')) return <FaSpa />;
+    if (name.includes('aire') || name.includes('climatizado')) return <FaHotel />;
+    return <FaCheck />;
+  };
+
+  const getServiceIcon = (serviceName) => {
+    const name = serviceName.toLowerCase();
+    if (name.includes('vuelo') || name.includes('transporte')) return <FaPlane />;
+    if (name.includes('hotel') || name.includes('alojamiento')) return <FaHotel />;
+    if (name.includes('comida') || name.includes('desayuno')) return <FaUtensils />;
+    if (name.includes('playa') || name.includes('costa')) return <FaUmbrellaBeach />;
+    return <FaCheck />;
+  };
+
+  const getActivityIcon = (activityType) => {
+    const type = activityType.toLowerCase();
+    if (type.includes('aventura') || type.includes('montaña')) return <FaMountain />;
+    if (type.includes('playa') || type.includes('acuático')) return <FaUmbrellaBeach />;
+    if (type.includes('cultural') || type.includes('histórico')) return <FaCamera />;
+    if (type.includes('caminata') || type.includes('senderismo')) return <FaWalking />;
+    return <FaCheck />;
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -145,25 +176,26 @@ const PackagePage = () => {
       </div>
 
       <div className="package-container">
-        <div className="package-gallery">
-          <img src={selectedPackage.image} alt={selectedPackage.title} />
-          <div className="gallery-thumbnails">
-            <div className="thumbnail active">
-              <img src={selectedPackage.image} alt="Thumbnail 1" />
-            </div>
-            <div className="thumbnail">
-              <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070" alt="Thumbnail 2" />
-            </div>
-            <div className="thumbnail">
-              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070" alt="Thumbnail 3" />
-            </div>
-            <div className="thumbnail">
-              <img src="https://images.unsplash.com/photo-1606117331085-5760e3b58520?q=80&w=1974" alt="Thumbnail 4" />
+        <div className="package-main-content">
+          <div className="package-gallery">
+            <img src={selectedPackage.image} alt={selectedPackage.title} />
+            <div className="gallery-thumbnails">
+              <div className="thumbnail active">
+                <img src={selectedPackage.image} alt="Thumbnail 1" />
+              </div>
+              <div className="thumbnail">
+                <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070" alt="Thumbnail 2" />
+              </div>
+              <div className="thumbnail">
+                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070" alt="Thumbnail 3" />
+              </div>
+              <div className="thumbnail">
+                <img src="https://images.unsplash.com/photo-1606117331085-5760e3b58520?q=80&w=1974" alt="Thumbnail 4" />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="package-details">
+          <div className="package-details">
           <div className="package-header">
             <h1>{selectedPackage.title}</h1>
             <div className="bot">
@@ -214,13 +246,76 @@ const PackagePage = () => {
           <div className="package-section">
             <h2>¿Qué incluye este paquete?</h2>
             <div className="includes-grid">
-              {selectedPackage.includes.map((item) => (
-                <div key={item.id} className="include-item">
+              {selectedPackage.includes.map((item, index) => (
+                <div key={item.id || index} className="include-item">
                   <FaCheck className="include-icon" />
-                  <span>{item.name}</span>
+                  <span>{item.name || item}</span>
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Servicios incluidos */}
+          {selectedPackage.includes && selectedPackage.includes.length > 0 && (
+            <div className="services-section">
+              <h2>Servicios incluidos</h2>
+              <div className="services-grid">
+                {selectedPackage.includes.map((service, index) => (
+                  <div key={service.id || index} className="service-item">
+                    <div className="service-icon">
+                      {getServiceIcon(service.name || service)}
+                    </div>
+                    <span>{service.name || service}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Amenidades del hotel */}
+          {selectedPackage.hotel && selectedPackage.hotel.amenidades && selectedPackage.hotel.amenidades.length > 0 && (
+            <div className="amenities-section">
+              <h2>Amenidades del hotel</h2>
+              <div className="amenities-grid">
+                {selectedPackage.hotel.amenidades.map((amenity, index) => (
+                  <div key={amenity.id_amenidad || index} className="amenity-item">
+                    <div className="amenity-icon">
+                      {getAmenityIcon(amenity.nombre)}
+                    </div>
+                    <span>{amenity.nombre}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Actividades incluidas */}
+          {selectedPackage.activities && selectedPackage.activities.length > 0 && (
+            <div className="activities-section">
+              <h2>Actividades incluidas</h2>
+              <div className="activities-grid">
+                {selectedPackage.activities.map((activity, index) => (
+                  <div key={activity.id || index} className="activity-item">
+                    <div className="activity-header">
+                      <h3 className="activity-name">{activity.name}</h3>
+                      <span className="activity-type">{activity.type}</span>
+                    </div>
+                    <p className="activity-description">{activity.description}</p>
+                    <div className="activity-details">
+                      <div className="activity-detail">
+                        <FaClock />
+                        <span>{activity.duration}</span>
+                      </div>
+                      <div className="activity-detail">
+                        <FaMapMarkerAlt />
+                        <span>{activity.city}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           </div>
         </div>
 

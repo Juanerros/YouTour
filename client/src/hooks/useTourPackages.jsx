@@ -62,6 +62,7 @@ const useTourPackages = () => {
               name: paquete.hotel?.nombre || 'Hotel 4★',
               rating: paquete.hotel?.rating ?? 4.5,
               description: paquete.hotel?.descripcion || '',
+              amenidades: paquete.hotel?.amenidades || []
             },
             vuelo: {
               id: paquete.vuelo?.id_vuelo ?? 0,

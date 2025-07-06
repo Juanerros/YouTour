@@ -1,201 +1,176 @@
-import './style.css';
-import { useState, useEffect, useContext } from 'react';
-import axios from '../../api/axios';
-import { UserContext } from '../../contexts/UserContext.jsx';
-
-// Hooks personalizados
-import useNotification from '../../hooks/useNotification';
-import useTourPackages from '../../hooks/useTourPackages';
-import useCatalogFilters from './hooks/useCatalogFilters';
-import usePagination from './hooks/usePagination';
-import useFilteredPackages from './hooks/useFilteredPackages';
-
-// Services
-import {
-  getAllDestinations,
-  getAllCountries,
-  getAllCategories,
-  getAllDifficulties,
-  getAllAccommodations,
-  getAllMeals,
-  getAllGroupSizes,
-  getPriceRange
-} from './services/catalogService';
-
-// Components
-import CatalogHeader from './components/CatalogHeader';
-import CatalogResults from './components/CatalogResults';
-import { FaSpinner } from 'react-icons/fa';
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaSpinner } from "react-icons/fa";
+import "./style.css";
+import useCatalogFilters from "./hooks/useCatalogFilters";
+import { UserContext } from "../../contexts/UserContext";
+import useNotification from "../../hooks/useNotification";
+import axios from "../../api/axios";
+import FilterSidebar from "./components/FilterSidebar";
+import CatalogControls from "./components/CatalogControls";
+import PackageGrid from "./components/PackageGrid";
+import Pagination from "./components/Pagination";
 
 const Catalog = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const { notify } = useNotification();
+  const navigate = useNavigate();
   const { user } = useContext(UserContext);
+  const { notify } = useNotification();
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(null);
 
-  // Hook personalizado para obtener los paquetes turísticos
-  const { tourPackages, isLoading: isLoadingPackages, error } = useTourPackages();
-
-  // Obtener rango de precios
-  const minMaxPrice = tourPackages ? getPriceRange(tourPackages) : [0, 10000];
-
-  // Hook para manejar filtros
   const {
-    searchTerm,
+    packages,
+    totalPackages,
+    loading,
+    error,
+    filters,
+    availableOrigins,
+    availableDestinations,
     priceRange,
-    selectedMonths,
-    selectedDuration,
-    selectedIncludes,
+    updateSearch,
+    updatePriceRange,
+    updateOrigin,
+    updateDestination,
+    updateDuration,
+    clearFilters,
     sortBy,
-    selectedDestination,
-    selectedCountry,
-    selectedCategory,
-    selectedRating,
-    selectedDifficulty,
-    selectedAccommodation,
-    selectedMeals,
-    selectedGroupSize,
-    handleSearch,
-    handleDestinationChange,
-    handleCountryChange,
-    handleCategoryChange,
-    handleRatingChange,
-    handleDifficultyChange,
-    handleAccommodationChange,
-    handleMealsChange,
-    handleGroupSizeChange,
-    handleSortChange,
-    handlePriceChange,
-    handleMaxPriceChange,
-    handleMonthToggle,
-    handleDurationChange,
-    handleIncludeToggle,
-    clearFilters
-  } = useCatalogFilters(minMaxPrice);
+    updateSortBy,
+    sortOptions,
+    currentPage,
+    totalPages,
+    goToPage,
+    nextPage,
+    prevPage,
+  } = useCatalogFilters();
 
-  // Crear objeto de filtros para el hook
-  const filters = {
-    searchTerm,
-    selectedDestination,
-    selectedCountry,
-    selectedCategory,
-    selectedRating,
-    selectedDifficulty,
-    selectedAccommodation,
-    selectedMeals,
-    selectedGroupSize,
-    priceRange,
-    selectedMonths,
-    selectedDuration,
-    selectedIncludes,
-    sortBy
+  const handlePackageClick = (packageId) => {
+    navigate(`/package/${packageId}`);
   };
 
-  // Hook para obtener paquetes filtrados
-  const filteredPackages = tourPackages
+  const handleAddToCart = async (packageId, event) => {
+    event.stopPropagation();
 
-  // Hook para paginación
-  const {
-    currentItems: currentPackages,
-    totalPages,
-    currentPage,
-    paginate,
-    resetPagination
-  } = usePagination(filteredPackages, 6);
+    if (!user) {
+      notify(
+        "Debes iniciar sesión para añadir productos al carrito",
+        "warning"
+      );
+      navigate("/auth");
+      return;
+    }
 
-  // Resetear paginación cuando cambien los filtros
-  useEffect(() => {
-    resetPagination();
-  }, [filteredPackages.length, resetPagination]);
-
-  // Función para añadir al carrito
-  const handleAddToCart = async (paqueteId) => {
     try {
-      setIsLoading(true);
-      const response = await axios.post('/cart/add', { userId: user.id_user, paqueteId });
-      if (response.status == 201) {
-        notify(response.data.message, 'success');
+      setAddingToCart(packageId);
+      const response = await axios.post("/cart/add", {
+        userId: user.id_user,
+        paqueteId: packageId,
+      });
+
+      if (response.status === 201) {
+        notify("Paquete añadido al carrito exitosamente", "success");
       }
     } catch (error) {
-      console.error('Error al agregar al carrito:', error);
-      notify(error.response?.data?.message || 'Error al agregar al carrito', 'error');
+      console.error("Error al agregar al carrito:", error);
+      notify(
+        error.response?.data?.message || "Error al agregar al carrito",
+        "error"
+      );
     } finally {
-      setIsLoading(false);
+      setAddingToCart(null);
     }
   };
 
-  // Opciones para filtros
-  const filterOptions = tourPackages ? {
-    destinations: getAllDestinations(tourPackages),
-    countries: getAllCountries(tourPackages),
-    categories: getAllCategories(tourPackages),
-    difficulties: getAllDifficulties(tourPackages),
-    accommodations: getAllAccommodations(tourPackages),
-    meals: getAllMeals(tourPackages),
-    groupSizes: getAllGroupSizes(tourPackages)
-  } : {
-    destinations: [],
-    countries: [],
-    categories: [],
-    difficulties: [],
-    accommodations: [],
-    meals: [],
-    groupSizes: []
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency: "ARS",
+    }).format(price);
   };
 
-  // Manejadores de filtros agrupados
-  const filterHandlers = {
-    handleDestinationChange,
-    handleCountryChange,
-    handleCategoryChange,
-    handleRatingChange,
-    handleDifficultyChange,
-    handleAccommodationChange,
-    handleMealsChange,
-    handleGroupSizeChange,
-    handlePriceChange,
-    handleMaxPriceChange,
-    handleMonthToggle,
-    handleDurationChange,
-    handleIncludeToggle,
-    clearFilters
-  };
+  if (loading) {
+    return (
+      <div className="catalog-loading">
+        <FaSpinner className="spinner" />
+        <p>Cargando paquetes...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="catalog-error">
+        <h3>Error al cargar los paquetes</h3>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()}>Reintentar</button>
+      </div>
+    );
+  }
 
   return (
-    <div className="catalog-page">
-      <CatalogHeader
-        searchTerm={searchTerm}
-        onSearch={handleSearch}
-        showFilters={showFilters}
-        onToggleFilters={() => setShowFilters(!showFilters)}
-        filteredCount={filteredPackages.length}
-        sortBy={sortBy}
-        onSortChange={handleSortChange}
-        filters={filters}
-        handlers={filterHandlers}
-        options={filterOptions}
-        minMaxPrice={minMaxPrice}
-      />
+    <div className="catalog-container">
 
-      {
-        !isLoadingPackages ? (
-          <CatalogResults
-          currentPackages={currentPackages}
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPaginate={paginate}
-          onAddToCart={handleAddToCart}
-          filteredCount={filteredPackages.length}
+      {/* Layout principal */}
+      <div className="catalog-layout">
+        {/* Filtros laterales */}
+        <FilterSidebar
+          showMobileFilters={showMobileFilters}
+          onCloseMobileFilters={() => setShowMobileFilters(false)}
+          filters={filters}
+          availableOrigins={availableOrigins}
+          availableDestinations={availableDestinations}
+          priceRange={priceRange}
           onClearFilters={clearFilters}
+          onUpdateOrigin={updateOrigin}
+          onUpdateDestination={updateDestination}
+          onUpdatePriceRange={updatePriceRange}
+          onUpdateDuration={updateDuration}
+          formatPrice={formatPrice}
         />
-        ) : (
-          <div className="loading-container">
-            <FaSpinner className="spinner" />
-            <p>Cargando viajes...</p>
-          </div>
-        )
 
-      }
+        {/* Contenido principal */}
+        <div className="catalog-content">
+          {/* Controles superiores */}
+          <CatalogControls
+            searchValue={filters.search}
+            onSearchChange={updateSearch}
+            onShowMobileFilters={() => setShowMobileFilters(true)}
+            sortBy={sortBy}
+            onSortChange={updateSortBy}
+            sortOptions={sortOptions}
+            totalPackages={totalPackages}
+          />
+
+          <div className="results-info">
+            <span>{totalPackages} paquetes encontrados</span>
+          </div>
+
+          {/* Grid de paquetes */}
+          <PackageGrid
+            packages={packages}
+            onPackageClick={handlePackageClick}
+            onAddToCart={handleAddToCart}
+            addingToCart={addingToCart}
+            formatPrice={formatPrice}
+          />
+
+          {/* Paginación */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPrevPage={prevPage}
+            onNextPage={nextPage}
+            onGoToPage={goToPage}
+          />
+        </div>
+      </div>
+
+      {/* Overlay para filtros móviles */}
+      {showMobileFilters && (
+        <div
+          className="mobile-filters-overlay"
+          onClick={() => setShowMobileFilters(false)}
+        />
+      )}
     </div>
   );
 };

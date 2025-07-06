@@ -1,12 +1,16 @@
-const SearchBar = ({ searchTerm, onSearch, placeholder = "Buscar destinos, ciudades o países..." }) => {
+import React from "react";
+import { FaSearch } from "react-icons/fa";
+
+const SearchBar = ({ searchValue, onSearchChange }) => {
   return (
-    <div className="search-bar-container">
-      <div className="search-bar">
+    <div className="search-bar">
+      <div className="search-input-container">
+        <FaSearch className="search-icon" />
         <input
           type="text"
-          placeholder={placeholder}
-          value={searchTerm}
-          onChange={onSearch}
+          placeholder="Buscar destinos, ciudades o países..."
+          value={searchValue}
+          onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
     </div>
