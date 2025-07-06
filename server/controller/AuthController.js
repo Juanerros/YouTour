@@ -51,6 +51,21 @@ class AuthController {
       }
 
       const user = await this.authService.register(req.body);
+
+      const token = generateToken({
+        id_user: user.id_user,
+        name: user.name,
+        email: user.email,
+        isAdmin: false,
+      });
+
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true, // usar HTTPS en producción
+        sameSite: 'Strict',
+        maxAge: 1000 * 60 * 60 * 24, // 1 día
+      });
+
       res.status(201).json({
         message: 'Usuario registrado correctamente',
         user: { ...user, pass: '[Hidden]' }
