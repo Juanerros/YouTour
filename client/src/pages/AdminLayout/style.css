@@ -283,3 +283,171 @@ aside {
         font-size: 11px;
     }
 }
+
+.mobile-topbar {
+    display: none;
+}
+
+/* --- responsive del admin layout, adaptado para movil --- */
+@media (max-width: 600px) {
+    aside {
+        width: 100vw;
+        height: 60px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        top: auto;
+        z-index: 1000;
+        border-right: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        background: linear-gradient(180deg, #4A5BF5 0%, #3B4DE6 100%);
+        box-shadow: 0 -2px 20px rgba(13, 28, 168, 0.08);
+    }
+
+    .sidebar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+        padding: 0;
+    }
+
+    .w-dashboard {
+        display: none !important;
+    }
+
+    .op-container {
+        display: flex;
+        flex-direction: row;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sidebar-op {
+        flex: 1 1 0;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        border-radius: 0;
+        background: none;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 20px;
+        min-width: 0;
+        height: 100%;
+        transition: none;
+        gap: 0;
+        position: relative;
+    }
+
+    .sidebar-op .label-nav {
+        display: none !important;
+    }
+
+    .sidebar-op .op-ico {
+        margin: 0 auto;
+        display: block;
+        width: 26px;
+        height: 26px;
+    }
+
+    .sidebar-op.active {
+        background: none;
+        color: #fff;
+        border-left: none;
+        border-bottom: 4px solid #fff;
+        box-shadow: none;
+        backdrop-filter: none;
+    }
+
+    .sidebar-op.active::before {
+        display: none;
+    }
+
+    .sidebar-op:hover {
+        transform: translateX(0px);
+    }
+
+    .profile-section {
+        display: none !important;
+    }
+
+    /* Navbar superior para perfil/admin */
+    .mobile-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100vw;
+        height: 60px;
+        background: #4A5BF5;
+        color: #fff;
+        padding: 0 6px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1100;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .4);
+    }
+
+    .mobile-topbar .profile-button {
+        background: rgba(255, 255, 255, 0.08);
+        border: none;
+        color: #fff;
+        padding: 8px 10px;
+        border-radius: 1000px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: none;
+    }
+
+    .actual-section {
+        display: flex;
+        width: 50%;
+        line-height: 1.2;
+        justify-content: center;
+        font-size: 12px;
+        text-decoration: underline;
+    }
+
+    .profile-button {
+        width: auto;
+    }
+
+    .mobile-topbar .profile-avatar-small {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    .mobile-topbar .profile-info-small {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        text-align: left;
+    }
+
+    .mobile-topbar .profile-name-small {
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        line-height: 1.2;
+    }
+
+    .mobile-topbar .profile-role-small {
+        font-size: 11px;
+        color: #e0eaff;
+        font-weight: 500;
+    }
+
+    .main-content {
+        padding-top: 56px !important;
+        padding-bottom: 60px !important;
+    }
+}

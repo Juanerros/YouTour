@@ -70,7 +70,8 @@ const AdminLayout = () => {
                     setIsProfileDropdownOpen(false); // Cerrar dropdown al navegar
                   }}
                 >
-                  {opt.icon}{opt.label}
+                  {opt.icon}
+                  <span className='label-nav'>{opt.label}</span>
                 </a>
               ))}
             </div>
@@ -106,6 +107,33 @@ const AdminLayout = () => {
         <section className="main-content">
           <Outlet />
         </section>
+      </div>
+
+      {/* top navbar para movil */}
+      <div className="mobile-topbar">
+        <button 
+          className="profile-button"
+          onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+        >
+          <div className="profile-avatar-small">
+            <FiUser />
+          </div>
+          <div className="profile-info-small">
+            <span className="profile-name-small">
+              {user?.name || `${user?.nombre} ${user?.apellido}` || 'Admin Ventas'}
+            </span>
+            <span className="profile-role-small">
+              {user?.isAdmin === 1 ? 'Administrador' : 'Usuario'}
+            </span>
+          </div>
+        </button>
+        <ProfileDropdown 
+          isOpen={isProfileDropdownOpen}
+          onClose={() => setIsProfileDropdownOpen(false)}
+        />
+        <div className='actual-section'>
+          <h2>{sidebarOptions[activeIndex]?.label || "Inicio"}</h2>
+        </div>
       </div>
     </>
   );
