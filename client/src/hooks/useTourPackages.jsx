@@ -21,7 +21,6 @@ const useTourPackages = () => {
 
         // Transformar los datos para que coincidan con el formato esperado
         const formattedData = data.map(paquete => {
-          console.log('Paquete original:', paquete);
 
           return {
             id: paquete.id_paquete || paquete.id || 0,
@@ -42,13 +41,13 @@ const useTourPackages = () => {
             persons: 1,
             rating: paquete.hotel?.rating ?? 4.5,
             reviews: paquete.reviews || 100,
-            additionalServices: paquete.servicios.map(service => ({
+            additionalServices: Array.isArray(paquete.servicios) ? paquete.servicios.map(service => ({
               selected: false,
               price: service.precio || 0,
               icon: service.icono || 'service',
               name: service.nombre || 'Servicio',
               id: service.id_servicio
-            })),
+            })) : [],
             activities: Array.isArray(paquete.actividades) ? paquete.actividades.map(activity => ({
               id: activity.id_actividad,
               name: activity.nombre,
@@ -91,10 +90,12 @@ const useTourPackages = () => {
             groupSize: paquete.tamano_grupo || "Pequeño"
           };
         });
-                 
+
         setTourPackages(formattedData);
         setIsLoading(false);
       } catch (error) {
+        console.error('Error en useTourPackages:', error);
+        console.error('Error completo:', error.response || error);
         setError(error.message);
         setIsLoading(false);
       }

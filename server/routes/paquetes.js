@@ -12,14 +12,14 @@ const paquetesController = new PaquetesController(paquetesService);
 // Obtener todos los paquetes
 router.get('/', paquetesController.getAllPaquetes);
 
+// Obtener todos los paquetes con detalles completos
+router.get('/all/detallados', paquetesController.getPaquetesDetallados);
+
 // Obtener un paquete específico
 router.get('/:id', paquetesController.getPaqueteById);
 
 // Obtener paquete con detalles completos
 router.get('/:id/detallado', paquetesController.getPaqueteDetallado);
-
-// Obtener todos los paquetes con detalles completos
-router.get('/all/detallados', paquetesController.getPaquetesDetallados);
 
 // Crear un nuevo paquete
 router.post('/', paquetesController.createPaquete);

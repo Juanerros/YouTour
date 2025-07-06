@@ -36,20 +36,25 @@ class PaquetesService {
 
     getPaquetesDetallados = async () => {
         try {
+            console.log('Iniciando getPaquetesDetallados');
             const paquetes = await this.getAllPaquetes();
+            console.log('Paquetes obtenidos:', paquetes.length);
+            const paquetesDetallados = [];
 
             for (let paquete of paquetes) {
-                // Obtener vuelos del paquete
+                try {
+                    console.log('Procesando paquete:', paquete.id_paquete);
+                    // Obtener vuelos del paquete
                 const [vuelos] = await this.conex.execute(
                     'SELECT v.*, ' +
                     'origen.nombre as origen_nombre, origen.codigo_aeropuerto as origen_codigo, ' +
                     'destino.nombre as destino_nombre, destino.codigo_aeropuerto as destino_codigo, ' +
                     'destino_pais.id_pais as destino_id_pais, destino_pais.nombre as destino_pais_nombre ' +
                     'FROM paquetes p ' +
-                    'INNER JOIN vuelos v ON p.id_vuelo = v.id_vuelo ' +
-                    'INNER JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
-                    'INNER JOIN ciudades destino ON v.destino = destino.id_ciudad ' +
-                    'INNER JOIN paises destino_pais ON destino.id_pais = destino_pais.id_pais ' +
+                    'LEFT JOIN vuelos v ON p.id_vuelo = v.id_vuelo ' +
+                    'LEFT JOIN ciudades origen ON v.origen = origen.id_ciudad ' +
+                    'LEFT JOIN ciudades destino ON v.destino = destino.id_ciudad ' +
+                    'LEFT JOIN paises destino_pais ON destino.id_pais = destino_pais.id_pais ' +
                     'WHERE p.id_paquete = ?',
                     [paquete.id_paquete]
                 );
@@ -87,13 +92,28 @@ class PaquetesService {
                     [paquete.id_paquete]
                 );
 
-                return paquetes.map(paquete => ({
-                    ...paquete,
-                    vuelo: vuelos[0],
-                    hotel: hoteles[0],
-                    actividades,
-                }));
+                // Obtener servicios del paquete
+                const [servicios] = await this.conex.execute(
+                    'SELECT * FROM servicios WHERE id_paquete = ?',
+                    [paquete.id_paquete]
+                );
+
+                    // Agregar el paquete detallado al array
+                    paquetesDetallados.push({
+                        ...paquete,
+                        vuelo: vuelos[0],
+                        hotel: hoteles[0],
+                        actividades,
+                        servicios
+                    });
+                } catch (paqueteError) {
+                    console.error(`Error procesando paquete ${paquete.id_paquete}:`, paqueteError);
+                    // Continuar con el siguiente paquete
+                }
             }
+
+            console.log('Paquetes detallados procesados:', paquetesDetallados.length);
+            return paquetesDetallados;
         } catch (err) {
             if (err.status) throw err;
             console.error('Error al obtener paquetes detallados:', err);
