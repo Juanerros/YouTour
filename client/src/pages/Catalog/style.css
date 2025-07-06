@@ -1,13 +1,12 @@
 .catalog-page {
-  min-width: 1300px;
   width: 100%;
   margin: 0 auto;
   padding: 20px;
   background-color: #f8f9fa;
   min-height: 100vh;
   width: 100%;
-  padding-top: 20vh !important;
   transform: scale(0.9);
+  align-self: center;
 }
 
 /* Sección de búsqueda */
@@ -22,8 +21,8 @@
 .search-bar {
   display: flex;
   gap: 10px;
+  width: 100%;
   margin-bottom: 15px;
-
   padding: 10px;
 }
 
@@ -245,10 +244,11 @@
 .catalog-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem 4rem;
+  margin-top: -2%;
 }
 
 .catalog-header {
+  margin: auto;
   margin-bottom: 2rem;
 }
 
@@ -267,6 +267,7 @@
 }
 
 .search-bar-container {
+  margin: auto 30px;
   margin-bottom: 1.5rem;
 }
 
@@ -536,7 +537,7 @@
     background-color: #f8f9fa;
     min-height: 100vh;
     width: 100%;
-    padding-top: 2vh !important;
+    padding-top: 5vh !important;
     transform: scale(1);
   }
 

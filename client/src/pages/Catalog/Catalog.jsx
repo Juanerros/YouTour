@@ -25,19 +25,16 @@ import {
 // Components
 import CatalogHeader from './components/CatalogHeader';
 import CatalogResults from './components/CatalogResults';
+import { FaSpinner } from 'react-icons/fa';
 
 const Catalog = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const { notify } = useNotification();
   const { user } = useContext(UserContext);
-  
+
   // Hook personalizado para obtener los paquetes turísticos
   const { tourPackages, isLoading: isLoadingPackages, error } = useTourPackages();
-
-  useEffect(() => {
-    console.log('Los paquetes en Catalog.jsx: ', tourPackages);
-  }, [tourPackages, isLoadingPackages, error])
 
   // Obtener rango de precios
   const minMaxPrice = tourPackages ? getPriceRange(tourPackages) : [0, 10000];
@@ -96,7 +93,7 @@ const Catalog = () => {
 
   // Hook para obtener paquetes filtrados
   const filteredPackages = tourPackages
-  
+
   // Hook para paginación
   const {
     currentItems: currentPackages,
@@ -180,15 +177,25 @@ const Catalog = () => {
         minMaxPrice={minMaxPrice}
       />
 
-      <CatalogResults
-        currentPackages={currentPackages}
-        totalPages={totalPages}
-        currentPage={currentPage}
-        onPaginate={paginate}
-        onAddToCart={handleAddToCart}
-        filteredCount={filteredPackages.length}
-        onClearFilters={clearFilters}
-      />
+      {
+        !isLoadingPackages ? (
+          <CatalogResults
+          currentPackages={currentPackages}
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPaginate={paginate}
+          onAddToCart={handleAddToCart}
+          filteredCount={filteredPackages.length}
+          onClearFilters={clearFilters}
+        />
+        ) : (
+          <div className="loading-container">
+            <FaSpinner className="spinner" />
+            <p>Cargando viajes...</p>
+          </div>
+        )
+
+      }
     </div>
   );
 };
