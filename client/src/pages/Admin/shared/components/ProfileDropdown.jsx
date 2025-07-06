@@ -4,7 +4,7 @@ import { UserContext } from '../../../../contexts/UserContext';
 import { FiUser, FiMail, FiPhone, FiShield, FiHome, FiLogOut } from 'react-icons/fi';
 import '../styles/ProfileDropdown.css';
 
-const ProfileDropdown = ({ isOpen, onClose }) => {
+const ProfileDropdown = ({ isOpen, onClose, position }) => {
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ const ProfileDropdown = ({ isOpen, onClose }) => {
       <div className="dropdown-overlay" onClick={onClose}></div>
       
       {/* Dropdown */}
-      <div className="profile-dropdown">
+      <div className={`profile-dropdown${position === "bottom" ? " profile-dropdown-bottom" : ""}`}>
         {/* Header del usuario */}
         <div className="dropdown-header">
           <div className="user-avatar">
@@ -80,4 +80,4 @@ const ProfileDropdown = ({ isOpen, onClose }) => {
   );
 };
 
-export default ProfileDropdown; 
+export default ProfileDropdown;

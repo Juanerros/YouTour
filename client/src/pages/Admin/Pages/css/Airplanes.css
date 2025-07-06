@@ -44,7 +44,7 @@
   height: 80px;
   padding: 16px;
   border-radius: 8px;
-  background-color: #f0f4ff;
+  background-color: #f6f5ff;
   color: #1447b5;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #2563ea63;
@@ -72,7 +72,7 @@
 }
 .info-container h1{
   font-size: 20px;
-  line-height: 1.2;
+  line-height: .8;
 }
 .info-container h3 {
   font-size: 10px;
@@ -438,6 +438,12 @@ hr {
   overflow: hidden;
 }
 
+.vuelos-table thead tr th{
+  background-color: #f8fbff;
+  color: #000000;
+  font-weight: 1000;
+}
+
 .vuelos-table th,
 .vuelos-table td {
   padding: 12px 15px;
@@ -465,6 +471,14 @@ hr {
   justify-content: center;
 }
 
+.vuelos-table tbody tr:nth-child(odd) {
+  background-color: #d5e8ff;
+}
+
+.vuelos-table tbody tr:nth-child(even) {
+  background-color: #fff;
+}
+
 /* Estilos para el modal de confirmación */
 .modal-small p {
   margin-bottom: 20px;
@@ -485,4 +499,15 @@ hr {
 .precio-acciones {
   display: flex;
   flex-direction: column;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
 }

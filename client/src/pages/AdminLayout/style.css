@@ -210,31 +210,31 @@ aside {
     aside {
         width: 240px;
     }
-    
+
     .w-dashboard {
         padding: 20px 16px;
         gap: 10px;
     }
-    
+
     .w-dashboard h1 {
         font-size: 16px;
     }
-    
+
     .sidebar-op {
         padding: 10px 12px;
         font-size: 13px;
     }
-    
+
     .profile-button {
         padding: 10px;
     }
-    
+
     .profile-avatar-small {
         width: 36px;
         height: 36px;
         font-size: 16px;
     }
-    
+
     .profile-name-small {
         font-size: 13px;
     }
@@ -244,41 +244,41 @@ aside {
     aside {
         width: 200px;
     }
-    
+
     .w-dashboard h1 {
         font-size: 14px;
     }
-    
+
     .w-dashboard h4 {
         font-size: 11px;
     }
-    
+
     .sidebar-op {
         padding: 8px 10px;
         font-size: 12px;
         gap: 8px;
     }
-    
+
     .op-ico {
         width: 16px;
         height: 16px;
     }
-    
+
     .profile-button {
         padding: 8px;
         gap: 8px;
     }
-    
+
     .profile-avatar-small {
         width: 32px;
         height: 32px;
         font-size: 14px;
     }
-    
+
     .profile-name-small {
         font-size: 12px;
     }
-    
+
     .profile-role-small {
         font-size: 11px;
     }
@@ -396,7 +396,7 @@ aside {
 
     .mobile-topbar .profile-button {
         background: rgba(255, 255, 255, 0.08);
-        border: none;
+        border: 1px solid rgba(255, 255, 255, 0);
         color: #fff;
         padding: 8px 10px;
         border-radius: 1000px;
@@ -418,6 +418,13 @@ aside {
 
     .profile-button {
         width: auto;
+    }
+
+
+    .profile-button:hover {
+        transform: translateY(0px);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .mobile-topbar .profile-avatar-small {

@@ -130,6 +130,7 @@ const AdminLayout = () => {
         <ProfileDropdown 
           isOpen={isProfileDropdownOpen}
           onClose={() => setIsProfileDropdownOpen(false)}
+          position="bottom" // <-- Añade esta prop para indicar posición
         />
         <div className='actual-section'>
           <h2>{sidebarOptions[activeIndex]?.label || "Inicio"}</h2>

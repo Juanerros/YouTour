@@ -295,10 +295,12 @@ const Airplanes = () => {
     <>
       <div className="Airplanes">
         <div className="row">
-          <span>
-            <h1>Gestión de vuelos</h1>
-            <h4>Administra los vuelos.</h4>
-          </span>
+          <div className='column'>
+            <span>
+              <h1>Gestión de vuelos</h1>
+              <h4>Administra los vuelos.</h4>
+            </span>
+          </div>
           <div className="view-controls">
             <button
               className={`view-btn ${viewMode === 'cards' ? 'active' : ''}`}
