@@ -1,12 +1,12 @@
-const API_BASE_URL = 'http://localhost:5001/api';
+import axios from '../../../api/axios';
 
 export const actividadesService = {
   // Obtener todas las actividades
   async getAll() {
     try {
-      const response = await fetch(`${API_BASE_URL}/actividades`);
-      if (!response.ok) throw new Error('Error al obtener las actividades');
-      return await response.json();
+      const response = await axios.get('/actividades');
+      if (response.status !== 200) throw new Error('Error al obtener las actividades');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -15,13 +15,9 @@ export const actividadesService = {
   // Crear nueva actividad
   async create(actividad) {
     try {
-      const response = await fetch(`${API_BASE_URL}/actividades`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(actividad),
-      });
-      if (!response.ok) throw new Error('Error al agregar la actividad');
-      return await response.json();
+      const response = await axios.post('/actividades', { actividad });
+      if (response.status !== 201 && response.status !== 200) throw new Error('Error al agregar la actividad');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -30,9 +26,9 @@ export const actividadesService = {
   // Obtener países
   async getPaises() {
     try {
-      const response = await fetch(`${API_BASE_URL}/paises`);
-      if (!response.ok) throw new Error('Error al obtener los países');
-      return await response.json();
+      const response = await axios.get('/paises');
+      if (response.status !== 200) throw new Error('Error al obtener los países');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -41,9 +37,9 @@ export const actividadesService = {
   // Obtener ciudades por país
   async getCiudadesByPais(idPais) {
     try {
-      const response = await fetch(`${API_BASE_URL}/ciudades/pais/${idPais}`);
-      if (!response.ok) throw new Error('Error al obtener las ciudades');
-      return await response.json();
+      const response = await axios.get(`/ciudades/pais/${idPais}`);
+      if (response.status !== 200) throw new Error('Error al obtener las ciudades');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }

@@ -1,12 +1,12 @@
-const API_BASE_URL = 'http://localhost:5001/api';
+import axios from '../../../api/axios';
 
 export const paquetesService = {
   // Obtener todos los paquetes
   async getAll() {
     try {
-      const response = await fetch(`${API_BASE_URL}/paquetes`);
-      if (!response.ok) throw new Error('Error al obtener los paquetes');
-      return await response.json();
+      const response = await axios.get('/paquetes');
+      if (response.status !== 200) throw new Error('Error al obtener los paquetes');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -15,9 +15,9 @@ export const paquetesService = {
   // Obtener todos los paquetes con detalles completos
   async getAllDetallados() {
     try {
-      const response = await fetch(`${API_BASE_URL}/paquetes/all/detallados`);
-      if (!response.ok) throw new Error('Error al obtener los paquetes detallados');
-      return await response.json();
+      const response = await axios.get('/paquetes/all/detallados');
+      if (response.status !== 200) throw new Error('Error al obtener los paquetes detallados');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -26,9 +26,9 @@ export const paquetesService = {
   // Obtener paquete por ID
   async getById(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}/paquetes/${id}`);
-      if (!response.ok) throw new Error('Error al obtener el paquete');
-      return await response.json();
+      const response = await axios.get(`/paquetes/${id}`);
+      if (response.status !== 200) throw new Error('Error al obtener el paquete');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -37,9 +37,9 @@ export const paquetesService = {
   // Obtener paquete detallado por ID
   async getDetalladoById(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}/paquetes/${id}/detallado`);
-      if (!response.ok) throw new Error('Error al obtener el paquete detallado');
-      return await response.json();
+      const response = await axios.get(`/paquetes/${id}/detallado`);
+      if (response.status !== 200) throw new Error('Error al obtener el paquete detallado');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -48,13 +48,9 @@ export const paquetesService = {
   // Crear nuevo paquete
   async create(paquete) {
     try {
-      const response = await fetch(`${API_BASE_URL}/paquetes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paquete),
-      });
-      if (!response.ok) throw new Error('Error al agregar el paquete');
-      return await response.json();
+      const response = await axios.post('/paquetes', { paquete });
+      if (response.status !== 201 && response.status !== 200) throw new Error('Error al agregar el paquete');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -63,13 +59,9 @@ export const paquetesService = {
   // Actualizar paquete
   async update(id, paquete) {
     try {
-      const response = await fetch(`${API_BASE_URL}/paquetes/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paquete),
-      });
-      if (!response.ok) throw new Error('Error al actualizar el paquete');
-      return await response.json();
+      const response = await axios.put(`/paquetes/${id}`, { paquete, });
+      if (response.status !== 200) throw new Error('Error al actualizar el paquete');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -78,13 +70,9 @@ export const paquetesService = {
   // Agregar actividad a paquete
   async addActividad(idPaquete, actividadData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/paquetes/${idPaquete}/actividades`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(actividadData),
-      });
-      if (!response.ok) throw new Error('Error al agregar actividad al paquete');
-      return await response.json();
+      const response = await axios.post(`/paquetes/${idPaquete}/actividades`, { actividadData, });
+      if (response.status !== 200) throw new Error('Error al agregar actividad al paquete');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -93,11 +81,10 @@ export const paquetesService = {
   // Eliminar paquete
   async delete(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}/paquetes/${id}`, {
-        method: 'DELETE',
+      const response = await axios.delete(`/paquetes/${id}`, {
       });
-      if (!response.ok) throw new Error('Error al eliminar el paquete');
-      return await response.json();
+      if (response.status !== 200) throw new Error('Error al eliminar el paquete');
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
