@@ -54,7 +54,7 @@ app.use('/api/paquetes', paquetesRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/', mercadoPagoRoutes);
+app.use('/api', mercadoPagoRoutes);
 
 
 // Testeo de api

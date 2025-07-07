@@ -250,7 +250,7 @@ const Cart = () => {
   const checkoutMP = async () => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/mercado-pago/create`,
+        `api/mercado-pago/create`,
         {
           title: cartItem.nombre,
           price: calculateTotal()
