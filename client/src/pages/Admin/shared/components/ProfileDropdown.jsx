@@ -5,17 +5,12 @@ import { FiUser, FiMail, FiPhone, FiShield, FiHome, FiLogOut } from 'react-icons
 import '../styles/ProfileDropdown.css';
 
 const ProfileDropdown = ({ isOpen, onClose, position }) => {
-  const { user, logout } = useContext(UserContext);
+  const { user, handleLogout } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      onClose();
-      navigate('/');
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-    }
+  const logout = async () => {
+    onClose();
+    await handleLogout();
   };
 
   const handleGoHome = () => {
@@ -29,7 +24,7 @@ const ProfileDropdown = ({ isOpen, onClose, position }) => {
     <>
       {/* Overlay invisible para cerrar al hacer clic fuera */}
       <div className="dropdown-overlay" onClick={onClose}></div>
-      
+
       {/* Dropdown */}
       <div className={`profile-dropdown${position === "bottom" ? " profile-dropdown-bottom" : ""}`}>
         {/* Header del usuario */}
@@ -51,7 +46,7 @@ const ProfileDropdown = ({ isOpen, onClose, position }) => {
             <FiMail className="info-icon" />
             <span className="info-text">{user?.email || 'No disponible'}</span>
           </div>
-          
+
           <div className="info-item">
             <FiPhone className="info-icon" />
             <span className="info-text">{user?.phone || 'No disponible'}</span>
@@ -60,16 +55,16 @@ const ProfileDropdown = ({ isOpen, onClose, position }) => {
 
         {/* Botones de acción */}
         <div className="dropdown-actions">
-          <button 
+          <button
             className="dropdown-btn secondary"
             onClick={handleGoHome}
           >
             <FiHome />
             Ir al Inicio
           </button>
-          <button 
+          <button
             className="dropdown-btn primary"
-            onClick={handleLogout}
+            onClick={logout}
           >
             <FiLogOut />
             Cerrar Sesión

@@ -183,42 +183,6 @@ const Admin = () => {
           </div>
         ))}
       </div>
-
-      <div className="recent-section">
-        <div className="section-header">
-          <h2>Reservas Recientes</h2>
-        </div>
-        <div className="table-container">
-          <table className="reservations-table">
-            <thead>
-              <tr>
-                <th>ID RESERVA</th>
-                <th>CLIENTE</th>
-                <th>DESTINO</th>
-                <th>FECHA</th>
-                <th>ESTADO</th>
-                <th>MONTO</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentReservations.map((reservation, index) => (
-                <tr key={index}>
-                  <td className="reservation-id">{reservation.id}</td>
-                  <td>{reservation.client}</td>
-                  <td>{reservation.destination}</td>
-                  <td>{reservation.date}</td>
-                  <td>
-                    <span className={`status-badge ${reservation.status.toLowerCase().replace(/\s+/g, '-')}`}>
-                      {reservation.status}
-                    </span>
-                  </td>
-                  <td className="amount">{reservation.amount}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   );
 };
