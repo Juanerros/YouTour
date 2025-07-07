@@ -59,6 +59,7 @@ const Nav = () => {
       <div className={`mobile-menu ${isOpen ? 'active' : ''}`}>
         <Link to="/" className="mobile-link">Inicio</Link>
         <Link to="/catalog" className="mobile-link">Catalogo</Link>
+        <Link to="/cart" className="mobile-link">Carrito</Link>
         {(user && user.isAdmin) ? (
           <Link to="/admin" className="nav-link">
             <span>Admin</span>

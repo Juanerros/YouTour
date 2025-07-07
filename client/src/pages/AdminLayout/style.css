@@ -409,11 +409,11 @@ aside {
 
     .actual-section {
         display: flex;
-        width: 50%;
+        width: 55%;
         line-height: 1.2;
         justify-content: center;
         font-size: 12px;
-        text-decoration: underline;
+        opacity: .8;
     }
 
     .profile-button {

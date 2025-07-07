@@ -426,6 +426,12 @@
   margin-top: 0.2rem;
 }
 
+.row {
+  padding: 0rem;
+  line-height: 1.2;
+  gap: .6rem;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .paquete-footer {

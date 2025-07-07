@@ -1,7 +1,7 @@
 /* Catálogo - Estilos principales */
 .catalog-container {
   width: 100%;
-  padding: 1rem;
+  padding: .4rem;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -162,7 +162,7 @@
 .catalog-content {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: .4rem;
   flex: 1;
   min-width: 0;
 }
