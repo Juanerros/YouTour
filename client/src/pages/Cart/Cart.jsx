@@ -261,7 +261,7 @@ const Cart = () => {
       if (init_point) {
         window.open(init_point, "_blank");
       } else {
-        notify("No se pudo obtener el link de pago", "error");
+        notify("No se pudo obtener el link de pago, V6", "error");
       }
     } catch (err) {
       console.error("Error en checkoutMP:", err);
