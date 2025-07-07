@@ -250,7 +250,7 @@ const Cart = () => {
   const checkoutMP = async () => {
     try {
       const response = await axios.post(
-        `api/mercado-pago/create`,
+        `https://youtour.onrender.com/api/mercado-pago/create`,
         {
           title: cartItem.nombre,
           price: calculateTotal()
