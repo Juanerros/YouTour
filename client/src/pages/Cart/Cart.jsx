@@ -250,7 +250,7 @@ const Cart = () => {
   const checkoutMP = async () => {
     try {
       const response = await axios.post(
-        `https://youtour.onrender.com/mercado-pago/create`,
+        `/mercado-pago/create`,
         {
           title: cartItem.nombre,
           price: calculateTotal()
@@ -261,7 +261,7 @@ const Cart = () => {
       if (init_point) {
         window.open(init_point, "_blank");
       } else {
-        notify("No se pudo obtener el link de pago, V6", "error");
+        notify("No se pudo obtener el link de pago, V7", "error");
       }
     } catch (err) {
       console.error("Error en checkoutMP:", err);
