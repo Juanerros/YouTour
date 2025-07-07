@@ -612,7 +612,7 @@
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .other-carts-section h3 {
@@ -634,7 +634,7 @@
   padding: 12px 15px;
   background-color: white;
   border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .other-cart-details h4 {
@@ -661,4 +661,17 @@
 .status-cancelado {
   color: #f44336;
   font-weight: 500;
+}
+
+
+.status-badge-cancelar {
+  margin-left: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  background: linear-gradient(135deg, rgba(251, 36, 36, 0.1) 0%, rgba(245, 11, 11, 0.1) 100%);
+  color: #d90606;
+  border: 1px solid rgba(251, 191, 36, 0.2);
 }

@@ -554,7 +554,7 @@ const Cart = () => {
                         {cart.estado}
                       </span>
                       {(cart.estado.toLowerCase() === 'procesando') && (
-                        <button onClick={() => handleDeleteOrder(cart.id_carrito)} >Cancelar</button>
+                        <button onClick={() => handleDeleteOrder(cart.id_carrito)} className='status-badge-cancelar'>Cancelar</button>
                       )}
                     </div>
                   </div>

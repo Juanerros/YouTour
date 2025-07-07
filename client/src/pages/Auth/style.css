@@ -254,7 +254,7 @@
 }
 
 .auth-extra-info .more-info {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
   padding: 1rem 1.5rem;
   border-radius: 12px;
 }
@@ -278,46 +278,53 @@
 
 /* Responsive styles */
 @media (max-width: 992px) {
+
+  .auth-page {
+    padding: 0rem;
+  }
+
   .auth-container {
     flex-direction: column;
+    border-radius: 0 0 0 0;
     max-width: 600px;
   }
-  
+
   .auth-left-panel {
     padding: 2rem;
-    border-radius: 35px 35px 0px 0px;
+    border-radius: 16px 16px 0px 0px;
   }
-  
+
   .auth-features {
     display: none;
   }
-  
+
   .testimonial {
     display: none;
   }
-  
+
   .auth-right-panel {
     padding: 2rem;
   }
 }
 
 @media (max-width: 576px) {
+
   .auth-page {
-    padding: 1rem;
+    padding: 0rem;
   }
-  
+
   .auth-container {
-    border-radius: 8px;
+    border-radius: 16px;
   }
-  
+
   .auth-left-panel {
     padding: 1.5rem;
   }
-  
+
   .auth-right-panel {
     padding: 1.5rem;
   }
-  
+
   .form-row {
     flex-direction: column;
     gap: 1.25rem;

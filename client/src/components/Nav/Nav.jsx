@@ -3,7 +3,7 @@ import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { UserContext } from '../../contexts/UserContext.jsx';
-import { LuTicketsPlane } from 'react-icons/lu';
+import { RiShoppingCart2Line } from "react-icons/ri";
 
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +37,8 @@ const Nav = () => {
       </div>
       <div className="nav-actions">
         <Link className="cart-btn" to={'/cart'}>
-          <LuTicketsPlane size={24} />
+          <RiShoppingCart2Line size={22}/>
+          <span className='cart-text'>Carrito</span>
         </Link>
         <span>{user && user.name}</span>
         {user ? <button className="login-btn" onClick={handleLogout}>Cerrar sesión</button>
@@ -66,8 +67,26 @@ const Nav = () => {
           </Link>
         ) : null}
         <div className="mobile-actions">
-          <Link to="/auth" className="mobile-link"><button className="mobile-login-btn">Iniciar sesión</button></Link>
-
+          {user ? (
+            <button
+              className="mobile-login-btn"
+              onClick={() => {
+                handleLogout();
+                setIsOpen(false);
+              }}
+            >
+              Cerrar sesión
+            </button>
+          ) : (
+            <Link to="/auth" className="mobile-link">
+              <button
+                className="mobile-login-btn"
+                onClick={() => setIsOpen(false)}
+              >
+                Iniciar sesión
+              </button>
+            </Link>
+          )}
         </div>
       </div>
     </nav>
