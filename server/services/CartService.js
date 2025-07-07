@@ -200,7 +200,7 @@ class CartService {
         return paquete.length > 0;
     }
 
-    checkoutCart = async (cartId, total, metodo_pago) => {
+    checkoutCart = async (cartId, total, metodo_pago, userId) => {
 
         try {
             await this.getCartById(cartId);
@@ -213,7 +213,7 @@ class CartService {
 
             const [transaccion] = await this.conex.execute(
                 'INSERT INTO transacciones(id_user, total, metodo_pago) VALUES (?, ?, ?)',
-                [cartId, total, metodo_pago]
+                [userId, total, metodo_pago]
             );
 
             if (transaccion.affectedRows == 0) throw { status: 500, message: 'Error al crear transacción' };

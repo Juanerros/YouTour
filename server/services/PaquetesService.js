@@ -249,32 +249,49 @@ class PaquetesService {
         }
     }
 
-    createPaquete = async (nombre, descripcion, precio_base, id_status) => {
+    createPaquete = async (paqueteData) => {
         try {
-            // Verificar que el status exista
-            const [status] = await this.conex.execute(
-                'SELECT * FROM paquete_status WHERE id_status = ?',
-                [id_status]
-            );
-
-            if (status.length === 0)
-                throw {
-                    status: 404,
-                    message: 'Status no encontrado'
-                }
-
-            const [result] = await this.conex.execute(
-                'INSERT INTO paquetes (nombre, descripcion, precio_base, id_status, cantidad_personas) VALUES (?, ?, ?, ?, 0)',
-                [nombre, descripcion, precio_base, id_status]
-            );
-
-            return {
-                id_paquete: result.insertId,
+            const {
                 nombre,
                 descripcion,
                 precio_base,
-                id_status,
-                cantidad_personas: 0
+                duracion_dias,
+                cantidad_personas,
+                fecha_inicio,
+                fecha_fin,
+                vuelo_id,
+                hotel_id,
+                id_status = 1
+            } = paqueteData;
+
+            // Crear el paquete básico
+            const [result] = await this.conex.execute(
+                'INSERT INTO paquetes (nombre, descripcion, precio_base, duracion_dias, cantidad_personas, fecha_inicio, fecha_fin, id_vuelo, id_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [nombre, descripcion, precio_base, duracion_dias, cantidad_personas, fecha_inicio, fecha_fin, vuelo_id || null, id_status]
+            );
+
+            const paqueteId = result.insertId;
+
+            // Si hay hotel_id, agregarlo al paquete con las fechas del paquete
+            if (hotel_id) {
+                await this.conex.execute(
+                    'INSERT INTO paquete_hoteles (id_paquete, id_hotel, fecha_entrada, fecha_salida) VALUES (?, ?, ?, ?)',
+                    [paqueteId, hotel_id, fecha_inicio, fecha_fin]
+                );
+            }
+
+            return {
+                id_paquete: paqueteId,
+                nombre,
+                descripcion,
+                precio_base,
+                duracion_dias,
+                cantidad_personas,
+                fecha_inicio,
+                fecha_fin,
+                vuelo_id,
+                hotel_id,
+                id_status
             };
         } catch (err) {
             if (err.status) throw err;
@@ -318,7 +335,7 @@ class PaquetesService {
     addHotelToPaquete = async (id_paquete, id_hotel) => {
         try {
             // Verificar que el paquete exista
-            await this.getPaqueteById(id_paquete);
+            const paquete = await this.getPaqueteById(id_paquete);
 
             // Verificar que el hotel exista
             const [hotel] = await this.conex.execute(
@@ -332,9 +349,10 @@ class PaquetesService {
                     message: 'Hotel no encontrado'
                 }
 
+            // Usar las fechas del paquete para la relación hotel-paquete
             const [result] = await this.conex.execute(
-                'INSERT INTO paquete_hoteles (id_paquete, id_hotel) VALUES (?, ?)',
-                [id_paquete, id_hotel]
+                'INSERT INTO paquete_hoteles (id_paquete, id_hotel, fecha_entrada, fecha_salida) VALUES (?, ?, ?, ?)',
+                [id_paquete, id_hotel, paquete.fecha_inicio, paquete.fecha_fin]
             );
 
             return { message: 'Hotel agregado al paquete correctamente' };
@@ -378,15 +396,57 @@ class PaquetesService {
         }
     }
 
-    updatePaquete = async (id, nombre, descripcion, precio_base) => {
+    updatePaquete = async (id, paqueteData) => {
         try {
             // Verificar que el paquete exista
             await this.getPaqueteById(id);
 
+            const {
+                nombre,
+                descripcion,
+                precio_base,
+                duracion_dias,
+                cantidad_personas,
+                fecha_inicio,
+                fecha_fin,
+                vuelo_id,
+                hotel_id
+            } = paqueteData;
+
+            // Actualizar el paquete básico
             await this.conex.execute(
-                'UPDATE paquetes SET nombre = ?, descripcion = ?, precio_base = ? WHERE id_paquete = ?',
-                [nombre, descripcion, precio_base, id]
+                'UPDATE paquetes SET nombre = ?, descripcion = ?, precio_base = ?, duracion_dias = ?, cantidad_personas = ?, fecha_inicio = ?, fecha_fin = ?, id_vuelo = ? WHERE id_paquete = ?',
+                [nombre, descripcion, precio_base, duracion_dias, cantidad_personas, fecha_inicio, fecha_fin, vuelo_id || null, id]
             );
+
+            // Manejar la relación con el hotel
+            if (hotel_id) {
+                // Verificar si ya existe una relación hotel-paquete
+                const [existingHotel] = await this.conex.execute(
+                    'SELECT * FROM paquete_hoteles WHERE id_paquete = ?',
+                    [id]
+                );
+
+                if (existingHotel.length > 0) {
+                    // Si existe, actualizar la relación con las nuevas fechas
+                    await this.conex.execute(
+                        'UPDATE paquete_hoteles SET id_hotel = ?, fecha_entrada = ?, fecha_salida = ? WHERE id_paquete = ?',
+                        [hotel_id, fecha_inicio, fecha_fin, id]
+                    );
+                } else {
+                    // Si no existe, insertar nueva relación con las fechas
+                    await this.conex.execute(
+                        'INSERT INTO paquete_hoteles (id_paquete, id_hotel, fecha_entrada, fecha_salida) VALUES (?, ?, ?, ?)',
+                        [id, hotel_id, fecha_inicio, fecha_fin]
+                    );
+                }
+            } else {
+                // Si no hay hotel_id, eliminar cualquier relación existente
+                await this.conex.execute(
+                    'DELETE FROM paquete_hoteles WHERE id_paquete = ?',
+                    [id]
+                );
+            }
 
             // Obtener el paquete actualizado
             return await this.getPaqueteById(id);

@@ -46,12 +46,36 @@ class PaquetesController {
     }
 
     createPaquete = async (req, res) => {
-        const { nombre, descripcion, precio_base, id_status } = req.body;
+        const { 
+            nombre, 
+            descripcion, 
+            precio_base, 
+            duracion_dias, 
+            cantidad_personas, 
+            fecha_inicio, 
+            fecha_fin, 
+            vuelo_id, 
+            hotel_id,
+            id_status = 1 // Estado por defecto
+        } = req.body;
 
-        if (!nombre || !descripcion || !precio_base || !id_status) return handleError(res, { message: 'Todos los campos son requeridos', status: 400 });
+        if (!nombre || !descripcion || !precio_base || !duracion_dias || !cantidad_personas || !fecha_inicio || !fecha_fin) {
+            return handleError(res, { message: 'Todos los campos requeridos deben ser proporcionados', status: 400 });
+        }
 
         try {
-            const paquete = await this.paquetesService.createPaquete(nombre, descripcion, precio_base, id_status);
+            const paquete = await this.paquetesService.createPaquete({
+                nombre,
+                descripcion,
+                precio_base,
+                duracion_dias,
+                cantidad_personas,
+                fecha_inicio,
+                fecha_fin,
+                vuelo_id,
+                hotel_id,
+                id_status
+            });
             res.status(201).json(paquete);
         } catch (err) {
             handleError(res, err);
@@ -102,12 +126,34 @@ class PaquetesController {
 
     updatePaquete = async (req, res) => {
         const { id } = req.params;
-        const { nombre, descripcion, precio_base } = req.body;
+        const { 
+            nombre, 
+            descripcion, 
+            precio_base, 
+            duracion_dias, 
+            cantidad_personas, 
+            fecha_inicio, 
+            fecha_fin, 
+            vuelo_id, 
+            hotel_id 
+        } = req.body;
 
-        if (!nombre || !descripcion || !precio_base) return handleError(res, { message: 'Todos los campos son requeridos', status: 400 });
+        if (!nombre || !descripcion || !precio_base || !duracion_dias || !cantidad_personas || !fecha_inicio || !fecha_fin) {
+            return handleError(res, { message: 'Todos los campos requeridos deben ser proporcionados', status: 400 });
+        }
 
         try {
-            const paquete = await this.paquetesService.updatePaquete(id, nombre, descripcion, precio_base);
+            const paquete = await this.paquetesService.updatePaquete(id, {
+                nombre,
+                descripcion,
+                precio_base,
+                duracion_dias,
+                cantidad_personas,
+                fecha_inicio,
+                fecha_fin,
+                vuelo_id,
+                hotel_id
+            });
             res.json(paquete);
         } catch (err) {
             handleError(res, err);

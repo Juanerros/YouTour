@@ -6,6 +6,7 @@ import useActividades from './useActividades';
 
 const usePaquetes = () => {
   const [paquetes, setPaquetes] = useState([]);
+  const [paquetesDetallados, setPaquetesDetallados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -35,11 +36,53 @@ const usePaquetes = () => {
     }
   };
 
+  const fetchPaquetesDetallados = async () => {
+    try {
+      const data = await paquetesService.getAllDetallados();
+      setPaquetesDetallados(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const addPaquete = async (paquete) => {
     try {
       const nuevoPaquete = await paquetesService.create(paquete);
       setPaquetes(prev => [...prev, nuevoPaquete]);
+      
+      // Refrescar los paquetes detallados para tener la información completa
+      fetchPaquetesDetallados();
+      
       return nuevoPaquete;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  const updatePaquete = async (id, paqueteData) => {
+    try {
+      const paqueteActualizado = await paquetesService.update(id, paqueteData);
+      setPaquetes(prev => prev.map(p => p.id_paquete === id ? paqueteActualizado : p));
+      
+      // Refrescar los paquetes detallados para tener la información completa y actualizada
+      fetchPaquetesDetallados();
+      
+      return paqueteActualizado;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  const deletePaquete = async (id) => {
+    try {
+      await paquetesService.delete(id);
+      setPaquetes(prev => prev.filter(p => p.id_paquete !== id));
+      setPaquetesDetallados(prev => prev.filter(p => p.id_paquete !== id));
     } catch (err) {
       setError(err.message);
       throw err;
@@ -66,23 +109,41 @@ const usePaquetes = () => {
     }
   };
 
+  const getPaqueteDetalladoById = async (id) => {
+    try {
+      return await paquetesService.getDetalladoById(id);
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
   useEffect(() => {
     fetchPaquetes();
+    fetchPaquetesDetallados();
   }, []);
 
   return {
     paquetes,
+    paquetesDetallados,
     vuelos,
     selectedVuelo,
     selectVuelo,
     hoteles: filteredHoteles,
+    hotelesCompletos: hoteles,
+    filterHotelesByPais,
+    resetHotelFilter,
     actividades,
     loading,
     error,
     addPaquete,
+    updatePaquete,
+    deletePaquete,
     addActividadAPaquete,
     getPaqueteById,
-    fetchPaquetes
+    getPaqueteDetalladoById,
+    fetchPaquetes,
+    fetchPaquetesDetallados
   };
 };
 

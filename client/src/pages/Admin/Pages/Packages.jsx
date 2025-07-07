@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../style.css'
 import './css/Packages.css';
-import { FaPlane, FaHotel, FaStar, FaRegCalendarAlt, FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
+import { FaPlane, FaHotel, FaStar, FaRegCalendarAlt, FaMapMarkerAlt, FaTimes, FaEdit, FaTrash } from 'react-icons/fa';
 import usePaquetes from '../hooks/usePaquetes';
 
 const Packages = () => {
@@ -11,22 +11,31 @@ const Packages = () => {
   const [selectedPaquete, setSelectedPaquete] = useState(null);
   const [selectedActividades, setSelectedActividades] = useState([]);
   const [showActividadesModal, setShowActividadesModal] = useState(false);
-  const [filteredHoteles, setFilteredHoteles] = useState([]);
   const [vueloDestinoPais, setVueloDestinoPais] = useState(null);
   const [vueloDestinoCiudad, setVueloDestinoCiudad] = useState(null);
   const [availableActividades, setAvailableActividades] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingPaquete, setEditingPaquete] = useState(null);
   
   const { 
     paquetes, 
+    paquetesDetallados,
     vuelos, 
     hoteles, 
+    hotelesCompletos,
+    filterHotelesByPais,
+    resetHotelFilter,
     actividades,
     loading, 
     error, 
     addPaquete, 
+    updatePaquete,
+    deletePaquete,
     addActividadAPaquete,
     getPaqueteById,
-    fetchPaquetes
+    getPaqueteDetalladoById,
+    fetchPaquetes,
+    fetchPaquetesDetallados
   } = usePaquetes();
 
   const [form, setForm] = useState({
@@ -70,13 +79,8 @@ const Packages = () => {
         setVueloDestinoPais(selectedVuelo.destino_id_pais);
         setVueloDestinoCiudad(selectedVuelo.destino);
         
-        // Filtrar hoteles que estén en el mismo país que el destino del vuelo
-        const hotelesEnDestino = hoteles.filter(hotel => {
-          // Filtrar por país de destino del vuelo
-          return hotel.id_pais === selectedVuelo.destino_id_pais;
-        });
-        
-        setFilteredHoteles(hotelesEnDestino);
+        // Usar la función del hook para filtrar hoteles
+        filterHotelesByPais(selectedVuelo.destino_id_pais);
         
         // Resetear el hotel seleccionado
         setForm(prev => ({ ...prev, [name]: value, hotel_id: '' }));
@@ -90,7 +94,7 @@ const Packages = () => {
       }
     } else if (name === 'hotel_id' && value) {
       // Cuando se selecciona un hotel, mostrar actividades del destino y amenidades del hotel
-      const selectedHotel = filteredHoteles.find(h => h.id_hotel === parseInt(value));
+      const selectedHotel = hoteles.find(h => h.id_hotel === parseInt(value));
       if (selectedHotel) {
         // Primero obtener actividades del destino
         const actividadesDestino = actividades.filter(actividad => {
@@ -145,7 +149,7 @@ const Packages = () => {
     e.preventDefault();
     try {
       // Validar que el hotel corresponda al destino del vuelo
-      if (filteredHoteles.length > 0 && !filteredHoteles.some(h => h.id_hotel === parseInt(form.hotel_id))) {
+      if (hoteles.length > 0 && !hoteles.some(h => h.id_hotel === parseInt(form.hotel_id))) {
         alert('El hotel seleccionado no corresponde al destino del vuelo.');
         return;
       }
@@ -157,25 +161,33 @@ const Packages = () => {
         cantidad_personas: parseInt(form.cantidad_personas)
       };
       
-      const resultado = await addPaquete(paqueteData);
-      
-      // Si hay actividades seleccionadas, agregarlas al paquete
-      if (selectedActividades.length > 0 && resultado.id_paquete) {
-        for (const actividad of selectedActividades) {
-          await addActividadAPaquete(resultado.id_paquete, {
-            id_actividad: actividad.id_actividad,
-            fecha: form.fecha_inicio,
-            hora: '10:00:00',
-            incluido_base: true
-          });
+      let resultado;
+      if (isEditing && editingPaquete) {
+        resultado = await updatePaquete(editingPaquete.id_paquete, paqueteData);
+        alert('Paquete actualizado exitosamente');
+      } else {
+        resultado = await addPaquete(paqueteData);
+        // Si hay actividades seleccionadas, agregarlas al paquete
+        if (selectedActividades.length > 0 && resultado.id_paquete) {
+          for (const actividad of selectedActividades) {
+            await addActividadAPaquete(resultado.id_paquete, {
+              id_actividad: actividad.id_actividad,
+              fecha: form.fecha_inicio,
+              hora: '10:00:00',
+              incluido_base: true
+            });
+          }
         }
+        alert('Paquete creado exitosamente');
       }
       
       setShowModal(false);
-      fetchPaquetes(); // Actualizar la lista de paquetes
+      fetchPaquetes();
+      fetchPaquetesDetallados();
       resetForm();
     } catch (err) {
-      console.error('Error al agregar paquete:', err);
+      console.error('Error al procesar paquete:', err);
+      alert('Error al procesar el paquete');
     }
   };
 
@@ -192,20 +204,90 @@ const Packages = () => {
       hotel_id: ''
     });
     setSelectedActividades([]);
-    setFilteredHoteles([]);
     setVueloDestinoPais(null);
     setVueloDestinoCiudad(null);
     setAvailableActividades([]);
+    setIsEditing(false);
+    setEditingPaquete(null);
   };
 
   const handleViewDetails = async (paquete) => {
     try {
-      const paqueteDetalle = await getPaqueteById(paquete.id_paquete);
+      const paqueteDetalle = await getPaqueteDetalladoById(paquete.id_paquete);
       setSelectedPaquete(paqueteDetalle);
       setShowDetailsModal(true);
       setCurrentTab('resumen');
     } catch (err) {
       console.error('Error al obtener detalles del paquete:', err);
+      alert('Error al obtener detalles del paquete');
+    }
+  };
+
+  const handleEditPaquete = async (paquete) => {
+    try {
+      setIsEditing(true);
+      setEditingPaquete(paquete);
+      
+      console.log('Editando paquete:', paquete); // Debug
+
+      // Si hay vuelo seleccionado, configurar hoteles filtrados PRIMERO
+      if (paquete.vuelo?.id_vuelo) {
+        const selectedVuelo = vuelos.find(v => v.id_vuelo === paquete.vuelo.id_vuelo);
+        console.log('Vuelo encontrado:', selectedVuelo); // Debug
+        
+        if (selectedVuelo) {
+          setVueloDestinoPais(selectedVuelo.destino_id_pais);
+          setVueloDestinoCiudad(selectedVuelo.destino);
+          
+          // Usar la función del hook para filtrar hoteles
+          await filterHotelesByPais(selectedVuelo.destino_id_pais);
+        }
+      } else {
+        // Si no hay vuelo, usar todos los hoteles
+        resetHotelFilter();
+      }
+      
+      // Precargar los datos del paquete en el formulario
+      setForm({
+        nombre: paquete.nombre || '',
+        descripcion: paquete.descripcion || '',
+        duracion_dias: paquete.duracion_dias || '',
+        precio_base: paquete.precio_base || '',
+        cantidad_personas: paquete.cantidad_personas || '1',
+        fecha_inicio: paquete.fecha_inicio ? new Date(paquete.fecha_inicio).toISOString().split('T')[0] : '',
+        fecha_fin: paquete.fecha_fin ? new Date(paquete.fecha_fin).toISOString().split('T')[0] : '',
+        vuelo_id: paquete.vuelo?.id_vuelo || '',
+        hotel_id: paquete.hotel?.id_hotel || ''
+      });
+
+      console.log('Form data:', {
+        vuelo_id: paquete.vuelo?.id_vuelo,
+        hotel_id: paquete.hotel?.id_hotel
+      }); // Debug
+
+      // Si hay actividades, cargarlas
+      if (paquete.actividades && paquete.actividades.length > 0) {
+        setSelectedActividades(paquete.actividades);
+      }
+
+      setShowModal(true);
+    } catch (err) {
+      console.error('Error al preparar edición:', err);
+      alert('Error al preparar la edición del paquete');
+    }
+  };
+
+  const handleDeletePaquete = async (paquete) => {
+    if (window.confirm(`¿Estás seguro de que quieres eliminar el paquete "${paquete.nombre}"?`)) {
+      try {
+        await deletePaquete(paquete.id_paquete);
+        alert('Paquete eliminado exitosamente');
+        fetchPaquetes();
+        fetchPaquetesDetallados();
+      } catch (err) {
+        console.error('Error al eliminar paquete:', err);
+        alert('Error al eliminar el paquete');
+      }
     }
   };
 
@@ -219,8 +301,8 @@ const Packages = () => {
     setSelectedActividades(selectedActividades.filter(a => a.id_actividad !== id));
   };
 
-  const getVueloById = (id) => vuelos.find(v => v.id_vuelo === id);
-  const getHotelById = (id) => hoteles.find(h => h.id_hotel === id);
+  // Usar paquetes detallados para obtener mejor información
+  const paquetesToShow = paquetesDetallados.length > 0 ? paquetesDetallados : paquetes;
 
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -242,10 +324,7 @@ const Packages = () => {
         </div>
         
         <div className="paquetes-container">
-          {paquetes.map((paquete) => {
-            const vuelo = getVueloById(paquete.vuelo_id);
-            const hotel = getHotelById(paquete.hotel_id);
-            
+          {paquetesToShow.map((paquete) => {
             return (
               <div className="paquete-card" key={paquete.id_paquete}>
                 <div className="paquete-header">
@@ -257,22 +336,24 @@ const Packages = () => {
                     ${paquete.precio_base}
                     <div className="paquete-rating">
                       <FaStar />
-                      <span>{(Math.random() * (5 - 4) + 4).toFixed(1)}</span>
+                      <span>{paquete.hotel?.rating || '4.5'}</span>
                     </div>
                   </div>
                   
                   <div className="paquete-info">
-                    {vuelo && (
+                    {paquete.vuelo && (
                       <div className="paquete-info-item">
                         <FaPlane />
-                        <span>Buenos Aires (EZE) → {vuelo.destino_nombre} ({vuelo.destino_codigo})</span>
+                        <span>
+                          {paquete.vuelo.origen_nombre} ({paquete.vuelo.origen_codigo}) → {paquete.vuelo.destino_nombre} ({paquete.vuelo.destino_codigo})
+                        </span>
                       </div>
                     )}
                     
-                    {hotel && (
+                    {paquete.hotel && (
                       <div className="paquete-info-item">
                         <FaHotel />
-                        <span>{hotel.nombre}</span>
+                        <span>{paquete.hotel.nombre}</span>
                       </div>
                     )}
                     
@@ -280,16 +361,34 @@ const Packages = () => {
                       <FaRegCalendarAlt />
                       <span>{new Date(paquete.fecha_inicio).toLocaleDateString()} - {new Date(paquete.fecha_fin).toLocaleDateString()}</span>
                     </div>
+
+                    {paquete.actividades && paquete.actividades.length > 0 && (
+                      <div className="paquete-info-item">
+                        <FaMapMarkerAlt />
+                        <span>{paquete.actividades.length} actividades incluidas</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
                 <div className="paquete-footer">
-                  <button className="paquete-btn btn-editar">Editar</button>
+                  <button 
+                    className="paquete-btn btn-editar"
+                    onClick={() => handleEditPaquete(paquete)}
+                  >
+                    <FaEdit /> Editar
+                  </button>
                   <button 
                     className="paquete-btn btn-detalles"
                     onClick={() => handleViewDetails(paquete)}
                   >
                     Ver Detalles
+                  </button>
+                  <button 
+                    className="paquete-btn btn-eliminar"
+                    onClick={() => handleDeletePaquete(paquete)}
+                  >
+                    <FaTrash /> Eliminar
                   </button>
                 </div>
               </div>
@@ -298,12 +397,12 @@ const Packages = () => {
         </div>
       </div>
       
-      {/* Modal para crear paquete */}
+      {/* Modal para crear/editar paquete */}
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">
             <div className="modal-header">
-              <h2>Crear Nuevo Paquete</h2>
+              <h2>{isEditing ? 'Editar Paquete' : 'Crear Nuevo Paquete'}</h2>
               <button className="close-btn" onClick={() => setShowModal(false)}>
                 <FaTimes />
               </button>
@@ -427,19 +526,13 @@ const Packages = () => {
                       disabled={!form.vuelo_id}
                     >
                       <option value="">Seleccionar hotel</option>
-                      {filteredHoteles.length > 0 ? (
-                        filteredHoteles.map(hotel => (
-                          <option key={hotel.id_hotel} value={hotel.id_hotel}>
-                            {hotel.nombre} - {hotel.ubicacion}
-                          </option>
-                        ))
-                      ) : (
-                        form.vuelo_id ? (
-                          <option value="" disabled>No hay hoteles disponibles en el destino</option>
-                        ) : null
-                      )}
+                      {hoteles.map(hotel => (
+                        <option key={hotel.id_hotel} value={hotel.id_hotel}>
+                          {hotel.nombre} - {hotel.ubicacion}
+                        </option>
+                      ))}
                     </select>
-                    {form.vuelo_id && filteredHoteles.length === 0 && (
+                    {form.vuelo_id && hoteles.length === 0 && (
                       <div className="error-message">
                         No hay hoteles disponibles en el destino. 
                         <a href="/admin/hotel" target="_blank" rel="noopener noreferrer">Crear un hotel</a>
@@ -493,7 +586,9 @@ const Packages = () => {
                 >
                   Cancelar
                 </button>
-                <button type="submit" className="btn-agregar">Crear Paquete</button>
+                <button type="submit" className="btn-agregar">
+                  {isEditing ? 'Actualizar Paquete' : 'Crear Paquete'}
+                </button>
               </div>
             </form>
           </div>
@@ -574,11 +669,45 @@ const Packages = () => {
               >
                 Actividades
               </div>
+              <div 
+                className={`modal-tab ${currentTab === 'servicios' ? 'active' : ''}`}
+                onClick={() => setCurrentTab('servicios')}
+              >
+                Servicios
+              </div>
             </div>
             
             <div className="modal-content">
               {currentTab === 'resumen' && (
                 <>
+                  <div className="modal-section">
+                    <h3>Información General</h3>
+                    <div className="modal-section-content">
+                      <div className="modal-info-grid">
+                        <div className="modal-info-item">
+                          <span className="modal-info-label">Duración:</span>
+                          <span className="modal-info-value">{selectedPaquete.duracion_dias} días / {selectedPaquete.duracion_dias - 1} noches</span>
+                        </div>
+                        <div className="modal-info-item">
+                          <span className="modal-info-label">Cantidad de Personas:</span>
+                          <span className="modal-info-value">{selectedPaquete.cantidad_personas}</span>
+                        </div>
+                        <div className="modal-info-item">
+                          <span className="modal-info-label">Fecha de Inicio:</span>
+                          <span className="modal-info-value">{new Date(selectedPaquete.fecha_inicio).toLocaleDateString()}</span>
+                        </div>
+                        <div className="modal-info-item">
+                          <span className="modal-info-label">Fecha de Fin:</span>
+                          <span className="modal-info-value">{new Date(selectedPaquete.fecha_fin).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className="modal-info-item">
+                        <span className="modal-info-label">Descripción:</span>
+                        <span className="modal-info-value">{selectedPaquete.descripcion}</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="modal-section">
                     <h3>Vuelo Incluido</h3>
                     <div className="modal-section-content">
@@ -586,26 +715,24 @@ const Packages = () => {
                         <div className="modal-info-item">
                           <span className="modal-info-label">Ruta:</span>
                           <span className="modal-info-value">
-                            {selectedPaquete.vuelos && selectedPaquete.vuelos[0] ? 
-                              `${selectedPaquete.vuelos[0].origen_nombre} (${selectedPaquete.vuelos[0].origen_codigo}) → 
-                              ${selectedPaquete.vuelos[0].destino_nombre} (${selectedPaquete.vuelos[0].destino_codigo})` : 
+                            {selectedPaquete.vuelo ? 
+                              `${selectedPaquete.vuelo.origen_nombre} (${selectedPaquete.vuelo.origen_codigo}) → 
+                              ${selectedPaquete.vuelo.destino_nombre} (${selectedPaquete.vuelo.destino_codigo})` : 
                               'No disponible'}
                           </span>
                         </div>
                         <div className="modal-info-item">
-                          <span className="modal-info-label">Aerolínea:</span>
+                          <span className="modal-info-label">País de Destino:</span>
                           <span className="modal-info-value">
-                            {selectedPaquete.vuelos && selectedPaquete.vuelos[0] ? 
-                              'Aerolíneas Argentinas' : 'No disponible'}
+                            {selectedPaquete.vuelo?.destino_pais_nombre || 'No disponible'}
                           </span>
                         </div>
-                        <div className="modal-info-item">
-                          <span className="modal-info-label">Duración:</span>
-                          <span className="modal-info-value">
-                            {selectedPaquete.vuelos && selectedPaquete.vuelos[0] ? 
-                              `${selectedPaquete.vuelos[0].duracion || '2h 30m'}` : 'No disponible'}
-                          </span>
-                        </div>
+                        {selectedPaquete.vuelo?.precio && (
+                          <div className="modal-info-item">
+                            <span className="modal-info-label">Precio del Vuelo:</span>
+                            <span className="modal-info-value">${selectedPaquete.vuelo.precio}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -617,24 +744,24 @@ const Packages = () => {
                         <div className="modal-info-item">
                           <span className="modal-info-label">Hotel:</span>
                           <span className="modal-info-value">
-                            {selectedPaquete.hoteles && selectedPaquete.hoteles[0] ? 
-                              selectedPaquete.hoteles[0].nombre : 'No disponible'}
+                            {selectedPaquete.hotel?.nombre || 'No disponible'}
                           </span>
                         </div>
                         <div className="modal-info-item">
                           <span className="modal-info-label">Ubicación:</span>
                           <span className="modal-info-value">
-                            {selectedPaquete.hoteles && selectedPaquete.hoteles[0] ? 
-                              `${selectedPaquete.hoteles[0].ubicacion}` : 'No disponible'}
+                            {selectedPaquete.hotel ? 
+                              `${selectedPaquete.hotel.ciudad_nombre}, ${selectedPaquete.hotel.pais_nombre}` : 
+                              'No disponible'}
                           </span>
                         </div>
                         <div className="modal-info-item">
                           <span className="modal-info-label">Rating:</span>
                           <span className="modal-info-value">
-                            {selectedPaquete.hoteles && selectedPaquete.hoteles[0] ? 
+                            {selectedPaquete.hotel?.rating ? 
                               <>
                                 <FaStar style={{ color: '#f5a623' }} /> 
-                                {selectedPaquete.hoteles[0].rating || '5'}
+                                {selectedPaquete.hotel.rating}
                               </> : 'No disponible'}
                           </span>
                         </div>
@@ -668,14 +795,37 @@ const Packages = () => {
                           <div className="actividad-item-info">
                             <span className="actividad-item-name">{actividad.nombre}</span>
                             <span className="actividad-item-details">
-                              {actividad.ciudad}, {actividad.pais} - ${actividad.precio} - Duración: {actividad.duracion}
+                              {actividad.ciudad_nombre}, {actividad.pais_nombre} - ${actividad.precio}
                             </span>
+                            {actividad.descripcion && (
+                              <span className="actividad-item-description">{actividad.descripcion}</span>
+                            )}
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <p>No hay actividades incluidas en este paquete.</p>
+                  )}
+                </div>
+              )}
+
+              {currentTab === 'servicios' && (
+                <div className="modal-section">
+                  <h3>Servicios Incluidos</h3>
+                  {selectedPaquete.servicios && selectedPaquete.servicios.length > 0 ? (
+                    <div className="servicios-list">
+                      {selectedPaquete.servicios.map(servicio => (
+                        <div className="servicio-item" key={servicio.id_servicio}>
+                          <div className="servicio-item-info">
+                            <span className="servicio-item-name">{servicio.nombre}</span>
+                            <span className="servicio-item-details">{servicio.descripcion}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>No hay servicios adicionales incluidos en este paquete.</p>
                   )}
                 </div>
               )}
