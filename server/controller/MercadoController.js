@@ -18,11 +18,10 @@ export const createPreference = async (req, res) => {
           },
         ],
         back_urls: {
-          success: "http://localhost:5173/success",
-          failure: "http://localhost:5173/failure",
-          pending: "http://localhost:5173/pending",
+          success: "http://youtour.onrender.com/success",
+          failure: "http://youtour.onrender.com/failure",
+          pending: "http://youtour.onrender.com/pending",
         },
-        auto_return: "approved",
       },
       {
         headers: {
