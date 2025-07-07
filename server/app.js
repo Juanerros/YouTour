@@ -9,6 +9,7 @@ import cartRoutes from './routes/cart.js';
 import emailRoutes from './routes/email.js';
 import authRoutes from './routes/Auth.js';
 import adminRoutes from './routes/admin.js'
+import mercadoPagoRoutes from './routes/mercadoPagoRoutes.js';
 
 // Importaciones de dependencias 
 import express from 'express';
@@ -53,6 +54,8 @@ app.use('/api/paquetes', paquetesRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api', mercadoPagoRoutes);
+
 
 // Testeo de api
 app.get('/api/ping', async (req, res) => {

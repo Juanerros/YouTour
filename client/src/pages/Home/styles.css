@@ -833,6 +833,7 @@ h1 {
 
 .contact-container {
   margin: 0 auto;
+  width: 70%;
 }
 
 .contact h2 {
@@ -904,6 +905,8 @@ h1 {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
   gap: 2rem;
+ 
+
   margin-bottom: 3rem;
 }
 
@@ -1183,6 +1186,7 @@ h1 {
 
   .contact-container {
     padding: 0rem;
+
   }
 
   .contact h2 {

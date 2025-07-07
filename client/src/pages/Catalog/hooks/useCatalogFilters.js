@@ -1,7 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import catalogService from '../services/catalogService';
+import { useLocation } from 'react-router-dom';
+
 
 export const useCatalogFilters = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialSearch = searchParams.get('search') || '';
+
   // Estados para los datos
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,7 +15,7 @@ export const useCatalogFilters = () => {
 
   // Estados para filtros
   const [filters, setFilters] = useState({
-    search: '',
+    search: initialSearch,
     priceRange: { min: 0, max: 200000 },
     origin: 'todos',
     destination: 'todos',

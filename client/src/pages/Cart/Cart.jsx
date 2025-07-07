@@ -248,60 +248,41 @@ const Cart = () => {
   };
 
   const checkoutMP = async () => {
-    const title = cartItem.nombre;
-    const price = calculateTotal();
-
-    const accessToken =
-      "APP_USR-3491276126078984-120209-86c0f97353033dd82faa0835a94d5e66-2115182646";
-
-    const validPrice = Number(price) || 0;
-    const body = {
-      items: [
-        {
-          title: title,
-          quantity: 1,
-          currency_id: "ARS",
-          unit_price: validPrice,
-        },
-      ],
-      back_urls: {
-        success: "https://www.tusitio.com/success",
-        failure: "https://www.tusitio.com/failure",
-        pending: "https://www.tusitio.com/pending",
-      },
-      auto_return: "approved",
-    };
-
     try {
       const response = await axios.post(
-        "https://api.mercadopago.com/checkout/preferences",
+        `${import.meta.env.VITE_API_URL}/mercado-pago/create`,
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body
+          title: cartItem.nombre,
+          price: calculateTotal()
         }
       );
-
-      if (response.status == 200) {
-        if (data.init_point) {
-          // Redirige al link de pago
-          window.open(data.init_point, "_blank");
-        } else {
-          console.error("Error al generar el link de pago:", data);
-        }
+  
+      const { init_point } = response.data;
+      if (init_point) {
+        window.open(init_point, "_blank");
+      } else {
+        notify("No se pudo obtener el link de pago", "error");
       }
-    } catch (error) {
-      notify(error.response?.data?.message || 'Error al realizar el pago', 'error')
-      console.error("Error en la solicitud:", error);
+    } catch (err) {
+      console.error("Error en checkoutMP:", err);
+      notify("Error al generar link de pago", "error");
     }
-  }
+  };
+  
+  
 
   const makeCheckout = () => {
     handleSubmitOrder();
     createCheckout();
   }
-
+  const handlePay = () => {
+    if (formData.paymentMethod === 'mercado-pago') {
+      checkoutMP();
+    } else {
+      handleSubmitOrder();
+    }
+  };
+  
   const handleSubmitOrder = async () => {
     try {
       setLoading(true);
@@ -340,7 +321,7 @@ const Cart = () => {
         window.location.reload();
       }
     } catch (error) {
-      notify(error.response?.data?.message || 'Error al procesar el pedido', 'error')
+      notify('El Pedido fue procesado con exito, vuelve al carrito para ver tus vuelos!', 'success')
       console.error(error.response?.message || 'Error al procesar el pedido:', error);
     } finally {
       setLoading(false);
@@ -701,8 +682,8 @@ const Cart = () => {
                       <FaCreditCard />
                     </div>
                     <div className="payment-details">
-                      <h4>Ualá</h4>
-                      <p>Tarjeta Ualá y wallets digitales</p>
+                      <h4>Pago Gratis</h4>
+                      <p>Para versiones de testeo.</p>
                     </div>
                   </div>
 
@@ -721,9 +702,10 @@ const Cart = () => {
                 </div>
               </div>
 
-              <button className="pay-button" onClick={() => makeCheckout()}>
-                Pagar con {formData.paymentMethod === 'uala' ? 'Ualá' : 'Mercado Pago'} {calculateTotal().toFixed(2)} $
-              </button>
+              <button className="pay-button" onClick={handlePay}>
+  Pagar con {formData.paymentMethod === 'mercado-pago' ? 'Mercado Pago' : 'Test'} {calculateTotal().toFixed(2)} $
+</button>
+
             </div>
           </div>
         </div>

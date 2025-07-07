@@ -7,20 +7,21 @@
 
 /* Barra de búsqueda */
 .search-bar {
-  max-width: 600px;
+  max-width: 800px;
+  width: 90%;
   margin: 0 auto;
 }
 
 .search-input-container {
   position: relative;
   display: flex;
+  padding: 0px -20px;
   align-items: center;
 }
 
 .search-icon {
   position: absolute;
-  left: 1rem;
-  color: #7f8c8d;
+  left: 1rem !important;
   font-size: 1.1rem;
   z-index: 1;
 }
