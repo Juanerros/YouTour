@@ -21,17 +21,19 @@
   gap: 2rem;
   margin-top: 2rem;
   padding: 2rem 3vw;
-  /* Espaciado para que no estén pegados a los bordes */
   justify-content: flex-start;
   box-sizing: border-box;
 }
 
+/* Usar grid flexible para los cards */
 .hotel-card {
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .08);
   overflow: hidden;
-  width: 320px;
+  flex: 1 1 320px;           /* Permite crecer y encogerse, base 320px */
+  min-width: 280px;          /* No más chico que esto */
+  max-width: 370px;          /* No más grande que esto */
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -40,7 +42,7 @@
 }
 
 .hotel-card:hover {
-  box-shadow: 0 8px 32px rgba(37, 99, 174, 0.22);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: translateY(-10px) scale(1.03);
 }
 
@@ -208,6 +210,18 @@
   color: #11233f;
 }
 
+@media (max-width: 980px) {
+  .hoteles-container {
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .hotel-card {
+    min-width: 60vw;
+    max-width: 80vw;
+    flex: 1 1 100%;
+  }
+}
+
 @media (max-width: 600px) {
   .row {
     line-height: 1;
@@ -215,6 +229,16 @@
 
   .agregar-hotel-btn {
     margin-top: 10px;
+  }
+
+  
+  .hotel-card {
+    min-width: 90vw;
+    flex: 1 1 100%;
+  }
+
+  .hotel-card:hover {
+    transform: scale(1.02)
   }
 
   .hoteles-container {
