@@ -28,6 +28,10 @@ const Airplanes = () => {
   const [currentVuelo, setCurrentVuelo] = useState(null);
   const [viewMode, setViewMode] = useState('cards'); // 'cards' o 'table'
 
+  useEffect(() => {
+    document.title = "YouTour - Vuelos";
+  }, []);
+
   // Estado para almacenar los nombres de las ciudades seleccionadas
   const [ciudadesNombres, setCiudadesNombres] = useState({
     origen: '',

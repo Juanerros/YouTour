@@ -1,5 +1,5 @@
 import './style.css'
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/UserContext.jsx';
 import axios from '../../api/axios';
@@ -116,6 +116,10 @@ const Auth = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  useEffect(() => {
+    document.title = "YouTour - " + (isLogin ? "Iniciar sesión" : "Registrarse");
+  }, [isLogin]);
 
   if (user) return navigate('/');
 

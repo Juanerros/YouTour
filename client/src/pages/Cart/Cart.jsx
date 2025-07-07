@@ -37,6 +37,7 @@ const Cart = () => {
       fetchCart();
       fetchOtherCarts(); // Añadir esta línea
     }
+    document.title = "YouTour - Carrito";
   }, [user]);
 
   // Función para obtener el carrito del usuario desde la API

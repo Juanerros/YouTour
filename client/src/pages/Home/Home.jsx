@@ -54,6 +54,7 @@ const Home = () => {
   useEffect(() => {
     setPackages(tourPackages);
     setFilteredPackages(tourPackages);
+    document.title = "YouTour - Inicio";
   }, []);
 
   const handleSearch = (e) => {

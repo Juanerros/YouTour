@@ -38,6 +38,10 @@ const Packages = () => {
     fetchPaquetesDetallados
   } = usePaquetes();
 
+  useEffect(() => {
+    document.title = "YouTour - Paquetes";
+  }, []);
+
   const [form, setForm] = useState({
     nombre: '',
     descripcion: '',

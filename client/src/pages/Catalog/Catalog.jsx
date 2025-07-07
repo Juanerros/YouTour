@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import "./style.css";
@@ -17,6 +17,10 @@ const Catalog = () => {
   const { notify } = useNotification();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [addingToCart, setAddingToCart] = useState(null);
+
+  useEffect(() => {
+    document.title = "YouTour - Catálogo";
+  }, []);
 
   const {
     packages,

@@ -4,6 +4,7 @@ import { IoIosAirplane } from "react-icons/io";
 import { RiHotelFill } from "react-icons/ri";
 import { PiSunFill } from "react-icons/pi";
 import { FaShoppingBag, FaDollarSign } from "react-icons/fa";
+import { useEffect } from 'react';
 import { MdArrowForward } from "react-icons/md";
 import usePaquetes from './hooks/usePaquetes';
 import useVuelos from './hooks/useVuelos';
@@ -18,6 +19,10 @@ const Admin = () => {
   const { hoteles, loading: loadingHoteles } = useHoteles();
   const { actividades, loading: loadingActividades } = useActividades();
   const { pedidos, loading: loadingPedidos } = usePedidos();
+
+  useEffect(() => {
+    document.title = "YouTour - Admin";
+  }, []);
 
   // Verificar si hay algún loading activo
   const isLoading = loadingPaquetes || loadingVuelos || loadingHoteles || loadingActividades || loadingPedidos;

@@ -29,6 +29,10 @@ const Activities = () => {
     descripcion: ''
   });
 
+  useEffect(() => {
+    document.title = "YouTour - Actividades";
+  }, []);
+
   const handleChange = e => {
     const { name, value } = e.target;
     if (name === 'id_pais') {

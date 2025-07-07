@@ -1,7 +1,7 @@
 import '../style.css'
 import '../../../components/Modal/ModalHotel.css'
 import './css/Hotel.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useHoteles from '../hooks/useHoteles';
 
 const ejemploFoto = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80";
@@ -19,6 +19,10 @@ const Hotel = () => {
     fetchCiudadesPorPais,
     amenidadesDisponibles
   } = useHoteles();
+
+  useEffect(() => {
+    document.title = "YouTour - Hoteles";
+  }, []);
 
   const [form, setForm] = useState({
     nombre: '',

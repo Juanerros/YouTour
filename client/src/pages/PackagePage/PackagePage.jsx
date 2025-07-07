@@ -15,6 +15,10 @@ const PackagePage = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    document.title = "YouTour - Detalles del paquete";
+  }, []);
+
   const fetchPackageDetails = async () => {
     try {
       setLoading(true);
